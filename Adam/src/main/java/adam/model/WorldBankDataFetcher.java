@@ -25,8 +25,23 @@ import org.xml.sax.SAXException;
 
 public class WorldBankDataFetcher {
 
+	private static final String BASE_COUNTRY_URL = "http://api.worldbank.org/countries",
+			GDP = "NY.GDP.MKTP.CD",
+			CPI = "FP.CPI.TOTL",
+			BOP = "BN.CAB.XOKA.CD", 
+			UNEMPLOYMENT = "SL.UEM.TOTL.ZS",
+			INFLATION = "FP.CPI.TOTL.ZG",
+			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
+			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS";
+			
 	
-	public WorldBankDataFetcher () {}
+	private static HashMap<String, Document> cachedDocuments;
+	
+	
+	public WorldBankDataFetcher ()
+	{
+		cachedDocuments = new HashMap<String, Document>();
+	}
 	
 	
 	
@@ -39,18 +54,22 @@ public class WorldBankDataFetcher {
 	 */
 	private static Document loadDocument(String url) {
 		
-		// Parser to get XML Data from URL Given
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		Document document = null;
-		
-		try { // Put this on separate private method
-			DocumentBuilder dBuilder = builderFactory.newDocumentBuilder();
-			document = dBuilder.parse(new URL(url).openStream());
+		if (!cachedDocuments.containsKey(url))
+		{
+			// Parser to get XML Data from URL Given
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			Document document = null;
 			
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
+			try { // Put this on separate private method
+				DocumentBuilder dBuilder = builderFactory.newDocumentBuilder();
+				document = dBuilder.parse(new URL(url).openStream());
+				
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				e.printStackTrace();
+			}
+			cachedDocuments.put(url, document);
 		}
-		return document;
+		return cachedDocuments.get(url);
 	}
 	
 	
@@ -61,6 +80,7 @@ public class WorldBankDataFetcher {
 	 * @param  idName  a string that represents the common indicator name
 	 * @return String - the proper Indicator Code for the wanted indicator
 	 */
+	/*
 	private String getIndicatorCode(String idName) {
 		// TODO: Could also load from the XML indicator if needed - Recommended usage -> if designed for all indicators
 		switch (idName) {
@@ -75,7 +95,7 @@ public class WorldBankDataFetcher {
 			// TODO: Add More IDs as soon as we need them
 		}
 		return "Invalid Indicator Code";
-	}
+	}*/
 	
 	
 	//TODO: Might Need this - Not Sure Yet
@@ -87,7 +107,7 @@ public class WorldBankDataFetcher {
 	 */
 	private String getCountryCode(String countryName) {
 		//TODO: For use with getIndicatorDataByYear
-		Document document = loadDocument("http://api.worldbank.org/countries/all/?per_page=1000");
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all/?per_page=1000");
 		
 		
 		return null;
@@ -104,10 +124,10 @@ public class WorldBankDataFetcher {
 	 * @param  endYear an Integer with the end year (inclusive)
 	 * @return indicatorData - corresponds to the data desired with it's associated year
 	 */
-	public HashMap<String, HashMap<Integer, String>> getIndicatorDataByYear (String indicatorName, int startYear, int endYear) {
+	public HashMap<String, HashMap<Integer, String>> getIndicatorDataByYear(String indicatorName, int startYear, int endYear) {
 		HashMap<String, HashMap<Integer, String>> indicatorData = new HashMap<String, HashMap<Integer, String>>();
 		
-		String url = "http://api.worldbank.org/countries/all/indicators/" + getIndicatorCode(indicatorName) + "?per_page=1000&date=" + startYear + ":" + endYear + "&format=xml";
+		String url = BASE_COUNTRY_URL + "/all/indicators/" + indicatorName + "?per_page=1000&date=" + startYear + ":" + endYear + "&format=xml";
 		Document document = loadDocument(url);
 			
 		// Get All the Nodes into Node List
@@ -175,8 +195,45 @@ public class WorldBankDataFetcher {
 		return allCInfoData;
 	}
 	
+	private String getDataFromCode(String code, String tagName)
+	{
+		return loadDocument(BASE_COUNTRY_URL + "/" + code).getElementsByTagName(tagName).item(0).getTextContent();
+	}
 	
+	public String getNameFromCode(String code)
+	{
+		return getDataFromCode(code, "wb:name");
+	}
 	
+	public String getRegionFromCode(String code)
+	{
+		return getDataFromCode(code, "wb:region");
+	}
+	
+	public String getIncomeLevelFromCode(String code)
+	{
+		return getDataFromCode(code, "wb:incomeLevel");
+	}
+	
+	public String getLendingType(String code)
+	{
+		return getDataFromCode(code, "wb:lendingType");
+	}
+	
+	public String getCapitalCity(String code)
+	{
+		return getDataFromCode(code, "wb:capitalCity");
+	}
+	
+	public double getLongitude(String code)
+	{
+		return Double.parseDouble(getDataFromCode(code, "wb:longitude"));
+	}
+	
+	public double getLatitude(String code)
+	{
+		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
+	}
 	
 	
 	/**
