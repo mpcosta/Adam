@@ -23,13 +23,10 @@ import org.xml.sax.SAXException;
 
 
 
-public class WorldBankDataFetcher extends DataFetcher {
+public class WorldBankDataFetcher {
 
 	
-	public WorldBankDataFetcher ()
-	{
-		
-	}
+	public WorldBankDataFetcher () {}
 	
 	
 	
