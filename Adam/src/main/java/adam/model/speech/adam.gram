@@ -1,0 +1,12 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar
+ *
+ * @author Razvan-Gabriel Geangu
+ */
+
+grammar adam;
+
+public <show> = (Show me) ( statistics );
+public <adam> = (Adam) ( what time is it );
