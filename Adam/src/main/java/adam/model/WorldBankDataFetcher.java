@@ -33,12 +33,12 @@ public class WorldBankDataFetcher {
 			INFLATION = "FP.CPI.TOTL.ZG",
 			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
 			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS";
-			
+	private static final int ITEMS_PER_PAGE = 1000;
 	
 	private static HashMap<String, Document> cachedDocuments;
 	
 	
-	public WorldBankDataFetcher ()
+	public WorldBankDataFetcher()
 	{
 		cachedDocuments = new HashMap<String, Document>();
 	}
@@ -107,7 +107,7 @@ public class WorldBankDataFetcher {
 	 */
 	private String getCountryCode(String countryName) {
 		//TODO: For use with getIndicatorDataByYear
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all/?per_page=1000");
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all/?per_page=" + ITEMS_PER_PAGE);
 		
 		
 		return null;
@@ -127,7 +127,7 @@ public class WorldBankDataFetcher {
 	public HashMap<String, HashMap<Integer, String>> getIndicatorDataByYear(String indicatorName, int startYear, int endYear) {
 		HashMap<String, HashMap<Integer, String>> indicatorData = new HashMap<String, HashMap<Integer, String>>();
 		
-		String url = BASE_COUNTRY_URL + "/all/indicators/" + indicatorName + "?per_page=1000&date=" + startYear + ":" + endYear + "&format=xml";
+		String url = BASE_COUNTRY_URL + "/all/indicators/" + indicatorName + "?per_page=" + ITEMS_PER_PAGE + "&date=" + startYear + ":" + endYear + "&format=xml";
 		Document document = loadDocument(url);
 			
 		// Get All the Nodes into Node List
@@ -174,7 +174,7 @@ public class WorldBankDataFetcher {
 		// HashMap< CountryName, StringArray with all the info
 		HashMap<String, String[]> allCInfoData = new HashMap<String, String[]>();
 		
-		Document document = loadDocument("http://api.worldbank.org/countries/all/?per_page=1000");
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all/?per_page=" + ITEMS_PER_PAGE);
 		NodeList rootNodes = document.getElementsByTagName("wb:country");
 		
 		// Get All the Information Needed from all the Nodes
@@ -193,6 +193,18 @@ public class WorldBankDataFetcher {
 			allCInfoData.put(document.getElementsByTagName("wb:name").item(i).getTextContent(), data);
 		}
 		return allCInfoData;
+	}
+	
+	/**
+	 * Tests whether a Country code exists.
+	 * @param code	The code of the Country.
+	 * @return	True if a Country exists with the specified code.
+	 */
+	public boolean countryCodeExists(String code)
+	{
+		Document document = loadDocument(BASE_COUNTRY_URL + "/" + code);
+		NodeList nodeList = document.getElementsByTagName("wb:error");
+		return nodeList.getLength() == 0;
 	}
 	
 	private String getDataFromCode(String code, String tagName)
