@@ -2,50 +2,32 @@ package adam.model;
 
 import java.util.HashMap;
 
-public class Country
+public class Country extends Area
 {
-	private static final String EX_CODE_INVALID = "Country code provided was not valid ";
-	
-	private static HashMap<Code, Country> countries = new HashMap<Code, Country>();
-	
-	private static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
 	private Code code;
-	private String name, region, incomeLevel, lendingType, capitalCity;
+	private String region, incomeLevel, lendingType, capitalCity;
 	private double longitude, latitude;
 	private boolean longitudeCached, latitudeCached;
 	
 	private Country(String c) throws Exception
 	{
-		code = new Code(c);
+		super(c);
 		initialise();
 	}
 	private Country(Code c)
 	{
-		code = c;
+		super(c);
 		initialise();
 	}
 	
 	private void initialise()
 	{
-		name = null;
 		region = null;
 		incomeLevel = null;
 		lendingType = null;
 		capitalCity = null;
 		longitudeCached = false;
 		latitudeCached = false;
-	}
-	
-	public String getCode()
-	{
-		return code.get();
-	}
-	
-	public String getName()
-	{
-		if (name == null)
-			name = dataFetcher.getNameFromCode(code.get());
-		return name;
 	}
 	
 	public String getRegion()
@@ -113,38 +95,21 @@ public class Country
 		}
 	}
 	
-	private static boolean codeIsValid(Code code)
+	protected static boolean codeIsValid(Code code)
 	{
-		return countries.containsKey(code) || dataFetcher.countryCodeExists(code.get());
+		return (areas.containsKey(code) && areas.get(code) instanceof Country) || dataFetcher.countryCodeExists(code.get());
 	}
 	
 	public static Country getCountry(String c) throws Exception
 	{
 		Code code = new Code(c);
 		if (!codeIsValid(code))
-			throw new Exception(EX_CODE_INVALID + ": " + c);
-		if (!countries.containsKey(code))
-			countries.put(code, new Country(code));
-		return countries.get(code);
+			throw new Exception(Area.EX_CODE_INVALID + ": " + c + ", must be a valid Country code.");
+		if (!areas.containsKey(code))
+			areas.put(code, new Country(code));
+		return (Country)areas.get(code);
 	}
 	
-	private static class Code
-	{
-		private static final int CODE_LENGTH = 2;
-		
-		private String code;
-		
-		public Code(String c) throws Exception
-		{
-			if (c.length() != CODE_LENGTH)
-				throw new Exception(EX_CODE_INVALID + ": " + c + "; Code length must be " + CODE_LENGTH);
-			code = c;
-		}
-		
-		public String get()
-		{
-			return code;
-		}
-	}
+	
 	
 }
