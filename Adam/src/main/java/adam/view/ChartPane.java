@@ -5,6 +5,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
 
@@ -12,6 +13,7 @@ public class ChartPane extends StackPane {
 
 	@SuppressWarnings("rawtypes")
 	private XYChart chart;
+	private PieChart pieChart;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	/**
@@ -26,11 +28,19 @@ public class ChartPane extends StackPane {
 		switch (type) {
 			case "line": {
 				chart = new LineChart(xAxis, yAxis);
+				getChildren().add(chart);
 				break;
 			}
 	
 			case "bar": {
 				chart = new BarChart(xAxis, yAxis);
+				getChildren().add(chart);
+				break;
+			}
+			
+			case "pie": {
+				pieChart = new PieChart();
+				getChildren().add(pieChart);
 				break;
 			}
 	
@@ -46,15 +56,19 @@ public class ChartPane extends StackPane {
 		}
 		
 		chart.setTitle(title);
-		getChildren().add(chart);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	/**
 	 * A method for setting the data of the chart to an ObservableList.
 	 * @param data An object instance of an ObservableList that represents the data for the chart.
+	 * @param isPieChart, we used a boolean to represent if chart is pie or another type 
 	 */
-	public void setChartData(ObservableList<XYChart.Series> data) {
-		chart.setData(data);
+	public void setChartData(ObservableList data, boolean isPieChart) {
+		if (isPieChart) {
+			pieChart.setData(data);
+		} else {
+			chart.setData(data);
+		}
 	}
 }
