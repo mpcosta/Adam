@@ -13,8 +13,8 @@ public class Avatar {
 	// TODO: Add the static image to the resources package
 
 //	private static final Image STATIC_IMAGE = new Image("adam/resources/static.png");
-	private static final Image SPEAKING_IMAGE = new Image("adam/resources/speaking_animation.png");
-	private static final Image LISTENING_IMAGE = new Image("adam/resources/ears_and_eyes.png");
+	private static final Image SPEAKING_IMAGE = new Image("adam/view/res/speaking_animation.png");
+	private static final Image LISTENING_IMAGE = new Image("adam/view/res/ears_and_eyes.png");
 	private static final int FRAMES_SPEAKING_IMAGE = 4;
 	private static final int FRAME_LISTENING_IMAGE = 16;
 

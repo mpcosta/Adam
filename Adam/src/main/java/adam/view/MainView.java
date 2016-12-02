@@ -16,6 +16,8 @@ public class MainView extends BorderPane {
 		
 		sessionChooserPane = new SessionChooserPane();
 		setCenter(sessionChooserPane);
+		
+		setRight(new Avatar().getListeningImageView());
 				
 //        MenuButton menuButton = new MenuButton();
 //        menuButton.getItems().addAll(
