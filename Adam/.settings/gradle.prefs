@@ -1,8 +1,8 @@
 {
   "1.0": {
     "project_path": ":",
-    "project_dir": "",
-    "connection_project_dir": "",
+    "project_dir": "C:\\git\\SEG\\SEGWalk\\Adam",
+    "connection_project_dir": "C:\\git\\SEG\\SEGWalk\\Adam",
     "connection_gradle_user_home": null,
     "connection_gradle_distribution": "GRADLE_DISTRIBUTION(WRAPPER)",
     "connection_java_home": null,
