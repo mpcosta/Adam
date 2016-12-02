@@ -29,19 +29,31 @@ public abstract class Area
 		name = null;
 	}
 	
+	/**
+	 * Gets the code for the Area.
+	 * @return	The Area code.
+	 */
 	public String getCode()
 	{
 		return code.get();
 	}
 	
+	/**
+	 * Gets the name for the Area.
+	 * @return	The Area name.
+	 */
 	public String getName()
 	{
 		if (name == null)
 			name = dataFetcher.getNameFromCode(code.get());
 		return name;
 	}
-
 	
+	/**
+	 * Tests whether the given code matches to an Area.
+	 * @param code	The query code.
+	 * @return	True if an Area exists with the specified code.
+	 */
 	public static boolean codeIsValid(String code)
 	{
 		try
@@ -72,6 +84,10 @@ public abstract class Area
 			code = c;
 		}
 		
+		/**
+		 * Gets the string representation of the code.
+		 * @return	The code.
+		 */
 		public String get()
 		{
 			return code;

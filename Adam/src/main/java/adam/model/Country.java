@@ -30,6 +30,10 @@ public class Country extends Area
 		latitudeCached = false;
 	}
 	
+	/**
+	 * Gets the region that the Country is part of.
+	 * @return	The name of the region.
+	 */
 	public String getRegion()
 	{
 		if (region == null)
@@ -37,6 +41,10 @@ public class Country extends Area
 		return region;
 	}
 	
+	/**
+	 * Gets the income level of the Country.
+	 * @return	The income level.
+	 */
 	public String getIncomeLevel()
 	{
 		if (incomeLevel == null)
@@ -44,6 +52,10 @@ public class Country extends Area
 		return incomeLevel;
 	}
 	
+	/**
+	 * Gets the lending type of the Country.
+	 * @return	The lending type.
+	 */
 	public String getLendingType()
 	{
 		if (lendingType == null)
@@ -51,6 +63,10 @@ public class Country extends Area
 		return lendingType;
 	}
 	
+	/**
+	 * Gets the capital city of the Country.
+	 * @return	The name of the capital city.
+	 */
 	public String getCapitalCity()
 	{
 		if (capitalCity == null)
@@ -58,6 +74,10 @@ public class Country extends Area
 		return capitalCity;
 	}
 	
+	/**
+	 * Gets the longitude of the Country.
+	 * @return	The longitude.
+	 */
 	public double getLongitude()
 	{
 		if (!longitudeCached)
@@ -68,6 +88,10 @@ public class Country extends Area
 		return longitude;
 	}
 	
+	/**
+	 * Gets the latitude of the Country.
+	 * @return	The latitude.
+	 */
 	public double getLatitude()
 	{
 		if (!latitudeCached)
@@ -97,9 +121,16 @@ public class Country extends Area
 	
 	protected static boolean codeIsValid(Code code)
 	{
-		return (areas.containsKey(code) && areas.get(code) instanceof Country) || dataFetcher.countryCodeExists(code.get());
+		return (areas.containsKey(code) && areas.get(code) instanceof Country)
+				|| dataFetcher.countryCodeExists(code.get());
 	}
 	
+	/**
+	 * Get the Country that has the specified code.
+	 * @param c	The code that matches to a Country.
+	 * @return	The Country that has the code given.
+	 * @throws Exception	If the code given does not match a Country.
+	 */
 	public static Country getCountry(String c) throws Exception
 	{
 		Code code = new Code(c);

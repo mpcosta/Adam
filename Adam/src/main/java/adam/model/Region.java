@@ -13,9 +13,16 @@ public class Region extends Area
 	
 	protected static boolean codeIsValid(Code code)
 	{
-		return (areas.containsKey(code) && areas.get(code) instanceof Region) || dataFetcher.regionCodeExists(code.get());
+		return (areas.containsKey(code) && areas.get(code) instanceof Region)
+				|| dataFetcher.regionCodeExists(code.get());
 	}
 	
+	/**
+	 * Gets the region with the specified code.
+	 * @param c	The code that matches to a region.
+	 * @return	The Region that has the code given.
+	 * @throws Exception	If the code given does not match a region.
+	 */
 	public static Region getRegion(String c) throws Exception
 	{
 		Code code = new Code(c);
