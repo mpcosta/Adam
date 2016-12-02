@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 public class Country
 {
+	private static final String EX_CODE_INVALID = "Country code provided was not valid ";
+	
 	private static HashMap<Code, Country> countries = new HashMap<Code, Country>();
 	
 	private static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
@@ -12,7 +14,7 @@ public class Country
 	private double longitude, latitude;
 	private boolean longitudeCached, latitudeCached;
 	
-	public Country(String c) throws Exception
+	private Country(String c) throws Exception
 	{
 		code = new Code(c);
 		initialise();
@@ -94,11 +96,33 @@ public class Country
 		return latitude;
 	}
 	
+	/**
+	 * Tests whether a given Country code is valid to represent a Country. 
+	 * @param code	The Country code.
+	 * @return	True if it can be used to request a Country object.
+	 */
+	public static boolean codeIsValid(String code)
+	{
+		try
+		{
+			return codeIsValid(new Code(code));
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+	}
 	
+	private static boolean codeIsValid(Code code)
+	{
+		return countries.containsKey(code) || dataFetcher.countryCodeExists(code.get());
+	}
 	
 	public static Country getCountry(String c) throws Exception
 	{
 		Code code = new Code(c);
+		if (!codeIsValid(code))
+			throw new Exception(EX_CODE_INVALID + ": " + c);
 		if (!countries.containsKey(code))
 			countries.put(code, new Country(code));
 		return countries.get(code);
@@ -113,7 +137,7 @@ public class Country
 		public Code(String c) throws Exception
 		{
 			if (c.length() != CODE_LENGTH)
-				throw new Exception("Invalid code length: must be " + CODE_LENGTH);
+				throw new Exception(EX_CODE_INVALID + ": " + c + "; Code length must be " + CODE_LENGTH);
 			code = c;
 		}
 		
