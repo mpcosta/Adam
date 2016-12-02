@@ -196,77 +196,138 @@ public class WorldBankDataFetcher {
 	}
 	
 	/**
-	 * Tests whether a Country code exists.
-	 * @param code	The code of the Country.
-	 * @return	True if a Country exists with the specified code.
+	 * Tests whether an Area code exists.
+	 * @param code	The code of the Area.
+	 * @return	True if a Area exists with the specified code.
 	 */
 	public boolean areaCodeExists(String code)
 	{
-		Document document = loadDocument(BASE_COUNTRY_URL + "/" + code);
-		NodeList nodeList = document.getElementsByTagName("wb:error");
-		return nodeList.getLength() == 0;
+		return !tagExists(code, "wb:error");
 	}
 	
+	/**
+	 * Tests whether an Area exists, and if that Area is a Country.
+	 * @param code	The query code.
+	 * @return	True if the specified code matches to a Country.
+	 */
 	public boolean countryCodeExists(String code)
 	{
 		return areaCodeExists(code) && !isRegion(code);
 	}
 	
+	/**
+	 * Tests whether an Area exists, and if that Area is a Country.
+	 * @param code	The query code.
+	 * @return	True if the specified code matches to a Region.
+	 */
 	public boolean regionCodeExists(String code)
 	{
 		return areaCodeExists(code) && isRegion(code);
 	}
 	
+	/**
+	 * Tests whether an area with the specified code is a region. NB: does not check that the code matches to an existing Area. 
+	 * @param code	The area code.
+	 * @return	True if the specified code matches to a region.
+	 */
 	public boolean isRegion(String code)
 	{
-		return loadDocument(BASE_COUNTRY_URL + "/" + code).getElementsByTagName("wb:capitalCity").getLength() == 0;
+		return !tagExists(code, "wb:capitalCity");
 	}
 	
-	private String getDataFromCode(String code, String tagName)
-	{
-		return loadDocument(BASE_COUNTRY_URL + "/" + code).getElementsByTagName(tagName).item(0).getTextContent();
-	}
-	
+	/**
+	 * Gets the Area name from its code.
+	 * @param code	The Area code.
+	 * @return	The name of the Area.
+	 */
 	public String getNameFromCode(String code)
 	{
 		return getDataFromCode(code, "wb:name");
 	}
 	
+	/**
+	 * Gets the region of a Country from its code.
+	 * @param code	The Country code.
+	 * @return	The name of the region which Country is part of.
+	 */
 	public String getRegionFromCode(String code)
 	{
 		return getDataFromCode(code, "wb:region");
 	}
 	
+	/**
+	 * Gets the income level of a Country from its code.
+	 * @param code	The Country code.
+	 * @return	The income level for the specified Country.
+	 */
 	public String getIncomeLevelFromCode(String code)
 	{
 		return getDataFromCode(code, "wb:incomeLevel");
 	}
 	
+	/**
+	 * Gets the lending type of a Country from its code.
+	 * @param code	The Country code.
+	 * @return	The lending type for the specified Country.
+	 */
 	public String getLendingType(String code)
 	{
 		return getDataFromCode(code, "wb:lendingType");
 	}
 	
+	/**
+	 * Gets the capital city of a Country from its code.
+	 * @param code	The Country code.
+	 * @return	The name of the Countries capital city.
+	 */
 	public String getCapitalCity(String code)
 	{
 		return getDataFromCode(code, "wb:capitalCity");
 	}
 	
+	/**
+	 * Gets the longitude of a Country from its code.
+	 * @param code	The Country code.
+	 * @return	The longitude of the Country. 
+	 */
 	public double getLongitude(String code)
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:longitude"));
 	}
 	
+	/**
+	 * Gets the latitude of a Country from its code.
+	 * @param code	The Country code.
+	 * @return	The latitude of the Country.
+	 */
 	public double getLatitude(String code)
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
 	}
 	
-	public double getGDP(String code)
+	public double getGDP(String code, int year)
 	{
 		return 0;
 	}
 	
+	private boolean tagExists(String code, String tagName)
+	{
+		Document document = getDocumentForArea(code);
+		NodeList nodeList = document.getElementsByTagName(tagName);
+		return nodeList.getLength() > 0;
+	}
+	
+	private String getDataFromCode(String code, String tagName)
+	{
+		Document document = getDocumentForArea(code);
+		NodeList nodeList = document.getElementsByTagName(tagName);
+		return nodeList.item(0).getTextContent();
+	}
+	
+	private Document getDocumentForArea(String code)
+	{
+		return loadDocument(BASE_COUNTRY_URL + "/" + code);
+	}
 	
 	/**
 	 *  Private void method to print the whole Document type of variable
@@ -290,8 +351,4 @@ public class WorldBankDataFetcher {
 			e.printStackTrace();
 		}			
 	}
-	
-	
-	
-	
 }
