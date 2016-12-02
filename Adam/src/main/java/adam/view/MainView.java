@@ -1,13 +1,9 @@
 package adam.view;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import javafx.geometry.Pos;
+import javafx.scene.layout.StackPane;
 
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.BorderPane;
-
-public class MainView extends BorderPane {
+public class MainView extends StackPane {
 	
 	private SessionChooserPane sessionChooserPane;
 
@@ -15,9 +11,14 @@ public class MainView extends BorderPane {
 		super();
 		
 		sessionChooserPane = new SessionChooserPane();
-		setCenter(sessionChooserPane);
+		getChildren().add(sessionChooserPane);
 		
-		setRight(new Avatar().getListeningImageView());
+		Avatar adam = new Avatar();
+		adam.getListeningImageView().setFitHeight(75);;
+		
+		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_RIGHT);
+		
+		getChildren().add(adam.getListeningImageView());
 				
 //        MenuButton menuButton = new MenuButton();
 //        menuButton.getItems().addAll(
