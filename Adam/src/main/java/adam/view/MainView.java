@@ -16,7 +16,7 @@ public class MainView extends BorderPane {
 		
 		sessionChooserPane = new SessionChooserPane();
 		setCenter(sessionChooserPane);
-		
+				
 //        MenuButton menuButton = new MenuButton();
 //        menuButton.getItems().addAll(
 //                Stream.of("Sessions", "Lesson", "Manual", "Quiz")
