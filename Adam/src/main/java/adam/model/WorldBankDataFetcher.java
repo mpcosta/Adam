@@ -200,11 +200,26 @@ public class WorldBankDataFetcher {
 	 * @param code	The code of the Country.
 	 * @return	True if a Country exists with the specified code.
 	 */
-	public boolean countryCodeExists(String code)
+	public boolean areaCodeExists(String code)
 	{
 		Document document = loadDocument(BASE_COUNTRY_URL + "/" + code);
 		NodeList nodeList = document.getElementsByTagName("wb:error");
 		return nodeList.getLength() == 0;
+	}
+	
+	public boolean countryCodeExists(String code)
+	{
+		return areaCodeExists(code) && !isRegion(code);
+	}
+	
+	public boolean regionCodeExists(String code)
+	{
+		return areaCodeExists(code) && isRegion(code);
+	}
+	
+	public boolean isRegion(String code)
+	{
+		return loadDocument(BASE_COUNTRY_URL + "/" + code).getElementsByTagName("wb:capitalCity").getLength() == 0;
 	}
 	
 	private String getDataFromCode(String code, String tagName)
@@ -245,6 +260,11 @@ public class WorldBankDataFetcher {
 	public double getLatitude(String code)
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
+	}
+	
+	public double getGDP(String code)
+	{
+		return 0;
 	}
 	
 	
