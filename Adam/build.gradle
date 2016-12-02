@@ -9,16 +9,37 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+apply plugin: 'eclipse'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use 'jcenter' for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    
+    flatDir {
+    	dirs 'lib'
+	}
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
+	compile name: 'cmu_time_awb'
+	compile name: 'cmu_us_kal'
+	compile name: 'cmudict04'
+	compile name: 'cmulex'
+	compile name: 'cmutimelex'
+	compile name: 'en_us'
+	compile name: 'freetts-jsapi10'
+	compile name: 'freetts'
+	compile name: 'js'
+	compile name: 'jsapi'
+	compile name: 'sphinx4'
+	compile name: 'tags'
+	compile name: 'TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz'
+	compile name: 'WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz'
+	compile name: 'WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz'
+
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.12'
 
