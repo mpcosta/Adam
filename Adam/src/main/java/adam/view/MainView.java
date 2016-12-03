@@ -1,5 +1,6 @@
 package adam.view;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -21,6 +22,7 @@ public class MainView extends StackPane {
 		sessionChooserPane = new SessionChooserPane();
 		manualSessionPane = new ManualPane();
 		chartPane = new ChartPane("line", "Chart");
+		chartPane.setPadding(new Insets(110, 0, 0 ,0));
 		
 		getChildren().add(sessionChooserPane);
 		

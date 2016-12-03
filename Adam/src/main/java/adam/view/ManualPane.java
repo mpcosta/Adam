@@ -8,7 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
@@ -29,7 +29,7 @@ public class ManualPane extends StackPane {
 		textField.setPrefWidth(300);
 		
 		searchBar = new HBox();
-		searchBar.setPadding(new Insets(75, 0, 0, 0));
+		searchBar.setPadding(new Insets(75, 10, 0, 10));
 		searchBar.setSpacing(10);
 		searchBar.setAlignment(Pos.TOP_CENTER);
 		
@@ -37,8 +37,8 @@ public class ManualPane extends StackPane {
 		getChildren().add(searchBar);
 	}
 	
-	public StringProperty getTextInputProperty() {
-		return textField.textProperty();
+	public EventHandler<? super KeyEvent> getTextInputOnKeyPressedProperty() {
+		return textField.getOnKeyPressed();
 	}
 	
 	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {
