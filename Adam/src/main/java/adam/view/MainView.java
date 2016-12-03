@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 public class MainView extends StackPane {
 	
 	private SessionChooserPane sessionChooserPane;
+	private Avatar adam;
 
 	public MainView() {
 		super();
@@ -15,7 +16,7 @@ public class MainView extends StackPane {
 		sessionChooserPane = new SessionChooserPane();
 		getChildren().add(sessionChooserPane);
 		
-		Avatar adam = new Avatar(getScene());
+		adam = new Avatar(getScene());
 		adam.getListeningImageView().setFitHeight(75);
 		
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
@@ -30,4 +31,11 @@ public class MainView extends StackPane {
 //        setLeft(menuButton);
 	}
 	
+	public SessionChooserPane getSessionChooserPane() {
+		return sessionChooserPane;
+	}
+	
+	public Avatar getAvatar() {
+		return adam;
+	}
 }

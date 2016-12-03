@@ -1,6 +1,9 @@
 package adam.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -27,5 +30,24 @@ public class SessionChooserPane extends StackPane {
 		
 		getChildren().add(buttonsBox);
 	}
-
+	
+	public Button getLessonButton() {
+		return lessonButton;
+	}
+	
+	public Button getManualButton() {
+		return manualButton;
+	}
+	
+//	public ObservableList<Button> getButtons() {
+//		ObservableList<Button> buttons = FXCollections.observableArrayList();
+//		
+//		for (Node node : getChildren()) {
+//			if (node instanceof MaterialDesignButton) {
+//				buttons.add((Button) node);
+//			}
+//		}
+//		
+//		return buttons;
+//	}
 }
