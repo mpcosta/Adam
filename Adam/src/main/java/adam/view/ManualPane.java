@@ -1,6 +1,7 @@
 package adam.view;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,8 +37,8 @@ public class ManualPane extends StackPane {
 		getChildren().add(searchBar);
 	}
 	
-	public ObjectProperty<EventHandler<? super InputMethodEvent>> getTextInputOnInputMethodTextChangedProperty() {
-		return textField.onInputMethodTextChangedProperty();
+	public StringProperty getTextInputProperty() {
+		return textField.textProperty();
 	}
 	
 	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {

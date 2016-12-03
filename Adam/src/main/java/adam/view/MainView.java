@@ -8,7 +8,10 @@ public class MainView extends StackPane {
 	
 	private SessionChooserPane sessionChooserPane;
 	private ManualPane manualSessionPane;
+	private ChartPane chartPane;
 	private Avatar adam;
+	
+	private Pane currentView;
 
 	public MainView() {
 		super();
@@ -17,6 +20,7 @@ public class MainView extends StackPane {
 	public void initComponents() {
 		sessionChooserPane = new SessionChooserPane();
 		manualSessionPane = new ManualPane();
+		chartPane = new ChartPane("line", "Chart");
 		
 		getChildren().add(sessionChooserPane);
 		
@@ -26,6 +30,7 @@ public class MainView extends StackPane {
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
 		getChildren().add(adam.getListeningImageView());
+		currentView = sessionChooserPane;
 	}
 	
 	public SessionChooserPane getSessionChooserPane() {
@@ -40,8 +45,12 @@ public class MainView extends StackPane {
 		return manualSessionPane;
 	}
 	
-	public void transition(Pane fromView, Pane toView) {
-		getChildren().remove(fromView);
+	public ChartPane getChartPane() {
+		return chartPane;
+	}
+	
+	public void transition(Pane toView) {
+		getChildren().remove(currentView);
 		getChildren().add(0, toView);
 	}
 }

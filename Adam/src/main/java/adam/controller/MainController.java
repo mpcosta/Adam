@@ -13,12 +13,12 @@ public class MainController {
 	}
 	
 	private void init() {
-		mainView.getSessionChooserPane().getLessonButton().set(handler -> {
+		mainView.getSessionChooserPane().getLessonButtonOnActionProperty().set(handler -> {
 			System.out.println("Lesson transition");
 		});
 		
-		mainView.getSessionChooserPane().getManualButton().set(handler -> {
-			mainView.transition(mainView.getSessionChooserPane(), mainView.getManualSessionPane());
+		mainView.getSessionChooserPane().getManualButtonOnActionProperty().set(handler -> {
+			mainView.transition(mainView.getManualSessionPane());
 		});
 		
 		mainView.getAvatar().getListeningImageView().setOnMouseClicked(handler -> {
@@ -27,6 +27,12 @@ public class MainController {
 		
 		mainView.getAvatar().getSpeakingImageView().setOnMouseClicked(handler -> {
 			System.out.println("Speaking...");
+		});
+		
+		mainView.getManualSessionPane().getTextInputProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue.matches(".*GDP.*")) {
+				mainView.transition(mainView.getChartPane());
+			}
 		});
 	}
 }

@@ -30,11 +30,11 @@ public class SessionChooserPane extends StackPane {
 		getChildren().add(buttonsBox);
 	}
 	
-	public ObjectProperty<EventHandler<ActionEvent>> getLessonButton() {
+	public ObjectProperty<EventHandler<ActionEvent>> getLessonButtonOnActionProperty() {
 		return lessonButton.onActionProperty();
 	}
 	
-	public ObjectProperty<EventHandler<ActionEvent>> getManualButton() {
+	public ObjectProperty<EventHandler<ActionEvent>> getManualButtonOnActionProperty() {
 		return manualButton.onActionProperty();
 	}
 }
