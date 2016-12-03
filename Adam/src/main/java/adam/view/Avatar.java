@@ -3,7 +3,10 @@ package adam.view;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
@@ -21,8 +24,12 @@ public class Avatar {
 	private ImageView staticImageView;
 	private ImageView listeningImageView;
 	private ImageView speakingImageView;
+	
+	private Scene scene;
 
-	public Avatar() {
+	public Avatar(Scene scene) {
+		this.scene = scene;
+		
 //		staticImageView = new ImageView(STATIC_IMAGE);
 		listeningImageView = createAnimatedImageView(SPEAKING_IMAGE, 601, 582, FRAMES_SPEAKING_IMAGE, 450);
 		speakingImageView = createAnimatedImageView(LISTENING_IMAGE, 601, 582, FRAME_LISTENING_IMAGE, 700);
@@ -39,8 +46,20 @@ public class Avatar {
 				frameWidth, frameHeight);
 		speakingAnimation.setCycleCount(Animation.INDEFINITE);
 		speakingAnimation.play();
+		
+		addButtonCapabilities(imageView);
 
 		return imageView;
+	}
+	
+	private void addButtonCapabilities(ImageView imageView) {
+		imageView.hoverProperty().addListener(handler -> {
+			if (((ReadOnlyBooleanProperty)handler).getValue()) {
+				scene.setCursor(Cursor.HAND);
+			} else {
+				scene.setCursor(Cursor.DEFAULT);
+			}
+		});
 	}
 	
 	public ImageView getListeningImageView() {

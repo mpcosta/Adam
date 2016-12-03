@@ -12,6 +12,7 @@ public class Main extends Application {
 			MainView root = new MainView();
 			Scene scene = new Scene(root,800,560);
 			scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());
+			root.initComponents();
 			
 			primaryStage.setTitle("Adam - Your Macro-Economics Friend");
 			

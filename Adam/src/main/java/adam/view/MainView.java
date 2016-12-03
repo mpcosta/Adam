@@ -9,12 +9,14 @@ public class MainView extends StackPane {
 
 	public MainView() {
 		super();
-		
+	}
+	
+	public void initComponents() {
 		sessionChooserPane = new SessionChooserPane();
 		getChildren().add(sessionChooserPane);
 		
-		Avatar adam = new Avatar();
-		adam.getListeningImageView().setFitHeight(75);;
+		Avatar adam = new Avatar(getScene());
+		adam.getListeningImageView().setFitHeight(75);
 		
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_RIGHT);
 		
