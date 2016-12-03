@@ -1,5 +1,8 @@
 package adam.view;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -27,23 +30,11 @@ public class SessionChooserPane extends StackPane {
 		getChildren().add(buttonsBox);
 	}
 	
-	public Button getLessonButton() {
-		return lessonButton;
+	public ObjectProperty<EventHandler<ActionEvent>> getLessonButton() {
+		return lessonButton.onActionProperty();
 	}
 	
-	public Button getManualButton() {
-		return manualButton;
+	public ObjectProperty<EventHandler<ActionEvent>> getManualButton() {
+		return manualButton.onActionProperty();
 	}
-	
-//	public ObservableList<Button> getButtons() {
-//		ObservableList<Button> buttons = FXCollections.observableArrayList();
-//		
-//		for (Node node : getChildren()) {
-//			if (node instanceof MaterialDesignButton) {
-//				buttons.add((Button) node);
-//			}
-//		}
-//		
-//		return buttons;
-//	}
 }

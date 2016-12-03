@@ -13,11 +13,11 @@ public class MainController {
 	}
 	
 	private void init() {
-		mainView.getSessionChooserPane().getLessonButton().setOnAction(handler -> {
+		mainView.getSessionChooserPane().getLessonButton().set(handler -> {
 			System.out.println("Lesson transition");
 		});
 		
-		mainView.getSessionChooserPane().getManualButton().setOnAction(handler -> {
+		mainView.getSessionChooserPane().getManualButton().set(handler -> {
 			mainView.transition(mainView.getSessionChooserPane(), mainView.getManualSessionPane());
 		});
 		
