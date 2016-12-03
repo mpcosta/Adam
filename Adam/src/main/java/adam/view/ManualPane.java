@@ -37,8 +37,12 @@ public class ManualPane extends StackPane {
 		getChildren().add(searchBar);
 	}
 	
-	public EventHandler<? super KeyEvent> getTextInputOnKeyPressedProperty() {
-		return textField.getOnKeyPressed();
+	public ObjectProperty<EventHandler<? super KeyEvent>> getTextInputOnKeyPressedProperty() {
+		return textField.onKeyPressedProperty();
+	}
+	
+	public StringProperty getTextInputTextProperty() {
+		return textField.textProperty();
 	}
 	
 	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {

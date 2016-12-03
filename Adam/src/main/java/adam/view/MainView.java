@@ -1,7 +1,11 @@
 package adam.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -23,6 +27,7 @@ public class MainView extends StackPane {
 		manualSessionPane = new ManualPane();
 		chartPane = new ChartPane("line", "Chart");
 		chartPane.setPadding(new Insets(110, 0, 0 ,0));
+		chartPane.setChartData(getRandomChartData(), false);
 		
 		getChildren().add(sessionChooserPane);
 		
@@ -54,5 +59,26 @@ public class MainView extends StackPane {
 	public void transition(Pane toView) {
 		getChildren().remove(currentView);
 		getChildren().add(0, toView);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ObservableList<XYChart.Series> getRandomChartData() {
+		double aValue = 1.56;
+		double cValue = 1.06;
+		ObservableList<XYChart.Series> answer = FXCollections.observableArrayList();
+		Series<String, Double> aSeries = new Series<String, Double>();
+		Series<String, Double> cSeries = new Series<String, Double>();
+		aSeries.setName("UK");
+		cSeries.setName("US");
+
+		for (int i = 2011; i < 2021; i++) {
+			aSeries.getData().add(new XYChart.Data(Integer.toString(i), aValue));
+			aValue = aValue + Math.random() - .5;
+			cSeries.getData().add(new XYChart.Data(Integer.toString(i), cValue));
+			cValue = cValue + Math.random() - .5;
+		}
+
+		answer.addAll(aSeries, cSeries);
+		return answer;
 	}
 }

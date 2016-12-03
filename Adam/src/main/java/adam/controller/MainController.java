@@ -1,6 +1,9 @@
 package adam.controller;
 
 import adam.view.MainView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class MainController {
 	
@@ -29,9 +32,19 @@ public class MainController {
 			System.out.println("Speaking...");
 		});
 		
-		mainView.getManualSessionPane().getTextInputProperty().addListener((observable, oldValue, newValue) -> {
-			if (newValue.matches(".*GDP.*")) {
-				mainView.transition(mainView.getChartPane());
+		mainView.getManualSessionPane().getTextInputTextProperty().addListener((observable, oldValue, newValue) -> {
+			// TODO: add matcher for keywords such as GDP, country, etc.
+		});
+		
+		mainView.getManualSessionPane().getTextInputOnKeyPressedProperty().set(key -> {
+			if (((KeyEvent) key).getCode().equals(KeyCode.ENTER)) {
+				String text = ((TextField)key.getSource()).getText();
+				if (text.matches(".*GDP\\sUSA\\svs\\sUK.*")) {
+					mainView.getChartPane().setTitle("GDP USA vs UK");
+					if (!mainView.getChildren().contains(mainView.getChartPane())) {
+						mainView.getChildren().add(mainView.getChartPane());
+					}
+				}
 			}
 		});
 	}

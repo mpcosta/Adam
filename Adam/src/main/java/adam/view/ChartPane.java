@@ -14,6 +14,7 @@ public class ChartPane extends StackPane {
 	@SuppressWarnings("rawtypes")
 	private XYChart chart;
 	private PieChart pieChart;
+	private String title;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	/**
@@ -55,7 +56,8 @@ public class ChartPane extends StackPane {
 			}
 		}
 		
-		chart.setTitle(title);
+		this.title = title;
+		chart.setTitle(this.title);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -70,5 +72,10 @@ public class ChartPane extends StackPane {
 		} else {
 			chart.setData(data);
 		}
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+		chart.setTitle(title);
 	}
 }
