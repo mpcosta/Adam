@@ -1,6 +1,7 @@
 package adam.view;
 
 import javafx.geometry.Pos;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class MainView extends StackPane {
@@ -25,13 +26,6 @@ public class MainView extends StackPane {
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
 		getChildren().add(adam.getListeningImageView());
-				
-//        MenuButton menuButton = new MenuButton();
-//        menuButton.getItems().addAll(
-//                Stream.of("Sessions", "Lesson", "Manual", "Quiz")
-//                    .map(MenuItem::new).collect(Collectors.toList()));
-//        
-//        setLeft(menuButton);
 	}
 	
 	public SessionChooserPane getSessionChooserPane() {
@@ -44,5 +38,10 @@ public class MainView extends StackPane {
 	
 	public ManualPane getManualSessionPane() {
 		return manualSessionPane;
+	}
+	
+	public void transition(Pane fromView, Pane toView) {
+		getChildren().remove(fromView);
+		getChildren().add(0, toView);
 	}
 }

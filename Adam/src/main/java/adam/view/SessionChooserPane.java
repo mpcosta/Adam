@@ -4,7 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class SessionChooserPane extends StackPane {
 
@@ -17,8 +16,8 @@ public class SessionChooserPane extends StackPane {
 		
 		setPrefSize(800, 560);
 		
-		lessonButton = new MaterialDesignButton("Lesson", Color.ROYALBLUE);
-		manualButton = new MaterialDesignButton("Manual", Color.ROYALBLUE);
+		lessonButton = new Button("Lesson");
+		manualButton = new Button("Manual");
 		
 		buttonsBox = new HBox();
 		buttonsBox.setAlignment(Pos.CENTER);
