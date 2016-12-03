@@ -13,7 +13,6 @@ import javafx.util.Duration;
 
 public class Avatar {
 
-//	private static final Image STATIC_IMAGE = new Image("adam/resources/static.png");
 	private static final Image SPEAKING_IMAGE = new Image("adam/view/res/speaking_animation.png");
 	private static final Image LISTENING_IMAGE = new Image("adam/view/res/ears_and_eyes.png");
 	private static final Image STATIC_IMAGE = new Image("adam/view/res/ears_and_eyes.png");

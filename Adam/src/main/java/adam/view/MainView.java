@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 public class MainView extends StackPane {
 	
 	private SessionChooserPane sessionChooserPane;
+	private ManualPane manualSessionPane;
 	private Avatar adam;
 
 	public MainView() {
@@ -14,6 +15,8 @@ public class MainView extends StackPane {
 	
 	public void initComponents() {
 		sessionChooserPane = new SessionChooserPane();
+		manualSessionPane = new ManualPane();
+		
 		getChildren().add(sessionChooserPane);
 		
 		adam = new Avatar(getScene());
@@ -37,5 +40,9 @@ public class MainView extends StackPane {
 	
 	public Avatar getAvatar() {
 		return adam;
+	}
+	
+	public ManualPane getManualSessionPane() {
+		return manualSessionPane;
 	}
 }
