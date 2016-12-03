@@ -18,7 +18,7 @@ public class MainController {
 		});
 		
 		mainView.getSessionChooserPane().getManualButton().setOnAction(handler -> {
-			System.out.println("Manual transition");
+			mainView.transition(mainView.getSessionChooserPane(), mainView.getManualSessionPane());
 		});
 		
 		mainView.getAvatar().getListeningImageView().setOnMouseClicked(handler -> {
