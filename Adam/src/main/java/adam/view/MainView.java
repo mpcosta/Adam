@@ -18,7 +18,7 @@ public class MainView extends StackPane {
 		Avatar adam = new Avatar(getScene());
 		adam.getListeningImageView().setFitHeight(75);
 		
-		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_RIGHT);
+		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
 		getChildren().add(adam.getListeningImageView());
 				
