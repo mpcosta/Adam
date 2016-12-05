@@ -305,41 +305,89 @@ public class WorldBankDataFetcher {
 		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
 	}
 	
+	/**
+	 * Gets the GDP of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The GDP Value of the Area on that year.
+	 */
 	public double getGDP(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, GDP, year));
 	}
 	
+	/**
+	 * Gets the Consumer Price Index of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The CPI Value of the Area on that year.
+	 */
 	public double getCPI(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, CPI, year));
 	}
 	
+	/**
+	 * Gets the Balance of Payments of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The BOB Value of the Area on that year.
+	 */
 	public double getBOP(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, BOP, year));
 	}
 	
+	/**
+	 * Gets the Unemployment of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The Unemployment Value of the Area on that year.
+	 */
 	public double getUnemployment(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, UNEMPLOYMENT, year));
 	}
 	
+	/**
+	 * Gets the Inflation of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The Inflation Value of the Area on that year.
+	 */
 	public double getInflation(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, INFLATION, year));
 	}
 	
+	/**
+	 * Gets the Government Spending of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The Government Spending Value of the Area on that year.
+	 */
 	public double getGovernmentSpending(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_SPENDING, year));
 	}
 	
+	/**
+	 * Gets the Government Consumption of an Area from its code on a determined year.
+	 * @param code	The Area code.
+	 * @param year	The Year wanted.
+	 * @return	The Government Consumption Value of the Area on that year.
+	 */
 	public double getGovernmentConsumption(String code, int year)
 	{
 		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_CONSUMPTION, year));
 	}
 	
+	/**
+	 * Checks if a tag exists in the Country Document
+	 * @param code	The Country code.
+	 * @param tagName The name of the Tag.
+	 * @return	True if the Tag Exists
+	 */
 	private boolean tagExistsInCountryDocument(String code, String tagName)
 	{
 		Document document = getDocumentForArea(code);
@@ -347,6 +395,12 @@ public class WorldBankDataFetcher {
 		return nodeList.getLength() > 0;
 	}
 	
+	/**
+	 * Gets a specific data from a Code
+	 * @param code	The Area code.
+	 * @param tagName the tagName of the data we want.
+	 * @return	A String with the data we wanted.
+	 */
 	private String getDataFromCode(String code, String tagName)
 	{
 		Document document = getDocumentForArea(code);
@@ -354,11 +408,24 @@ public class WorldBankDataFetcher {
 		return nodeList.item(0).getTextContent();
 	}
 	
+	
+	/**
+	 * Gets the Document of an Area from its code.
+	 * @param code	The Area code.
+	 * @return	The Document for that Area
+	 */
 	private Document getDocumentForArea(String code)
 	{
 		return loadDocument(BASE_COUNTRY_URL + "/" + code);
 	}
 	
+	/**
+	 * Gets the Indicator Data based on a set of arguments
+	 * @param code	The Area code.
+	 * @param indicator The Indicator Code
+	 * @param year	The Year wanted.
+	 * @return	The Indicator Data on that Year for that specific Area.
+	 */
 	private String getIndicatorData(String code, String indicator, int year)
 	{
 		Document document = getIndicatorDocumentForArea(code, indicator, year);
@@ -366,6 +433,13 @@ public class WorldBankDataFetcher {
 		return nodeList.item(0).getTextContent();
 	}
 	
+	/**
+	 * Gets the Indicator Document based on a set of arguments
+	 * @param code	The Area code.
+	 * @param indicator The Indicator Code
+	 * @param year	The Year wanted.
+	 * @return	The Document with the Indicator Data on that Year for that specific Area.
+	 */
 	private Document getIndicatorDocumentForArea(String code, String indicator, int year)
 	{
 		return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
