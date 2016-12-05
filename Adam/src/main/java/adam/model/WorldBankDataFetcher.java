@@ -202,7 +202,7 @@ public class WorldBankDataFetcher {
 	 */
 	public boolean areaCodeExists(String code)
 	{
-		return !tagExists(code, "wb:error");
+		return !tagExistsInCountryDocument(code, "wb:error");
 	}
 	
 	/**
@@ -232,7 +232,7 @@ public class WorldBankDataFetcher {
 	 */
 	public boolean isRegion(String code)
 	{
-		return !tagExists(code, "wb:capitalCity");
+		return !tagExistsInCountryDocument(code, "wb:capitalCity");
 	}
 	
 	/**
@@ -307,10 +307,40 @@ public class WorldBankDataFetcher {
 	
 	public double getGDP(String code, int year)
 	{
-		return 0;
+		return Double.parseDouble(getIndicatorData(code, GDP, year));
 	}
 	
-	private boolean tagExists(String code, String tagName)
+	public double getCPI(String code, int year)
+	{
+		return Double.parseDouble(getIndicatorData(code, CPI, year));
+	}
+	
+	public double getBOP(String code, int year)
+	{
+		return Double.parseDouble(getIndicatorData(code, BOP, year));
+	}
+	
+	public double getUnemployment(String code, int year)
+	{
+		return Double.parseDouble(getIndicatorData(code, UNEMPLOYMENT, year));
+	}
+	
+	public double getInflation(String code, int year)
+	{
+		return Double.parseDouble(getIndicatorData(code, INFLATION, year));
+	}
+	
+	public double getGovernmentSpending(String code, int year)
+	{
+		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_SPENDING, year));
+	}
+	
+	public double getGovernmentConsumption(String code, int year)
+	{
+		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_CONSUMPTION, year));
+	}
+	
+	private boolean tagExistsInCountryDocument(String code, String tagName)
 	{
 		Document document = getDocumentForArea(code);
 		NodeList nodeList = document.getElementsByTagName(tagName);
@@ -327,6 +357,18 @@ public class WorldBankDataFetcher {
 	private Document getDocumentForArea(String code)
 	{
 		return loadDocument(BASE_COUNTRY_URL + "/" + code);
+	}
+	
+	private String getIndicatorData(String code, String indicator, int year)
+	{
+		Document document = getIndicatorDocumentForArea(code, indicator, year);
+		NodeList nodeList = document.getElementsByTagName("wb:value");
+		return nodeList.item(0).getTextContent();
+	}
+	
+	private Document getIndicatorDocumentForArea(String code, String indicator, int year)
+	{
+		return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
 	}
 	
 	/**

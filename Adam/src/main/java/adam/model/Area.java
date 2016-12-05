@@ -12,6 +12,7 @@ public abstract class Area
 	protected Code code;
 	
 	private String name;
+	private HashMap<Integer, Double> gdp, cpi, bop, unemployment, inflation, governmentSpending, governmentConsumption;
 	
 	protected Area(String c) throws Exception
 	{
@@ -27,6 +28,13 @@ public abstract class Area
 	private void initialise()
 	{
 		name = null;
+		gdp = new HashMap<Integer, Double>();
+		cpi = new HashMap<Integer, Double>();
+		bop = new HashMap<Integer, Double>();
+		unemployment = new HashMap<Integer, Double>();
+		inflation = new HashMap<Integer, Double>();
+		governmentSpending = new HashMap<Integer, Double>();
+		governmentConsumption = new HashMap<Integer, Double>();
 	}
 	
 	/**
@@ -47,6 +55,55 @@ public abstract class Area
 		if (name == null)
 			name = dataFetcher.getNameFromCode(code.get());
 		return name;
+	}
+	
+	public double getGDP(int year)
+	{
+		if (!gdp.containsKey(year))
+			gdp.put(year, dataFetcher.getGDP(code.get(), year));
+		return gdp.get(year);
+	}
+	
+	public double getCPI(int year)
+	{
+		if (!cpi.containsKey(year))
+			cpi.put(year, dataFetcher.getCPI(code.get(), year));
+		return cpi.get(year);
+	}
+	
+	public double getBOP(int year)
+	{
+		if (!bop.containsKey(year))
+			bop.put(year, dataFetcher.getBOP(code.get(), year));
+		return bop.get(year);
+	}
+	
+	public double getUnemployment(int year)
+	{
+		if (!unemployment.containsKey(year))
+			unemployment.put(year, dataFetcher.getUnemployment(code.get(), year));
+		return unemployment.get(year);
+	}
+	
+	public double getInflation(int year)
+	{
+		if (!inflation.containsKey(year))
+			inflation.put(year, dataFetcher.getInflation(code.get(), year));
+		return inflation.get(year);
+	}
+	
+	public double getGovernmentSpending(int year)
+	{
+		if (!governmentSpending.containsKey(year))
+			governmentSpending.put(year, dataFetcher.getGovernmentSpending(code.get(), year));
+		return governmentSpending.get(year);
+	}
+	
+	public double getGovernmentConsumption(int year)
+	{
+		if (!governmentConsumption.containsKey(year))
+			governmentConsumption.put(year, dataFetcher.getGovernmentConsumption(code.get(), year));
+		return governmentConsumption.get(year);
 	}
 	
 	/**

@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 public class Country extends Area
 {
-	private Code code;
 	private String region, incomeLevel, lendingType, capitalCity;
 	private double longitude, latitude;
 	private boolean longitudeCached, latitudeCached;
