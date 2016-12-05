@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 public class WorldBankDataFetcher {
 
 	private static final String BASE_COUNTRY_URL = "http://api.worldbank.org/countries",
+			BASE_INDICATOR_URL = "http://api.worldbank.org/indicators",
 			GDP = "NY.GDP.MKTP.CD",
 			CPI = "FP.CPI.TOTL",
 			BOP = "BN.CAB.XOKA.CD", 
@@ -306,6 +307,15 @@ public class WorldBankDataFetcher {
 	}
 	
 	/**
+	 * Gets the Indicator Description.
+	 * @param code	The Indicator code.
+	 * @return	The Indicator Description.
+	 */
+	public String getIndicatorInfo(String indicator) {
+		return getIndicatorDescription(indicator); 
+	}
+	
+	/**
 	 * Gets the GDP of an Area from its code on a determined year.
 	 * @param code	The Area code.
 	 * @param year	The Year wanted.
@@ -434,6 +444,28 @@ public class WorldBankDataFetcher {
 	}
 	
 	/**
+	 * Gets the Indicator Information.
+	 * @param indicator The Indicator Code
+	 * @return	The Indicator Brief Description.
+	 */
+	private String getIndicatorDescription(String indicator) {
+		Document document = getIndicatorDocumentForInfo(indicator);
+		NodeList nodeList = document.getElementsByTagName("wb:sourceNote");
+		return nodeList.item(0).getTextContent();
+	}
+	
+	/**
+	 * Gets the Indicator Document based on a set of arguments
+	 * @param indicator	The Indicator Code.
+	 * @return	The Document with the Indicator Info.
+	 */
+	private Document getIndicatorDocumentForInfo(String indicator)
+	{
+		return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
+	}
+	
+	
+	/**
 	 * Gets the Indicator Document based on a set of arguments
 	 * @param code	The Area code.
 	 * @param indicator The Indicator Code
@@ -443,7 +475,7 @@ public class WorldBankDataFetcher {
 	private Document getIndicatorDocumentForArea(String code, String indicator, int year)
 	{
 		return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
-	}
+	}	
 	
 	/**
 	 *  Private void method to print the whole Document type of variable
