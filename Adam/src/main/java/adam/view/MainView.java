@@ -65,8 +65,9 @@ public class MainView extends BorderPane {
 	
 	public void transition(Pane toView) {
 		if (toView instanceof ManualPane) {
-			topPane.getChildren().add(toView);
+			topPane.getChildren().add(0, toView);
 		} else {
+			
 			setCenter(toView);
 		}
 	}

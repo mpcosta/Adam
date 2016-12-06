@@ -1,8 +1,5 @@
 package adam.view;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import com.jfoenix.controls.JFXButton;
 
 import javafx.beans.property.ObjectProperty;
@@ -21,21 +18,17 @@ public class ManualPane extends StackPane {
 	private AutoCompleteTextField textField;
 	private Button submitButton;
 	private HBox searchBar;
-	private SortedSet<String> entries;
 	
 	public ManualPane() {
 		super();
 		
-		setPrefSize(800, 560);
-		
-		entries = new TreeSet<String>();
+//		setPrefSize(800, 560);
 		
 		submitButton = new JFXButton("Search");
 		submitButton.getStyleClass().add("button-raised");
 		
 		textField = new AutoCompleteTextField();
 		textField.setPrefSize(300, 20);
-		textField.getEntries().addAll(getEntries());
 		
 		searchBar = new HBox();
 		searchBar.setPadding(new Insets(75, 10, 0, 10));
@@ -46,10 +39,8 @@ public class ManualPane extends StackPane {
 		getChildren().add(searchBar);
 	}
 	
-	public SortedSet<String> getEntries() {
-		entries.add("show me");
-		entries.add("show me GDP");
-		return entries;
+	public AutoCompleteTextField getAutoCompleteTextField() {
+		return textField;
 	}
 	
 	public ObjectProperty<EventHandler<? super KeyEvent>> getTextInputOnKeyPressedProperty() {
