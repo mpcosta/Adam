@@ -7,14 +7,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 public class ManualPane extends StackPane {
 	
-	private TextField textField;
+	private AutoCompleteTextField textField;
 	private Button submitButton;
 	private HBox searchBar;
 	
@@ -25,8 +24,11 @@ public class ManualPane extends StackPane {
 		
 		submitButton = new Button("GO");
 		
-		textField = new TextField();
-		textField.setPrefWidth(300);
+		textField = new AutoCompleteTextField();
+		textField.setPrefSize(300, 20);
+		textField.getEntries().add("Show me");
+		textField.getEntries().add("Works like this");
+		textField.getEntries().add("Suepr Works like this");
 		
 		searchBar = new HBox();
 		searchBar.setPadding(new Insets(75, 10, 0, 10));
