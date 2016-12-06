@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,6 +19,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -99,22 +101,6 @@ public class WorldBankDataFetcher {
 	}*/
 	
 	
-	//TODO: Might Need this - Not Sure Yet
-	/**
-	 * Private method that gets the proper Country/Region Code from a given string 
-	 *
-	 * @param  idName  a string that represents the common country/region name
-	 * @return String - the proper Id Code for the String Given
-	 */
-	private String getCountryCode(String countryName) {
-		//TODO: For use with getIndicatorDataByYear
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all/?per_page=" + ITEMS_PER_PAGE);
-		
-		
-		return null;
-	}
-	
-	
 	
 	/**
 	 *  Gets all the data for every counter for the wanted indicator
@@ -194,6 +180,35 @@ public class WorldBankDataFetcher {
 			allCInfoData.put(document.getElementsByTagName("wb:name").item(i).getTextContent(), data);
 		}
 		return allCInfoData;
+	}
+	
+	public String getAreaCodeFromName(String name)
+	{
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
+		NodeList names = document.getElementsByTagName("wb:name"),
+				codes = document.getElementsByTagName("wb:iso2Code");
+		for (int i = 0; i < names.getLength(); i++)
+		{
+			Node item = names.item(i);
+			if (item.getTextContent().equals(name))
+				return codes.item(i).getTextContent();
+		}
+		return null;
+	}
+	
+	public ArrayList<String> estimateNamesFromFragment(String fragment)
+	{
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
+		NodeList namesNodeList = document.getElementsByTagName("wb:name");
+		ArrayList<String> names = new ArrayList<String>();
+		for (int i = 0; i < namesNodeList.getLength(); i++)
+		{
+			String name = namesNodeList.item(i).getTextContent();
+			if (name.startsWith(fragment))
+				names.add(name);
+		}
+		names.sort((s1, s2) -> s1.length() - s2.length());
+		return names;
 	}
 	
 	/**
