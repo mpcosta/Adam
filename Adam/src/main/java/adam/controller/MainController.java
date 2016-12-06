@@ -55,17 +55,8 @@ public class MainController {
 			String[] segments = text.split(" ");
 			for (String segment : segments)
 			{
-				getSuggestions(existing, segment, display, override);
+				getSuggestions(existing, segment, text, display, override);
 				existing += segment + " ";
-			}
-			
-			for (int i = 0; i < display.size(); i++)
-			{
-				if (text.contains(display.get(i)))
-				{
-					display.remove(i);
-					override.remove(i);
-				}
 			}
 			
 			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
@@ -85,29 +76,32 @@ public class MainController {
 			*/
 		});
 	}
-	private void getSuggestions(String existing, String text, LinkedList<String> display, LinkedList<String> override)
+	private void getSuggestions(String existing, String segment, String full, LinkedList<String> display, LinkedList<String> override)
 	{
-		ArrayList<String> suggestions = Area.estimateNamesFromFragment(text);
+		final String[] special = new String[] //TODO: Example keywords that have no functionality currently.  
+		{
+			"GDP", "vs", "show", "tell", "me", "the", "BOP", "CPI", "capital" 
+		};
+		
+		ArrayList<String> suggestions = Area.estimateNamesFromFragment(segment);
+		for (String s : special)
+		{
+			if (s.contains(segment))
+				suggestions.add(s);
+		}
+		
+		for (String suggestion : suggestions)
+		{
+			if (full.contains(suggestion) && !full.endsWith(suggestion))
+				return;
+		}
+		
 		for (String item : suggestions)
 		{
 			if (display.contains(item))
 				continue;
 			display.add(item);
 			override.add(existing + item);
-		}
-		
-		final String[] special = new String[]
-		{
-			"GDP", "vs", "show", "me", "bop", "cpi", "captital" 
-		};
-		
-		for (String s : special)
-		{
-			if (s.contains(text))
-			{
-				display.add(s);
-				override.add(s);
-			}
 		}
 	}
 }
