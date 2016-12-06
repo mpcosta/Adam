@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.jfoenix.controls.JFXTextField;
+
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
-public class AutoCompleteTextField extends TextField {
+public class AutoCompleteTextField extends JFXTextField {
 	
 	private SortedSet<String> entries;
 	private ContextMenu entriesPopup;
