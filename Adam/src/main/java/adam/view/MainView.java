@@ -6,15 +6,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
-public class MainView extends StackPane {
+public class MainView extends BorderPane {
 	
 	private SessionChooserPane sessionChooserPane;
 	private ManualPane manualSessionPane;
 	private ChartPane chartPane;
 	private Avatar adam;
+	private StackPane topPane;
 	
 	private Pane currentView;
 
@@ -25,18 +27,23 @@ public class MainView extends StackPane {
 	public void initComponents() {
 		sessionChooserPane = new SessionChooserPane();
 		manualSessionPane = new ManualPane();
+		topPane = new StackPane();
+		
 		chartPane = new ChartPane("line", "Chart");
 		chartPane.setPadding(new Insets(110, 0, 0 ,0));
 		chartPane.setChartData(getRandomChartData(), false);
 		
-		getChildren().add(sessionChooserPane);
+		setCenter(sessionChooserPane);
 		
 		adam = new Avatar(getScene());
 		adam.getListeningImageView().setFitHeight(75);
 		
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
-		getChildren().add(adam.getListeningImageView());
+		topPane.getChildren().add(adam.getListeningImageView());
+		
+		setTop(topPane);
+		
 		currentView = sessionChooserPane;
 	}
 	
@@ -57,8 +64,11 @@ public class MainView extends StackPane {
 	}
 	
 	public void transition(Pane toView) {
-		getChildren().remove(currentView);
-		getChildren().add(0, toView);
+		if (toView instanceof ManualPane) {
+			topPane.getChildren().add(toView);
+		} else {
+			setCenter(toView);
+		}
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
