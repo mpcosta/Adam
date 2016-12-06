@@ -1,5 +1,6 @@
 package adam.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Area
@@ -8,6 +9,8 @@ public abstract class Area
 	
 	protected static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
 	protected static HashMap<Code, Area> areas = new HashMap<Code, Area>();
+	private static HashMap<String, String> namesToCodes = new HashMap<String, String>();
+	private static HashMap<String, ArrayList<String>> fragmentsToNamesEstimates = new HashMap<String, ArrayList<String>>();
 	
 	protected Code code;
 	
@@ -104,6 +107,20 @@ public abstract class Area
 		if (!governmentConsumption.containsKey(year))
 			governmentConsumption.put(year, dataFetcher.getGovernmentConsumption(code.get(), year));
 		return governmentConsumption.get(year);
+	}
+	
+	public static String getAreaCodeFromName(String name)
+	{
+		if (!namesToCodes.containsKey(name))
+			namesToCodes.put(name, dataFetcher.getAreaCodeFromName(name));
+		return namesToCodes.get(name);
+	}
+	
+	public static ArrayList<String> estimateNamesFromFragment(String fragment)
+	{
+		if (!fragmentsToNamesEstimates.containsKey(fragment))
+			fragmentsToNamesEstimates.put(fragment, dataFetcher.estimateNamesFromFragment(fragment));
+		return fragmentsToNamesEstimates.get(fragment);
 	}
 	
 	/**
