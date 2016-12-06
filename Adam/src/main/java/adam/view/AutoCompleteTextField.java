@@ -24,13 +24,14 @@ public class AutoCompleteTextField extends JFXTextField {
 		entries = new TreeSet<>();
 		entriesPopup = new ContextMenu();
 		searchResults = new LinkedList<>();
-		
+		/*
 		textProperty().addListener((observableValue, oldString, newString) -> {
 			if (getText().length() == 0) {
 				entriesPopup.hide();
 			} else {
 				searchResults.clear();
-				searchResults.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
+				searchResults.addAll(entries);
+				//searchResults.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
 				
 				if (entries.size() > 0) {
 					populatePopup(searchResults);
@@ -42,10 +43,30 @@ public class AutoCompleteTextField extends JFXTextField {
 				}
 			}
 		});
-		
+		*/
 		focusedProperty().addListener(listener -> {
 			entriesPopup.hide();
 		});
+	}
+	
+	public void updateDisplay()
+	{
+		if (getText().length() == 0) {
+			entriesPopup.hide();
+		} else {
+			searchResults.clear();
+			searchResults.addAll(entries);
+			//searchResults.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
+			
+			if (entries.size() > 0) {
+				populatePopup(searchResults);
+				if (!entriesPopup.isShowing()) {
+					entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
+				}
+			} else {
+				entriesPopup.hide();
+			}
+		}
 	}
 
 	private void populatePopup(List<String> searchResults) {

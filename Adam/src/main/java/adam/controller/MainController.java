@@ -1,5 +1,10 @@
 package adam.controller;
 
+import java.util.ArrayList;
+import java.util.SortedSet;
+
+import adam.model.Area;
+import adam.view.AutoCompleteTextField;
 import adam.view.MainView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -36,7 +41,18 @@ public class MainController {
 			// TODO: add matcher for keywords such as GDP, country, etc.
 		});
 		
-		mainView.getManualSessionPane().getTextInputOnKeyPressedProperty().set(key -> {
+		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
+		{
+			String text = ((TextField)key.getSource()).getText();
+			System.out.println(text);
+			ArrayList<String> suggestions = Area.estimateNamesFromFragment(text);
+			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
+			SortedSet<String> entries = textField.getEntries();
+			entries.clear();
+			entries.addAll(suggestions);
+			textField.updateDisplay();
+			
+			/*
 			if (((KeyEvent) key).getCode().equals(KeyCode.ENTER)) {
 				String text = ((TextField)key.getSource()).getText();
 				if (text.matches(".*GDP\\sUSA\\svs\\sUK.*")) {
@@ -46,6 +62,7 @@ public class MainController {
 					}
 				}
 			}
+			*/
 		});
 	}
 }
