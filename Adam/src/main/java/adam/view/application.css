@@ -1,0 +1,11 @@
+@font-face {
+    src: url('res/Roboto-Regular.ttf');
+}
+
+.button-raised{
+    -fx-font-size: 14px;
+    -fx-button-type: RAISED;
+    -fx-background-color: rgb(77,102,204);
+    -fx-pref-width: 70;
+    -fx-text-fill: WHITE;
+}
