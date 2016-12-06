@@ -206,7 +206,7 @@ public class WorldBankDataFetcher {
 		{
 			String name = namesNodeList.item(i).getTextContent(),
 					code = codeNodeList.item(i).getTextContent().toUpperCase();
-			if (name.startsWith(fragment) || fragment.startsWith(name) || code.startsWith(fragment) || fragment.startsWith(code))
+			if (name.startsWith(fragment) || code.startsWith(fragment) || fragment.startsWith(code))
 				names.add(name);
 		}
 		names.sort((s1, s2) -> s1.length() - s2.length());

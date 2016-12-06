@@ -1,6 +1,8 @@
 package adam.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.SortedSet;
 
 import adam.model.Area;
@@ -9,6 +11,7 @@ import adam.view.MainView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Pair;
 
 public class MainController {
 	
@@ -44,12 +47,29 @@ public class MainController {
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
 		{
 			String text = ((TextField)key.getSource()).getText();
-			System.out.println(text);
-			ArrayList<String> suggestions = Area.estimateNamesFromFragment(text);
+			
+			LinkedList<String> display = new LinkedList<String>(),
+					override = new LinkedList<String>();
+			
+			String existing = "";
+			String[] segments = text.split(" ");
+			for (String segment : segments)
+			{
+				getSuggestions(existing, segment, display, override);
+				existing += segment + " ";
+			}
+			
+			for (int i = 0; i < display.size(); i++)
+			{
+				if (text.contains(display.get(i)))
+				{
+					display.remove(i);
+					override.remove(i);
+				}
+			}
+			
 			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
-			SortedSet<String> entries = textField.getEntries();
-			entries.clear();
-			entries.addAll(suggestions);
+			textField.setEntries(display, override);
 			textField.updateDisplay();
 			
 			/*
@@ -64,5 +84,30 @@ public class MainController {
 			}
 			*/
 		});
+	}
+	private void getSuggestions(String existing, String text, LinkedList<String> display, LinkedList<String> override)
+	{
+		ArrayList<String> suggestions = Area.estimateNamesFromFragment(text);
+		for (String item : suggestions)
+		{
+			if (display.contains(item))
+				continue;
+			display.add(item);
+			override.add(existing + item);
+		}
+		
+		final String[] special = new String[]
+		{
+			"GDP", "vs", "show", "me", "bop", "cpi", "captital" 
+		};
+		
+		for (String s : special)
+		{
+			if (s.contains(text))
+			{
+				display.add(s);
+				override.add(s);
+			}
+		}
 	}
 }
