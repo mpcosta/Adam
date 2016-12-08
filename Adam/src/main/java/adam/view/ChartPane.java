@@ -11,6 +11,8 @@ import javafx.scene.layout.StackPane;
 
 public class ChartPane extends StackPane {
 
+	public static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3;
+	
 	@SuppressWarnings("rawtypes")
 	private XYChart chart;
 	private PieChart pieChart;
@@ -22,30 +24,30 @@ public class ChartPane extends StackPane {
 	 * @param type The type of the chart that can be: line, bar or map.
 	 * @param title The title of the chart.
 	 */
-	public ChartPane(String type, String title) {
+	public ChartPane(int type, String title) {
 		CategoryAxis xAxis = new CategoryAxis();
 		NumberAxis yAxis = new NumberAxis();
 
 		switch (type) {
-			case "line": {
+			case LINE: {
 				chart = new LineChart(xAxis, yAxis);
 				getChildren().add(chart);
 				break;
 			}
 	
-			case "bar": {
+			case BAR: {
 				chart = new BarChart(xAxis, yAxis);
 				getChildren().add(chart);
 				break;
 			}
 			
-			case "pie": {
+			case PIE: {
 				pieChart = new PieChart();
 				getChildren().add(pieChart);
 				break;
 			}
 	
-			case "map": {
+			case MAP: {
 				System.err.println("Google Map is not yet implemented, try line/bar chart.");
 				break;
 			}
@@ -66,12 +68,12 @@ public class ChartPane extends StackPane {
 	 * @param data An object instance of an ObservableList that represents the data for the chart.
 	 * @param isPieChart, we used a boolean to represent if chart is pie or another type 
 	 */
-	public void setChartData(ObservableList data, boolean isPieChart) {
-		if (isPieChart) {
-			pieChart.setData(data);
-		} else {
+	public void setChartData(ObservableList data)
+	{
+		if (pieChart == null)
 			chart.setData(data);
-		}
+		else
+			pieChart.setData(data);
 	}
 	
 	public void setTitle(String title) {

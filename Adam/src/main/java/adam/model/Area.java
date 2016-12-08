@@ -123,6 +123,11 @@ public abstract class Area
 		return fragmentsToNamesEstimates.get(fragment);
 	}
 	
+	public static void cacheAllNames()
+	{
+		dataFetcher.cacheAllNames();
+	}
+	
 	/**
 	 * Tests whether the given code matches to an Area.
 	 * @param code	The query code.
@@ -155,7 +160,7 @@ public abstract class Area
 		{
 			if (c.length() != CODE_LENGTH)
 				throw new Exception(EX_CODE_INVALID + ": " + c + "; Code length must be " + CODE_LENGTH);
-			code = c;
+			code = c.toUpperCase();
 		}
 		
 		/**

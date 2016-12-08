@@ -6,8 +6,12 @@ import java.util.LinkedList;
 import java.util.SortedSet;
 
 import adam.model.Area;
+import adam.model.Country;
+import adam.model.Region;
 import adam.view.AutoCompleteTextField;
+import adam.view.ChartPane;
 import adam.view.MainView;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -46,7 +50,19 @@ public class MainController {
 		
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
 		{
+			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP)
+				return;
 			String text = ((TextField)key.getSource()).getText();
+			
+			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
+			
+			if (key.getCode() == KeyCode.ENTER)
+			{
+				processCommand(text);
+				textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
+				textField.updateDisplay();
+				return;
+			}
 			
 			LinkedList<String> display = new LinkedList<String>(),
 					override = new LinkedList<String>();
@@ -59,7 +75,6 @@ public class MainController {
 				existing += segment + " ";
 			}
 			
-			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
 			textField.setEntries(display, override);
 			textField.updateDisplay();
 			
@@ -75,7 +90,17 @@ public class MainController {
 			}
 			*/
 		});
+		
+		Thread thread = new Thread()
+		{
+			public void run()
+			{
+				Area.cacheAllNames();
+			}
+		};
+		thread.start();
 	}
+	
 	private void getSuggestions(String existing, String segment, String full, LinkedList<String> display, LinkedList<String> override)
 	{
 		final String[] special = new String[] //TODO: Example keywords that have no functionality currently.  
@@ -101,7 +126,19 @@ public class MainController {
 			if (display.contains(item))
 				continue;
 			display.add(item);
-			override.add(existing + item);
+			override.add(existing + item + " ");
 		}
+	}
+	
+	private void processCommand(String command)
+	{
+		
+	}
+	
+	private void displayChart(int type, String title, ObservableList data)
+	{
+		ChartPane pane = new ChartPane(type, title);
+		pane.setChartData(data);
+		mainView.transition(pane);
 	}
 }
