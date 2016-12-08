@@ -7,10 +7,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
-public class SessionChooserPane extends BorderPane {
+public class SessionChooserPane extends StackPane {
 
 	private Button lessonButton;
 	private Button manualButton;
@@ -27,12 +27,11 @@ public class SessionChooserPane extends BorderPane {
 		manualButton.getStyleClass().add("button-raised");
 		
 		buttonsBox = new HBox();
-		buttonsBox.setPrefSize(300, 300);
-		buttonsBox.setAlignment(Pos.CENTER);
+		buttonsBox.setAlignment(Pos.TOP_CENTER);
 		buttonsBox.setSpacing(10);
 		buttonsBox.getChildren().addAll(lessonButton, manualButton);
 		
-		setCenter(buttonsBox);
+		getChildren().add(buttonsBox);
 	}
 	
 	public ObjectProperty<EventHandler<ActionEvent>> getLessonButtonOnActionProperty() {
