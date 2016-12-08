@@ -132,7 +132,35 @@ public class MainController {
 	
 	private void processCommand(String command)
 	{
-		
+		/*
+		String lCase = command.toLowerCase();
+		int chartType = ChartPane.LINE;
+		if (lCase.contains("on a bar") || lCase.contains("bar chart") || lCase.contains("bar graph"))
+			chartType = ChartPane.BAR;
+		else if (lCase.contains("on a pie") || lCase.contains("pie chart") || lCase.contains("pie graph"))
+			chartType = ChartPane.PIE;
+		ArrayList<String> areas = new ArrayList<String>();
+		String existing = "";
+		String[] segments = command.split(" ");
+		for (int i = 0; i < segments.length; i++)
+		{
+			LinkedList<String> possibilities = new LinkedList<String>();
+			getSuggestions(existing, segments[i], command, possibilities, new LinkedList<String>());
+			for (String possibility : possibilities)
+			{
+				if (!areas.contains(possibility))
+				{
+					areas.add(possibility);
+					break;
+				}
+			}
+		}
+		for (String a : areas)
+		{
+			System.out.println(a);
+		}
+		displayChart(chartType, "", null);
+		*/
 	}
 	
 	private void displayChart(int type, String title, ObservableList data)
