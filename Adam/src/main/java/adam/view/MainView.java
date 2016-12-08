@@ -2,7 +2,6 @@ package adam.view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
@@ -18,33 +17,25 @@ public class MainView extends BorderPane {
 	private Avatar adam;
 	private StackPane topPane;
 	
-	private Pane currentView;
-
-	public MainView() {
-		super();
-	}
-	
 	public void initComponents() {
 		sessionChooserPane = new SessionChooserPane();
 		manualSessionPane = new ManualPane();
 		topPane = new StackPane();
 		
 		chartPane = new ChartPane("line", "Chart");
-		chartPane.setPadding(new Insets(110, 0, 0 ,0));
 		chartPane.setChartData(getRandomChartData(), false);
 		
-		setCenter(sessionChooserPane);
-		
 		adam = new Avatar(getScene());
-		adam.getListeningImageView().setFitHeight(75);
+		adam.getListeningImageView().setFitHeight(90);
 		
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
 		topPane.getChildren().add(adam.getListeningImageView());
 		
-		setTop(topPane);
+		BorderPane.setAlignment(topPane, Pos.TOP_CENTER);
 		
-		currentView = sessionChooserPane;
+		setCenter(sessionChooserPane);
+		setTop(topPane);
 	}
 	
 	public SessionChooserPane getSessionChooserPane() {
@@ -66,8 +57,13 @@ public class MainView extends BorderPane {
 	public void transition(Pane toView) {
 		if (toView instanceof ManualPane) {
 			topPane.getChildren().add(0, toView);
-		} else {
+			getChildren().remove(sessionChooserPane);
 			
+			getScene().getWindow().setWidth(800);
+			getScene().getWindow().setHeight(560);
+		}
+		
+		if (toView instanceof ChartPane) {
 			setCenter(toView);
 		}
 	}
