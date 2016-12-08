@@ -22,8 +22,8 @@ public class MainView extends BorderPane {
 		manualSessionPane = new ManualPane();
 		topPane = new StackPane();
 		
-		chartPane = new ChartPane("line", "Chart");
-		chartPane.setChartData(getRandomChartData(), false);
+		chartPane = new ChartPane(ChartPane.LINE, "Chart");
+		chartPane.setChartData(getRandomChartData());
 		
 		adam = new Avatar(getScene());
 		adam.getListeningImageView().setFitHeight(90);
@@ -50,8 +50,8 @@ public class MainView extends BorderPane {
 		return manualSessionPane;
 	}
 	
-	public ChartPane getChartPane() {
-		return chartPane;
+	public void setChartPane(ChartPane chart) {
+		chartPane = chart;
 	}
 	
 	public void transition(Pane toView) {

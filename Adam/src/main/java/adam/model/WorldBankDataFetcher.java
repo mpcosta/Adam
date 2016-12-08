@@ -38,12 +38,13 @@ public class WorldBankDataFetcher {
 			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
-	private static HashMap<String, Document> cachedDocuments;
+	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
+	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>();
 	
 	
 	public WorldBankDataFetcher()
 	{
-		cachedDocuments = new HashMap<String, Document>();
+		
 	}
 	
 	
@@ -56,7 +57,6 @@ public class WorldBankDataFetcher {
 	 * @return document - a document type with all the data gotten from the HTTP request
 	 */
 	private static Document loadDocument(String url) {
-		
 		if (!cachedDocuments.containsKey(url))
 		{
 			// Parser to get XML Data from URL Given
@@ -184,7 +184,7 @@ public class WorldBankDataFetcher {
 	
 	public String getAreaCodeFromName(String name)
 	{
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
 		NodeList names = document.getElementsByTagName("wb:name"),
 				codes = document.getElementsByTagName("wb:iso2Code");
 		for (int i = 0; i < names.getLength(); i++)
@@ -213,6 +213,16 @@ public class WorldBankDataFetcher {
 		return names;
 	}
 	
+	public void cacheAllNames()
+	{
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
+		NodeList codes = document.getElementsByTagName("wb:iso2Code");
+		for (int i = 0; i < codes.getLength(); i++)
+		{
+			areaCodeToDocumentIndex.put(codes.item(i).getTextContent(), i);
+		}
+	}
+	
 	/**
 	 * Tests whether an Area code exists.
 	 * @param code	The code of the Area.
@@ -220,7 +230,14 @@ public class WorldBankDataFetcher {
 	 */
 	public boolean areaCodeExists(String code)
 	{
-		return !tagExistsInCountryDocument(code, "wb:error");
+		Document document = getDocumentForAllAreas();
+		NodeList codes = document.getElementsByTagName("wb:iso2Code");
+		for (int i = 0; i < codes.getLength(); i++)
+		{
+			if (code.equals(codes.item(i).getTextContent()))
+				return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -250,7 +267,7 @@ public class WorldBankDataFetcher {
 	 */
 	public boolean isRegion(String code)
 	{
-		return !tagExistsInCountryDocument(code, "wb:capitalCity");
+		return getDataFromCode(code, "wb:capitalCity").equals("");
 	}
 	
 	/**
@@ -430,9 +447,10 @@ public class WorldBankDataFetcher {
 	 */
 	private String getDataFromCode(String code, String tagName)
 	{
-		Document document = getDocumentForArea(code);
+		Document document = getDocumentForAllAreas();
 		NodeList nodeList = document.getElementsByTagName(tagName);
-		return nodeList.item(0).getTextContent();
+		int index = areaCodeToDocumentIndex.get(code);
+		return nodeList.item(index).getTextContent();
 	}
 	
 	
@@ -479,6 +497,11 @@ public class WorldBankDataFetcher {
 	private Document getIndicatorDocumentForInfo(String indicator)
 	{
 		return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
+	}
+	
+	private Document getDocumentForAllAreas()
+	{
+		return loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
 	}
 	
 	
