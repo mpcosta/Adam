@@ -47,6 +47,11 @@ public class ManualPane extends StackPane {
 		return textField.onKeyPressedProperty();
 	}
 	
+	public ObjectProperty<EventHandler<? super KeyEvent>> getTextInputOnKeyReleasedProperty()
+	{
+		return textField.onKeyReleasedProperty();
+	}
+	
 	public StringProperty getTextInputTextProperty() {
 		return textField.textProperty();
 	}

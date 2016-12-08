@@ -199,12 +199,14 @@ public class WorldBankDataFetcher {
 	public ArrayList<String> estimateNamesFromFragment(String fragment)
 	{
 		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
-		NodeList namesNodeList = document.getElementsByTagName("wb:name");
+		NodeList namesNodeList = document.getElementsByTagName("wb:name"),
+				codeNodeList = document.getElementsByTagName("wb:iso2Code");
 		ArrayList<String> names = new ArrayList<String>();
 		for (int i = 0; i < namesNodeList.getLength(); i++)
 		{
-			String name = namesNodeList.item(i).getTextContent();
-			if (name.startsWith(fragment))
+			String name = namesNodeList.item(i).getTextContent(),
+					code = codeNodeList.item(i).getTextContent().toUpperCase();
+			if (name.startsWith(fragment) || code.startsWith(fragment) || fragment.startsWith(code))
 				names.add(name);
 		}
 		names.sort((s1, s2) -> s1.length() - s2.length());

@@ -1,5 +1,6 @@
 package adam.view;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -13,24 +14,27 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 
 public class AutoCompleteTextField extends JFXTextField {
-	
-	private SortedSet<String> entries;
+
+	private LinkedList<String> displayText, overrideText;
+	//private HashMap<String, String> entries;
 	private ContextMenu entriesPopup;
 	private LinkedList<String> searchResults;
 
 	public AutoCompleteTextField() {
 		super();
 		
-		entries = new TreeSet<>();
+		displayText = new LinkedList<String>();
+		overrideText = new LinkedList<String>();
 		entriesPopup = new ContextMenu();
 		searchResults = new LinkedList<>();
-		
+		/*
 		textProperty().addListener((observableValue, oldString, newString) -> {
 			if (getText().length() == 0) {
 				entriesPopup.hide();
 			} else {
 				searchResults.clear();
-				searchResults.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
+				searchResults.addAll(entries);
+				//searchResults.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
 				
 				if (entries.size() > 0) {
 					populatePopup(searchResults);
@@ -42,24 +46,46 @@ public class AutoCompleteTextField extends JFXTextField {
 				}
 			}
 		});
-		
+		*/
 		focusedProperty().addListener(listener -> {
 			entriesPopup.hide();
 		});
 	}
+	
+	public void updateDisplay()
+	{
+		if (getText().length() == 0) {
+			entriesPopup.hide();
+		} else {
+			//searchResults.clear();
+			//searchResults.addAll(entries);
+			//searchResults.addAll(possibleEntries.subSet(getText(), getText() + Character.MAX_VALUE));
+			
+			if (displayText.size() > 0) {
+				populatePopup();
+				if (!entriesPopup.isShowing()) {
+					entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
+				}
+			} else {
+				entriesPopup.hide();
+			}
+		}
+	}
 
-	private void populatePopup(List<String> searchResults) {
+	private void populatePopup() {
 		List<CustomMenuItem> menuItems = new LinkedList<>();
 		
-		int maxEntries = 10;
-		int count = Math.min(searchResults.size(), maxEntries);
-		for (int i = 0; i < count; i++) {
-			final String result = searchResults.get(i);
-			Label entryLabel = new Label(result);
+		final int MAX_ENTRIES = 10;
+		
+		int count = Math.min(displayText.size(), MAX_ENTRIES);
+		for (int i = 0; i < count; i++)
+		{
+			final String newText = overrideText.get(i);
+			Label entryLabel = new Label(displayText.get(i));
 			CustomMenuItem item = new CustomMenuItem(entryLabel, true);
 			
 			item.setOnAction(handler -> {
-				setText(result);
+				setText(newText);
 				positionCaret(getText().length());
 				entriesPopup.hide();
 			});
@@ -71,7 +97,8 @@ public class AutoCompleteTextField extends JFXTextField {
 		entriesPopup.getItems().addAll(menuItems);
 	}
 
-	public SortedSet<String> getEntries() {
-		return entries;
+	public void setEntries(LinkedList<String> display, LinkedList<String> override) {
+		displayText = display;
+		overrideText = override;
 	}	
 }

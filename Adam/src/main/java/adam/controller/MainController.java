@@ -1,9 +1,17 @@
 package adam.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.SortedSet;
+
+import adam.model.Area;
+import adam.view.AutoCompleteTextField;
 import adam.view.MainView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Pair;
 
 public class MainController {
 	
@@ -36,7 +44,26 @@ public class MainController {
 			// TODO: add matcher for keywords such as GDP, country, etc.
 		});
 		
-		mainView.getManualSessionPane().getTextInputOnKeyPressedProperty().set(key -> {
+		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
+		{
+			String text = ((TextField)key.getSource()).getText();
+			
+			LinkedList<String> display = new LinkedList<String>(),
+					override = new LinkedList<String>();
+			
+			String existing = "";
+			String[] segments = text.split(" ");
+			for (String segment : segments)
+			{
+				getSuggestions(existing, segment, text, display, override);
+				existing += segment + " ";
+			}
+			
+			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
+			textField.setEntries(display, override);
+			textField.updateDisplay();
+			
+			/*
 			if (((KeyEvent) key).getCode().equals(KeyCode.ENTER)) {
 				String text = ((TextField)key.getSource()).getText();
 				if (text.matches(".*GDP\\sUSA\\svs\\sUK.*")) {
@@ -46,6 +73,35 @@ public class MainController {
 					}
 				}
 			}
+			*/
 		});
+	}
+	private void getSuggestions(String existing, String segment, String full, LinkedList<String> display, LinkedList<String> override)
+	{
+		final String[] special = new String[] //TODO: Example keywords that have no functionality currently.  
+		{
+			"GDP", "vs", "show", "tell", "me", "the", "BOP", "CPI", "capital" 
+		};
+		
+		ArrayList<String> suggestions = Area.estimateNamesFromFragment(segment);
+		for (String s : special)
+		{
+			if (s.contains(segment))
+				suggestions.add(s);
+		}
+		
+		for (String suggestion : suggestions)
+		{
+			if (full.contains(suggestion) && !full.endsWith(suggestion))
+				return;
+		}
+		
+		for (String item : suggestions)
+		{
+			if (display.contains(item))
+				continue;
+			display.add(item);
+			override.add(existing + item);
+		}
 	}
 }
