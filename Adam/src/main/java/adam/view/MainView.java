@@ -16,11 +16,13 @@ public class MainView extends BorderPane {
 	private ChartPane chartPane;
 	private Avatar adam;
 	private StackPane topPane;
+	private QuizPane quizPane;
 	
 	public void initComponents() {
 		sessionChooserPane = new SessionChooserPane();
 		manualSessionPane = new ManualPane();
 		topPane = new StackPane();
+		quizPane = new QuizPane();
 		
 		chartPane = new ChartPane(ChartPane.LINE, "Chart");
 		chartPane.setChartData(getRandomChartData());
@@ -50,6 +52,10 @@ public class MainView extends BorderPane {
 		return manualSessionPane;
 	}
 	
+	public QuizPane getQuizPane() {
+		return quizPane;
+	}
+	
 	public void setChartPane(ChartPane chart) {
 		chartPane = chart;
 	}
@@ -58,6 +64,13 @@ public class MainView extends BorderPane {
 		if (toView instanceof ManualPane) {
 			topPane.getChildren().add(0, toView);
 			getChildren().remove(sessionChooserPane);
+			
+			getScene().getWindow().setWidth(800);
+			getScene().getWindow().setHeight(560);
+		}
+		
+		if (toView instanceof QuizPane) {
+			setCenter(toView);
 			
 			getScene().getWindow().setWidth(800);
 			getScene().getWindow().setHeight(560);
