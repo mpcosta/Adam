@@ -9,8 +9,10 @@ public abstract class Area
 	
 	protected static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
 	protected static HashMap<Code, Area> areas = new HashMap<Code, Area>();
+	
 	private static HashMap<String, String> namesToCodes = new HashMap<String, String>();
 	private static HashMap<String, ArrayList<String>> fragmentsToNamesEstimates = new HashMap<String, ArrayList<String>>();
+	private static ArrayList<String> allNames = new ArrayList<String>();
 	
 	protected Code code;
 	
@@ -60,53 +62,66 @@ public abstract class Area
 		return name;
 	}
 	
-	public double getGDP(int year)
+	public double getGDP(int year) throws Exception
 	{
 		if (!gdp.containsKey(year))
 			gdp.put(year, dataFetcher.getGDP(code.get(), year));
 		return gdp.get(year);
 	}
 	
-	public double getCPI(int year)
+	public double getCPI(int year) throws Exception
 	{
 		if (!cpi.containsKey(year))
 			cpi.put(year, dataFetcher.getCPI(code.get(), year));
 		return cpi.get(year);
 	}
 	
-	public double getBOP(int year)
+	public double getBOP(int year) throws Exception
 	{
 		if (!bop.containsKey(year))
 			bop.put(year, dataFetcher.getBOP(code.get(), year));
 		return bop.get(year);
 	}
 	
-	public double getUnemployment(int year)
+	public double getUnemployment(int year) throws Exception
 	{
 		if (!unemployment.containsKey(year))
 			unemployment.put(year, dataFetcher.getUnemployment(code.get(), year));
 		return unemployment.get(year);
 	}
 	
-	public double getInflation(int year)
+	public double getInflation(int year) throws Exception
 	{
 		if (!inflation.containsKey(year))
 			inflation.put(year, dataFetcher.getInflation(code.get(), year));
 		return inflation.get(year);
 	}
 	
-	public double getGovernmentSpending(int year)
+	public double getGovernmentSpending(int year) throws Exception
 	{
 		if (!governmentSpending.containsKey(year))
 			governmentSpending.put(year, dataFetcher.getGovernmentSpending(code.get(), year));
 		return governmentSpending.get(year);
 	}
 	
-	public double getGovernmentConsumption(int year)
+	public double getGovernmentConsumption(int year) throws Exception
 	{
 		if (!governmentConsumption.containsKey(year))
 			governmentConsumption.put(year, dataFetcher.getGovernmentConsumption(code.get(), year));
 		return governmentConsumption.get(year);
+	}
+	
+	public static Area getAreaFromCode(String c) throws Exception
+	{
+		Code code = new Code(c);
+		if (!areas.containsKey(code))
+		{
+			if (dataFetcher.isRegion(c))
+				areas.put(code, Region.getRegion(c));
+			else
+				areas.put(code, Country.getCountry(c));
+		}
+		return areas.get(code);
 	}
 	
 	public static String getAreaCodeFromName(String name)
@@ -121,6 +136,13 @@ public abstract class Area
 		if (!fragmentsToNamesEstimates.containsKey(fragment))
 			fragmentsToNamesEstimates.put(fragment, dataFetcher.estimateNamesFromFragment(fragment));
 		return fragmentsToNamesEstimates.get(fragment);
+	}
+	
+	public static ArrayList<String> getAllNames()
+	{
+		if (allNames.size() == 0)
+			allNames = dataFetcher.getAllNames();
+		return new ArrayList<String>(allNames);
 	}
 	
 	public static void cacheAllNames()
@@ -160,7 +182,7 @@ public abstract class Area
 		{
 			if (c.length() != CODE_LENGTH)
 				throw new Exception(EX_CODE_INVALID + ": " + c + "; Code length must be " + CODE_LENGTH);
-			code = c.toUpperCase();
+			code = c.toLowerCase();
 		}
 		
 		/**

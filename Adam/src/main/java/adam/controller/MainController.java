@@ -15,14 +15,17 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 
 public class MainController {
 	
 	private MainView mainView;
+	private CommandProcessor commandProcessor;
 
 	public MainController(MainView mainView) {
 		this.mainView = mainView;
+		commandProcessor = new CommandProcessor();
 		
 		init();
 	}
@@ -58,9 +61,13 @@ public class MainController {
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-				processCommand(text);
-				textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
-				textField.updateDisplay();
+				Pane newPane = commandProcessor.process(text);
+				if (newPane != null)
+				{
+					mainView.transition(newPane);
+					textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
+					textField.updateDisplay();
+				}
 				return;
 			}
 			
@@ -71,7 +78,7 @@ public class MainController {
 			String[] segments = text.split(" ");
 			for (String segment : segments)
 			{
-				getSuggestions(existing, segment, text, display, override);
+				commandProcessor.getSuggestions(existing, segment, text, display, override);
 				existing += segment + " ";
 			}
 			
@@ -99,68 +106,6 @@ public class MainController {
 			}
 		};
 		thread.start();
-	}
-	
-	private void getSuggestions(String existing, String segment, String full, LinkedList<String> display, LinkedList<String> override)
-	{
-		final String[] special = new String[] //TODO: Example keywords that have no functionality currently.  
-		{
-			"GDP", "vs", "show", "tell", "me", "the", "BOP", "CPI", "capital" 
-		};
-		
-		ArrayList<String> suggestions = Area.estimateNamesFromFragment(segment);
-		for (String s : special)
-		{
-			if (s.contains(segment))
-				suggestions.add(s);
-		}
-		
-		for (String suggestion : suggestions)
-		{
-			if (full.contains(suggestion) && !full.endsWith(suggestion))
-				return;
-		}
-		
-		for (String item : suggestions)
-		{
-			if (display.contains(item))
-				continue;
-			display.add(item);
-			override.add(existing + item + " ");
-		}
-	}
-	
-	private void processCommand(String command)
-	{
-		/*
-		String lCase = command.toLowerCase();
-		int chartType = ChartPane.LINE;
-		if (lCase.contains("on a bar") || lCase.contains("bar chart") || lCase.contains("bar graph"))
-			chartType = ChartPane.BAR;
-		else if (lCase.contains("on a pie") || lCase.contains("pie chart") || lCase.contains("pie graph"))
-			chartType = ChartPane.PIE;
-		ArrayList<String> areas = new ArrayList<String>();
-		String existing = "";
-		String[] segments = command.split(" ");
-		for (int i = 0; i < segments.length; i++)
-		{
-			LinkedList<String> possibilities = new LinkedList<String>();
-			getSuggestions(existing, segments[i], command, possibilities, new LinkedList<String>());
-			for (String possibility : possibilities)
-			{
-				if (!areas.contains(possibility))
-				{
-					areas.add(possibility);
-					break;
-				}
-			}
-		}
-		for (String a : areas)
-		{
-			System.out.println(a);
-		}
-		displayChart(chartType, "", null);
-		*/
 	}
 	
 	private void displayChart(int type, String title, ObservableList data)

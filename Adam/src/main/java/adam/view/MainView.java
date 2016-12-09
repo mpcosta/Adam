@@ -69,7 +69,7 @@ public class MainView extends BorderPane {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private ObservableList<XYChart.Series> getRandomChartData() {
+	public ObservableList<XYChart.Series> getRandomChartData() {
 		double aValue = 1.56;
 		double cValue = 1.06;
 		ObservableList<XYChart.Series> answer = FXCollections.observableArrayList();

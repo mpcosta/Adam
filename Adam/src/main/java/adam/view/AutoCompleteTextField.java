@@ -16,9 +16,7 @@ import javafx.scene.control.Label;
 public class AutoCompleteTextField extends JFXTextField {
 
 	private LinkedList<String> displayText, overrideText;
-	//private HashMap<String, String> entries;
 	private ContextMenu entriesPopup;
-	private LinkedList<String> searchResults;
 
 	public AutoCompleteTextField() {
 		super();
@@ -26,7 +24,6 @@ public class AutoCompleteTextField extends JFXTextField {
 		displayText = new LinkedList<String>();
 		overrideText = new LinkedList<String>();
 		entriesPopup = new ContextMenu();
-		searchResults = new LinkedList<>();
 		/*
 		textProperty().addListener((observableValue, oldString, newString) -> {
 			if (getText().length() == 0) {
@@ -100,5 +97,5 @@ public class AutoCompleteTextField extends JFXTextField {
 	public void setEntries(LinkedList<String> display, LinkedList<String> override) {
 		displayText = display;
 		overrideText = override;
-	}	
+	}
 }
