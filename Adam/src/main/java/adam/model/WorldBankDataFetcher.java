@@ -35,7 +35,9 @@ public class WorldBankDataFetcher {
 			UNEMPLOYMENT = "SL.UEM.TOTL.ZS",
 			INFLATION = "FP.CPI.TOTL.ZG",
 			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
-			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS";
+			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS",
+			
+			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
 	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
@@ -213,6 +215,18 @@ public class WorldBankDataFetcher {
 		return names;
 	}
 	
+	public ArrayList<String> getAllNames()
+	{
+		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		NodeList namesNodeList = document.getElementsByTagName("wb:name");
+		ArrayList<String> names = new ArrayList<String>();
+		for (int i = 0; i < namesNodeList.getLength(); i++)
+		{
+			names.add(namesNodeList.item(i).getTextContent());
+		}
+		return names;
+	}
+	
 	public void cacheAllNames()
 	{
 		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
@@ -230,6 +244,7 @@ public class WorldBankDataFetcher {
 	 */
 	public boolean areaCodeExists(String code)
 	{
+		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
 		NodeList codes = document.getElementsByTagName("wb:iso2Code");
 		for (int i = 0; i < codes.getLength(); i++)
@@ -355,7 +370,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The GDP Value of the Area on that year.
 	 */
-	public double getGDP(String code, int year)
+	public double getGDP(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, GDP, year));
 	}
@@ -366,7 +381,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The CPI Value of the Area on that year.
 	 */
-	public double getCPI(String code, int year)
+	public double getCPI(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, CPI, year));
 	}
@@ -377,7 +392,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The BOB Value of the Area on that year.
 	 */
-	public double getBOP(String code, int year)
+	public double getBOP(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, BOP, year));
 	}
@@ -388,7 +403,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The Unemployment Value of the Area on that year.
 	 */
-	public double getUnemployment(String code, int year)
+	public double getUnemployment(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, UNEMPLOYMENT, year));
 	}
@@ -399,7 +414,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The Inflation Value of the Area on that year.
 	 */
-	public double getInflation(String code, int year)
+	public double getInflation(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, INFLATION, year));
 	}
@@ -410,7 +425,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The Government Spending Value of the Area on that year.
 	 */
-	public double getGovernmentSpending(String code, int year)
+	public double getGovernmentSpending(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_SPENDING, year));
 	}
@@ -421,7 +436,7 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The Government Consumption Value of the Area on that year.
 	 */
-	public double getGovernmentConsumption(String code, int year)
+	public double getGovernmentConsumption(String code, int year) throws Exception
 	{
 		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_CONSUMPTION, year));
 	}
@@ -447,6 +462,7 @@ public class WorldBankDataFetcher {
 	 */
 	private String getDataFromCode(String code, String tagName)
 	{
+		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
 		NodeList nodeList = document.getElementsByTagName(tagName);
 		int index = areaCodeToDocumentIndex.get(code);
@@ -471,11 +487,14 @@ public class WorldBankDataFetcher {
 	 * @param year	The Year wanted.
 	 * @return	The Indicator Data on that Year for that specific Area.
 	 */
-	private String getIndicatorData(String code, String indicator, int year)
+	private String getIndicatorData(String code, String indicator, int year) throws Exception
 	{
 		Document document = getIndicatorDocumentForArea(code, indicator, year);
 		NodeList nodeList = document.getElementsByTagName("wb:value");
-		return nodeList.item(0).getTextContent();
+		String text = nodeList.item(0).getTextContent();
+		if (text.equals(""))
+			throw new Exception(EX_INDICATOR_DATA_NOT_FOUND);
+		return text;
 	}
 	
 	/**
