@@ -1,38 +1,47 @@
 package adam.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.SortedSet;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import adam.model.Area;
-import adam.model.Country;
-import adam.model.Region;
 import adam.view.AutoCompleteTextField;
 import adam.view.ChartPane;
 import adam.view.MainView;
+import adam.view.res.QuizRes;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.util.Pair;
 
 public class MainController {
 	
 	private MainView mainView;
+	private QuizRes quizRes;
 	private CommandProcessor commandProcessor;
 
 	public MainController(MainView mainView) {
 		this.mainView = mainView;
+		this.quizRes = new QuizRes();
 		commandProcessor = new CommandProcessor();
 		
 		init();
 	}
 	
-	private void init() {
-		mainView.getSessionChooserPane().getLessonButtonOnActionProperty().set(handler -> {
-			System.out.println("Lesson transition");
+	private void init() {		
+		QHandler qHandler = new QHandler(quizRes.getQuestionAndAnswer().entrySet().iterator(), quizRes.getCorrectAnswer());
+		
+		mainView.getQuizPane().getButton().setOnAction(qHandler);
+		
+		mainView.getSessionChooserPane().getLessonButtonOnActionProperty().set(handler -> { 
+			qHandler.handle(null);
+			mainView.transition(mainView.getQuizPane());
 		});
 		
 		mainView.getSessionChooserPane().getManualButtonOnActionProperty().set(handler -> {
@@ -41,6 +50,7 @@ public class MainController {
 		
 		mainView.getAvatar().getListeningImageView().setOnMouseClicked(handler -> {
 			System.out.println("Listening...");
+			
 		});
 		
 		mainView.getAvatar().getSpeakingImageView().setOnMouseClicked(handler -> {
@@ -61,7 +71,7 @@ public class MainController {
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-				Pane newPane = commandProcessor.process(text);
+								Pane newPane = commandProcessor.process(text);
 				if (newPane != null)
 				{
 					mainView.transition(newPane);
@@ -113,5 +123,43 @@ public class MainController {
 		ChartPane pane = new ChartPane(type, title);
 		pane.setChartData(data);
 		mainView.transition(pane);
+	}
+	
+	private class QHandler implements EventHandler<ActionEvent> {
+		
+		private Map<String, ArrayList<Integer>> correct;
+		private Iterator<Entry<String, ArrayList<String>>> entryIterator;
+		
+		public QHandler(Iterator<Entry<String, ArrayList<String>>> entryIterator, Map<String, ArrayList<Integer>> correct) {
+			this.correct = correct;
+			this.entryIterator = entryIterator;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			if (entryIterator.hasNext()) {
+				Entry<String, ArrayList<String>> currentEntry = entryIterator.next();
+				mainView.getQuizPane().changeQuestion(currentEntry.getKey(), currentEntry.getValue(), correct.get(currentEntry.getKey()));
+				mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+			} else {
+				System.out.println("No other questions to answer");
+			}
+		}
+		
+	}
+	
+	private static class RadioButtonsHandler implements EventHandler<ActionEvent> {
+		
+		private Button submitButton;
+		
+		public RadioButtonsHandler(Button submitButton) {
+			this.submitButton = submitButton;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			submitButton.setDisable(((RadioButton) event.getSource()).isDisabled());
+		}
+		
 	}
 }
