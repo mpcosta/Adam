@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXButton;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,7 +25,12 @@ public class QuizPane extends StackPane {
 	
 	public QuizPane() {
 		currentQuestion = 0;
+		
 		questionLabel = new Label();
+		questionLabel.setWrapText(true);
+		questionLabel.setPadding(new Insets(20, 40, 20, 40));
+		questionLabel.getStyleClass().add("question-label");
+		
 		resLabel = new Label();
 		submitButton = new JFXButton("Submit");
 		submitButton.setDisable(true);
@@ -45,6 +51,9 @@ public class QuizPane extends StackPane {
 		
 		for (int i = 0; i < answers.size(); ++i){
 			RadioButton one = new RadioButton(answers.get(i));
+			one.setWrapText(true);
+			one.setPadding(new Insets(0,40,0,40));
+			
 			answersList.add(one);
 		}
 		

@@ -22,13 +22,11 @@ public class ManualPane extends StackPane {
 	public ManualPane() {
 		super();
 		
-//		setPrefSize(800, 560);
-		
 		submitButton = new JFXButton("Search");
 		submitButton.getStyleClass().add("button-raised");
 		
 		textField = new AutoCompleteTextField();
-		textField.setPrefSize(300, 20);
+		textField.setPrefSize(420, 20);
 		
 		searchBar = new HBox();
 		searchBar.setPadding(new Insets(75, 10, 0, 10));
