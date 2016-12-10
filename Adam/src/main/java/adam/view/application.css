@@ -1,11 +1,30 @@
-@font-face {
-    src: url('res/Roboto-Regular.ttf');
-}
-
 .button-raised{
     -fx-font-size: 14px;
     -fx-button-type: RAISED;
     -fx-background-color: rgb(77,102,204);
-    -fx-pref-width: 70;
+    -fx-min-width: 80;
     -fx-text-fill: WHITE;
+}
+
+.button-help{
+	-fx-background-radius: 5em;
+    -fx-font-size: 16px;
+    -fx-button-type: RAISED;
+    -fx-background-color: rgb(231,156,71);
+    -fx-text-fill: WHITE;
+    -fx-font-weight: bold;
+}
+
+.button-back{
+	-fx-background-radius: 5em;
+    -fx-font-size: 16px;
+    -fx-button-type: RAISED;
+    -fx-background-color: rgb(222,129,111);
+    -fx-text-fill: WHITE;
+    -fx-font-weight: bold;
+}
+
+.question-label{
+	-fx-font-size: 16px;
+	-fx-font-weight: bold;	
 }
