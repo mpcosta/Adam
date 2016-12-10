@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -63,15 +64,16 @@ public class MainController {
 		
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
 		{
-			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP)
+			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP || key.getSource() instanceof ContextMenu)
 				return;
+			
 			String text = ((TextField)key.getSource()).getText();
 			
 			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-								Pane newPane = commandProcessor.process(text);
+				Pane newPane = commandProcessor.process(text);
 				if (newPane != null)
 				{
 					mainView.transition(newPane);

@@ -7,9 +7,9 @@ import java.util.regex.Matcher;
 
 import adam.model.Area;
 import adam.view.ChartPane;
+import adam.view.ManualPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.chart.XYChart.Data;
@@ -167,15 +167,15 @@ public class CommandProcessor
 				invalidRange = startingYear == -1 || endingYear == -1;
 		if (noAreas || invalidDataType || invalidChartType || invalidRange)
 		{
-			String errorMessage = "Could not complete request: \n";
+			String errorMessage = "Information required: \n";
 			if (noAreas)
-				errorMessage += "Country/Region required.\n";
+				errorMessage += "- Country/Region\n";
 			if (invalidDataType)
-				errorMessage += "Data type to display required (e.g. GDP).\n";
+				errorMessage += "- Data type (e.g. GDP).\n";
 			if (invalidChartType)
-				errorMessage += "Chart type to display data on required (e.g. line).\n";
+				errorMessage += "- Chart type (e.g. line).\n";
 			if (invalidRange)
-				errorMessage += "Year range required (e.g. 2010 to 2012).\n";
+				errorMessage += "- Year range (e.g. 2010 to 2012).\n";
 			StackPane pane = new StackPane();
 			Label label = new Label(errorMessage);
 			pane.getChildren().add(label);
