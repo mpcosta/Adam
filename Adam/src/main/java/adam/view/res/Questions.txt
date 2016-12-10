@@ -1,0 +1,130 @@
+4
+Select the main macroeconomic indicators.
+a.	Inflation and Deflation
+b.	Economic Cycle 
+c.	Unemployment
+d.	Uses of National Income Data 
+0,1,2,3
+4
+What does GDP measure?
+a.  It measures long run aggregate supply 
+b.	It measures the value of economic activity within a country. 
+c.	It measures the exchange rate systems. 
+d.	It measures market and government failure. 
+1
+4
+_________ is a measure of inflation published monthly by the Office for National Statistics. 
+a.	Consumer Price and Retail Price Indices (CPI/RPI)
+b.	Investment
+c.	Aggregate Demand 
+d.	National Income Data 
+0
+6
+Select all factors that help determine the current stage of the economic cycle. 
+a.	GDP
+b.	Interest rates
+c.	Supply and demand
+d.	Levels of employment and consumer spending 
+e.	Fiscal policy 
+f.	Uses of national income data 
+0,1,3
+4
+Which one of the equations below best represents Aggregate Demand?
+a.	Consumption + Investment + Government Spending + Net Exports
+b.	Consumption + Government Spending 
+c.	Natural Rate of Output + (Actual Price Level – Expected Price Level)
+d.	Investment + Natural Rate of Output + Government Spending
+0
+5
+Select all of the main causes of shifts in aggregate supply. 
+a.	Changes in production costs
+b.	Commodity prices
+c.	Exchange rates 
+d.	Government taxation and subsidies 
+e.	Price of imports 
+0,1,2,3,4
+4
+If the Phillips Curve is vertical in the long run, then an increase in the money supply from year to year will _________ the unemployment rate and will _________ inflation rate.
+a.	Increase : increase 
+b.	Increase : not change 
+c.	Not change : increase 
+d.	Not change : not change 
+2
+4
+The life cycle theory on consumption can be summarized by saying that consumption decisions are based  
+a.	On permanent income rather than current income 
+b.	On current income rather than permanent income 
+c.	On an individual’s highest expected annual income 
+d.	Only on current income 
+0
+4
+Those holding the classical view of the labour market are likely to believe that  
+a.	Monetary and fiscal policy have a substantial effect on output and employment in both the short run and the long run 
+b.	Monetary and fiscal policy have some effect on output and employment in both the short run and long run 
+c.	Monetary and fiscal policy have little or no effect on output and employment in the short run and long run 
+d.	Monetary and fiscal policy have some effect on output and employment in the short run but not in the long run 
+2
+4
+Which of the following statement is correct?
+a.	The money supple does not play a role in sustained inflation 
+b.	The Fed is “accommodating” when they decrease the money supply after the government has increased G 
+c.	Inflation initiated by an increase in aggregate demand is referred to as demand- pull inflation 
+d.	In order to avoid “crowding-out” after the government has increased G, the Fed often decreases the money supply in order to lower the interest rates 
+2
+4
+A bond is 
+a.	A document that promise to pay back a loan under specified terms over a specified period of time 
+b.	A promise to pay back a loan over an unspecified period 
+c.	Allows the firm to access funds with more liabilities 
+d.	The only way a firm can raise funds 
+0
+4
+Keynes, the father of macro- economic policy stressed that:
+a.	As the economy was operating at full capacity (in his time), expansionary fiscal policy would only have an inflator effect 
+b.	The importance of expansionary fiscal and monetary policies during the 1930s aiming at shifting the AD curve out 
+c.	The enormous importance of regulating the money supply in the economy at a rate which equals the rate of real growth 
+d.	As firms use rational expectation models to determine their investment level, the government will in essence not be able to influence the economy
+1
+4
+According to the supply- side model, a reduction in the tax rate 
+a.	None of the below 
+b.	Would have no effect on output 
+c.	Would have no effect on consumption 
+d.	Could reduce the size of any budget deficit 
+3
+4
+The _______ lag for fiscal policy is generally _______ than it is for monetary policy.
+a.	Implementation : longer 
+b.	Recognition : shorter 
+c.	Recognition : longer 
+d.	Implementation : shorter 
+0
+4
+Which of the following would cause the aggregate demand curve to shift to the right?
+a.	An increase in purchases by the federal government 
+b.	An increase in real interest rates 
+c.	An appreciation of the American dollar 
+d.	A decrease in the money supply 
+0
+5
+Which of the following statements is true about the national debt?
+a.	In total, it is higher now than it has ever been 
+b.	Most of it is owned by the federal government to foreigners 
+c.	It means that a tremendous burden is being passed to our children 
+d.	Because of it, the United States is on the verge of bankruptcy 
+e.	All of the above 
+0
+4
+The demand for money will fall if 
+a.	Real GDP rises 
+b.	Real interest rates rise 
+c.	The GDP Deflator rises 
+d.	People expect deflation soon 
+1
+4
+If the actual unemployment rate is below the natural rate of unemployment, it would be expected that
+a.	The rate of inflation would increase 
+b.	Wages would fall 
+c.	The Phillip’s curve would shift to the left 
+d.	The natural rate of unemployment would fall 
+0
