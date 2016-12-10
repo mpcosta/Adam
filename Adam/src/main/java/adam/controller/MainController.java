@@ -8,12 +8,11 @@ import java.util.Map.Entry;
 
 import adam.model.Area;
 import adam.view.AutoCompleteTextField;
-import adam.view.ChartPane;
 import adam.view.MainView;
 import adam.view.res.QuizRes;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.RadioButton;
@@ -40,6 +39,14 @@ public class MainController {
 		
 		mainView.getQuizPane().getButton().setOnAction(qHandler);
 		
+		mainView.getBackButton().setOnAction(handler -> {
+			mainView.transition(mainView.getSessionChooserPane());
+		});
+		
+		mainView.getHelpButton().setOnAction(handler -> {
+			mainView.getGlobals().showDialog("Instructions", "", "In order to search for..", null, AlertType.INFORMATION);
+		});
+		
 		mainView.getSessionChooserPane().getLessonButtonOnActionProperty().set(handler -> { 
 			qHandler.handle(null);
 			mainView.transition(mainView.getQuizPane());
@@ -51,15 +58,10 @@ public class MainController {
 		
 		mainView.getAvatar().getListeningImageView().setOnMouseClicked(handler -> {
 			System.out.println("Listening...");
-			
 		});
 		
 		mainView.getAvatar().getSpeakingImageView().setOnMouseClicked(handler -> {
 			System.out.println("Speaking...");
-		});
-		
-		mainView.getManualSessionPane().getTextInputTextProperty().addListener((observable, oldValue, newValue) -> {
-			// TODO: add matcher for keywords such as GDP, country, etc.
 		});
 		
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
@@ -76,6 +78,7 @@ public class MainController {
 				Pane newPane = commandProcessor.process(text);
 				if (newPane != null)
 				{
+					// mainView.addLoadingScreen();
 					mainView.transition(newPane);
 					textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
 					textField.updateDisplay();
@@ -96,18 +99,6 @@ public class MainController {
 			
 			textField.setEntries(display, override);
 			textField.updateDisplay();
-			
-			/*
-			if (((KeyEvent) key).getCode().equals(KeyCode.ENTER)) {
-				String text = ((TextField)key.getSource()).getText();
-				if (text.matches(".*GDP\\sUSA\\svs\\sUK.*")) {
-					mainView.getChartPane().setTitle("GDP USA vs UK");
-					if (!mainView.getChildren().contains(mainView.getChartPane())) {
-						mainView.getChildren().add(mainView.getChartPane());
-					}
-				}
-			}
-			*/
 		});
 		
 		Thread thread = new Thread()
@@ -118,13 +109,6 @@ public class MainController {
 			}
 		};
 		thread.start();
-	}
-	
-	private void displayChart(int type, String title, ObservableList data)
-	{
-		ChartPane pane = new ChartPane(type, title);
-		pane.setChartData(data);
-		mainView.transition(pane);
 	}
 	
 	private class QHandler implements EventHandler<ActionEvent> {
