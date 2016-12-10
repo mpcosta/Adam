@@ -32,7 +32,7 @@ f.	Uses of national income data
 Which one of the equations below best represents Aggregate Demand?
 a.	Consumption + Investment + Government Spending + Net Exports
 b.	Consumption + Government Spending 
-c.	Natural Rate of Output + (Actual Price Level – Expected Price Level)
+c.	Natural Rate of Output + (Actual Price Level - Expected Price Level)
 d.	Investment + Natural Rate of Output + Government Spending
 0
 5
@@ -54,7 +54,7 @@ d.	Not change : not change
 The life cycle theory on consumption can be summarized by saying that consumption decisions are based  
 a.	On permanent income rather than current income 
 b.	On current income rather than permanent income 
-c.	On an individual’s highest expected annual income 
+c.	On an individual's highest expected annual income 
 d.	Only on current income 
 0
 4
@@ -67,9 +67,9 @@ d.	Monetary and fiscal policy have some effect on output and employment in the s
 4
 Which of the following statement is correct?
 a.	The money supple does not play a role in sustained inflation 
-b.	The Fed is “accommodating” when they decrease the money supply after the government has increased G 
+b.	The Fed is "accommodating" when they decrease the money supply after the government has increased G 
 c.	Inflation initiated by an increase in aggregate demand is referred to as demand- pull inflation 
-d.	In order to avoid “crowding-out” after the government has increased G, the Fed often decreases the money supply in order to lower the interest rates 
+d.	In order to avoid "crowding-out" after the government has increased G, the Fed often decreases the money supply in order to lower the interest rates 
 2
 4
 A bond is 
@@ -125,6 +125,6 @@ d.	People expect deflation soon
 If the actual unemployment rate is below the natural rate of unemployment, it would be expected that
 a.	The rate of inflation would increase 
 b.	Wages would fall 
-c.	The Phillip’s curve would shift to the left 
+c.	The Phillip's curve would shift to the left 
 d.	The natural rate of unemployment would fall 
 0
