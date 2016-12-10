@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import adam.model.Area;
 import adam.view.AutoCompleteTextField;
 import adam.view.MainView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert.AlertType;
@@ -23,10 +24,13 @@ public class MainController {
 	
 	private MainView mainView;
 	private CommandProcessor commandProcessor;
+	
+	private Thread commandProcessorThread;
 
 	public MainController(MainView mainView) {
 		this.mainView = mainView;
 		commandProcessor = new CommandProcessor();
+		commandProcessorThread = null;
 		
 		init();
 	}
@@ -68,7 +72,7 @@ public class MainController {
 		
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
 		{
-			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP || key.getSource() instanceof ContextMenu)
+			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP || (commandProcessorThread != null && commandProcessorThread.isAlive()))
 				return;
 			
 			String text = ((TextField)key.getSource()).getText();
@@ -77,14 +81,28 @@ public class MainController {
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-				Pane newPane = commandProcessor.process(text);
-				if (newPane != null)
+				Thread thread = new Thread()
 				{
-					// mainView.addLoadingScreen();
-					mainView.transition(newPane);
-					textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
-					textField.updateDisplay();
-				}
+					public void run()
+					{
+						final Pane newPane = commandProcessor.process(text);
+						Platform.runLater(new Runnable()
+						{
+							public void run()
+							{
+								mainView.removeLoadingScreen();
+								if (newPane != null)
+								{
+									mainView.transition(newPane);
+									textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
+									textField.updateDisplay();
+								}
+							}
+						});
+					}
+				};
+				mainView.addLoadingScreen();
+				thread.start();
 				return;
 			}
 			
