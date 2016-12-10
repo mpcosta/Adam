@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import adam.model.Area;
 import adam.view.AutoCompleteTextField;
 import adam.view.MainView;
-import adam.view.res.QuizRes;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert.AlertType;
@@ -23,19 +22,17 @@ import javafx.scene.layout.Pane;
 public class MainController {
 	
 	private MainView mainView;
-	private QuizRes quizRes;
 	private CommandProcessor commandProcessor;
 
 	public MainController(MainView mainView) {
 		this.mainView = mainView;
-		this.quizRes = new QuizRes();
 		commandProcessor = new CommandProcessor();
 		
 		init();
 	}
 	
 	private void init() {		
-		QHandler qHandler = new QHandler(quizRes.getQuestionAndAnswer().entrySet().iterator(), quizRes.getCorrectAnswer());
+		QHandler qHandler = new QHandler(mainView.getQuizPane().getQuestionAndAnswers().entrySet().iterator(), mainView.getQuizPane().getCorrectAnswers());
 		
 		mainView.getQuizPane().getButton().setOnAction(qHandler);
 		
@@ -48,8 +45,13 @@ public class MainController {
 		});
 		
 		mainView.getSessionChooserPane().getLessonButtonOnActionProperty().set(handler -> { 
-			qHandler.handle(null);
-			mainView.transition(mainView.getQuizPane());
+			if (qHandler.isFinished()) {
+				qHandler.restart(mainView.getQuizPane().getQuestionAndAnswers().entrySet().iterator());
+				mainView.transition(mainView.getQuizPane());
+			} else {
+				qHandler.handle(null);
+				mainView.transition(mainView.getQuizPane());
+			}
 		});
 		
 		mainView.getSessionChooserPane().getManualButtonOnActionProperty().set(handler -> {
@@ -115,23 +117,66 @@ public class MainController {
 		
 		private Map<String, ArrayList<Integer>> correct;
 		private Iterator<Entry<String, ArrayList<String>>> entryIterator;
+		private Entry<String, ArrayList<String>> entry;
 		
 		public QHandler(Iterator<Entry<String, ArrayList<String>>> entryIterator, Map<String, ArrayList<Integer>> correct) {
 			this.correct = correct;
 			this.entryIterator = entryIterator;
 		}
+		
+		private boolean correctAnswer = false;
+		private boolean firstTime = true;
+		private boolean finished = false;
 
 		@Override
 		public void handle(ActionEvent event) {
 			if (entryIterator.hasNext()) {
-				Entry<String, ArrayList<String>> currentEntry = entryIterator.next();
-				mainView.getQuizPane().changeQuestion(currentEntry.getKey(), currentEntry.getValue(), correct.get(currentEntry.getKey()));
-				mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+				if (firstTime) {
+					entry = entryIterator.next();
+					mainView.getQuizPane().changeQuestion(entry.getKey(), entry.getValue(), correct.get(entry.getKey()));
+					mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+					firstTime = false;
+				} else {
+					if (correctAnswer) {
+						entry = entryIterator.next();
+						mainView.getQuizPane().changeQuestion(entry.getKey(), entry.getValue(), correct.get(entry.getKey()));
+						mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+					} else {
+						ArrayList<Integer> selectedAnswers = new ArrayList<Integer>();
+						for (int i = 0; i < mainView.getQuizPane().getAnswersList().size(); i++) {
+							if (mainView.getQuizPane().getAnswersList().get(i).isSelected()) {
+								selectedAnswers.add(i);
+							}
+						}
+						
+						if (selectedAnswers.equals(correct.get(entry.getKey()))) {
+							entry = entryIterator.next();
+							correctAnswer = true;
+							mainView.getQuizPane().getButton().setText("Next");
+							mainView.getQuizPane().getResLabel().setText("Correct answer!");
+						} else {
+							correctAnswer = false;
+							mainView.getQuizPane().getResLabel().setText("Wrong answer!");
+						}
+					}
+				}
 			} else {
-				System.out.println("No other questions to answer");
+				mainView.getQuizPane().getChildren().clear();
+				finished = true;
+				mainView.getQuizPane().getResLabel().setText("Congratulations, you finished the quiz!");
+				mainView.getQuizPane().getChildren().add(mainView.getQuizPane().getResLabel());
 			}
 		}
 		
+		public boolean isFinished() {
+			return finished;
+		}
+		
+		public void restart(Iterator<Entry<String, ArrayList<String>>> entryIterator) {
+			correctAnswer = false;
+			firstTime = true;
+			this.entryIterator = entryIterator;
+		}
 	}
 	
 	private static class RadioButtonsHandler implements EventHandler<ActionEvent> {

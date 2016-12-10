@@ -1,9 +1,11 @@
 package adam.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.jfoenix.controls.JFXButton;
 
+import adam.view.res.Questions;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -22,9 +24,19 @@ public class QuizPane extends StackPane {
 	private ArrayList<RadioButton> answersList;
 	private VBox questionBox;
 	private int currentQuestion;
+	private Questions questionsRes;
+	
+	public HashMap<String, ArrayList<String>> getQuestionAndAnswers() {
+		return questionsRes.getQuestionAndAnswers();
+	}
+
+	public HashMap<String, ArrayList<Integer>> getCorrectAnswers() {
+		return questionsRes.getCorrectAnswers();
+	}
 	
 	public QuizPane() {
 		currentQuestion = 0;
+		questionsRes = new Questions();
 		
 		questionLabel = new Label();
 		questionLabel.setWrapText(true);
@@ -44,8 +56,9 @@ public class QuizPane extends StackPane {
 		getChildren().add(questionBox);
 	}
 	
-	public void changeQuestion(String question, ArrayList<String> answers, ArrayList<Integer> correctAnswerIndex) {
+	public void changeQuestion(String question, ArrayList<String> answers, ArrayList<Integer> correctAnswerIndices) {
 		questionLabel.setText(question);
+		resLabel.setText("Feedback");
 		
 		answersList.clear();
 		
@@ -66,6 +79,10 @@ public class QuizPane extends StackPane {
 		return submitButton;
 	}
 	
+	public Label getResLabel() {
+		return resLabel;
+	}
+	
 	public int getCurrentQuestionIndex() {
 		return currentQuestion;
 	}
@@ -81,6 +98,10 @@ public class QuizPane extends StackPane {
 		for (RadioButton radioButton : answersList) {
 			radioButton.setOnAction(handler);
 		}
+	}
+	
+	public ArrayList<RadioButton> getAnswersList() {
+		return answersList;
 	}
 	
 }
