@@ -24,6 +24,7 @@ public class AutoCompleteTextField extends JFXTextField {
 		displayText = new LinkedList<String>();
 		overrideText = new LinkedList<String>();
 		entriesPopup = new ContextMenu();
+		
 		/*
 		textProperty().addListener((observableValue, oldString, newString) -> {
 			if (getText().length() == 0) {

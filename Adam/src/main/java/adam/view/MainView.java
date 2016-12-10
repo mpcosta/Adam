@@ -56,10 +56,6 @@ public class MainView extends BorderPane {
 		return quizPane;
 	}
 	
-	public void setChartPane(ChartPane chart) {
-		chartPane = chart;
-	}
-	
 	public void transition(Pane toView) {
 		if (toView instanceof ManualPane) {
 			topPane.getChildren().add(0, toView);
@@ -68,15 +64,14 @@ public class MainView extends BorderPane {
 			getScene().getWindow().setWidth(800);
 			getScene().getWindow().setHeight(560);
 		}
-		
-		if (toView instanceof QuizPane) {
+		else if (toView instanceof QuizPane) {
 			setCenter(toView);
 			
 			getScene().getWindow().setWidth(800);
 			getScene().getWindow().setHeight(560);
 		}
-		
-		if (toView instanceof ChartPane) {
+		else
+		{
 			setCenter(toView);
 		}
 	}
