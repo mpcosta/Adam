@@ -2,11 +2,13 @@ package adam.view;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSpinner;
+import com.jfoenix.controls.JFXToggleButton;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -32,6 +34,7 @@ public class MainView extends BorderPane {
 	// Private fields for the buttons
 	private Button backButton;
 	private Button helpButton;
+	private ToggleButton advancedToggleButton;
 	
 	// Private fields for the loading component
 	private JFXSpinner loadingSpinner;
@@ -69,12 +72,21 @@ public class MainView extends BorderPane {
 		adam.getListeningImageView().setFitHeight(90);
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
-		// Creating the help button
-		// Get the style class from the css resource
-		// Align the help button to the top right
-		helpButton = new JFXButton("?"); 
-		helpButton.getStyleClass().add("button-help");
-		StackPane.setAlignment(helpButton, Pos.TOP_RIGHT);
+		helpButton = new JFXButton("?"); // TODO: delete the help button 
+		
+		advancedToggleButton = new JFXToggleButton();
+		advancedToggleButton.setText("Simple");
+		StackPane.setAlignment(advancedToggleButton, Pos.TOP_RIGHT);
+		// TODO: move this in the controller
+		advancedToggleButton.setOnAction(handler -> {
+			if (advancedToggleButton.isSelected()) {
+				advancedToggleButton.setText(manualSessionPane.switchToAdvancedMode());
+			} else {
+				advancedToggleButton.setText(manualSessionPane.switchToSimpleMode());
+			}
+		});
+		
+		advancedToggleButton.setVisible(false);
 		
 		// Creating the back button
 		// Get the style class from the css resource
@@ -88,7 +100,7 @@ public class MainView extends BorderPane {
 		StackPane.setAlignment(backButton, Pos.TOP_LEFT);
 		
 		// Adding the components to the topPane and align the pane to the top centre
-		topPane.getChildren().addAll(backButton, adam.getListeningImageView(), helpButton);
+		topPane.getChildren().addAll(backButton, adam.getListeningImageView(), advancedToggleButton);
 		topPane.setPadding(new Insets(10, 10, 10, 10));
 		topPane.getStyleClass().add("top-pane");
 		topPane.setStyle("-fx-background-color: rgb(230,230,230);");
@@ -120,8 +132,9 @@ public class MainView extends BorderPane {
 			getScene().getWindow().centerOnScreen();
 			
 			// Showing helper buttons
+			advancedToggleButton.setVisible(true);
 			backButton.setVisible(true);
-			helpButton.setVisible(true);
+			requestFocus();
 		}
 		else if (toView instanceof QuizPane) {
 			setCenter(toView);
@@ -132,7 +145,6 @@ public class MainView extends BorderPane {
 			getScene().getWindow().centerOnScreen();
 			
 			// Showing helper buttons
-			helpButton.setVisible(false);
 			backButton.setVisible(true);
 		} else if (toView instanceof SessionChooserPane) {
 			
@@ -146,7 +158,7 @@ public class MainView extends BorderPane {
 			}
 			
 			// Showing helper buttons
-			helpButton.setVisible(true);
+			advancedToggleButton.setVisible(false);
 			backButton.setVisible(false);
 			setCenter(toView);
 		} else {
