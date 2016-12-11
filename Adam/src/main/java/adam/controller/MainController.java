@@ -159,6 +159,8 @@ public class MainController {
 						entry = entryIterator.next();
 						mainView.getQuizPane().changeQuestion(entry.getKey(), entry.getValue(), correct.get(entry.getKey()));
 						mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+						correctAnswer = false;
+						mainView.getQuizPane().getButton().setText("Submit");
 					} else {
 						ArrayList<Integer> selectedAnswers = new ArrayList<Integer>();
 						for (int i = 0; i < mainView.getQuizPane().getAnswersList().size(); i++) {
