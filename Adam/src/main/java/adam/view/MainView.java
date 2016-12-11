@@ -185,7 +185,7 @@ public class MainView extends BorderPane {
 	 * A method to set the loading label to appear a text 
 	 */
 	public void setLoadingLabel(int value) {
-		loadingLabel.setText(Integer.toString(value));
+		loadingLabel.setText(value + "%");
 	}
 	
 	/**
