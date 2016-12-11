@@ -6,86 +6,130 @@ import com.jfoenix.controls.JFXSpinner;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+/**
+ * This is the Main View class which extends the BorderPane.
+ * It is used to manipulate the view components, setting the objects,
+ * taking care of the alignment, transitions and holds all the view components.
+ * @author Team Blue
+ */
 public class MainView extends BorderPane {
 	
+	// Private pane fields used in the view
 	private SessionChooserPane sessionChooserPane;
 	private ManualPane manualSessionPane;
 	private ChartPane chartPane;
 	private StackPane topPane;
 	private QuizPane quizPane;
 	
+	// Private field of the avatar
 	private Avatar adam;
 	
+	// Private fields for the buttons
 	private Button backButton;
 	private Button helpButton;
 	
+	// Private field for the loading component
 	private JFXSpinner loadingSpinner;
 	
+	// Private field for the globals object
 	private Globals globals;
 	
+	/**
+	 * A method used to initialise all the components within this view.
+	 */
 	public void initComponents() {
+		// Creating the panes.
 		sessionChooserPane = new SessionChooserPane();
 		manualSessionPane = new ManualPane();
 		topPane = new StackPane();
 		quizPane = new QuizPane();
-		loadingSpinner = new JFXSpinner();
 		chartPane = new ChartPane(ChartPane.LINE, "Chart");
+		
+		// Creating the loading component
+		loadingSpinner = new JFXSpinner();
+		
+		// Creating an object for the global methods within the view.
 		globals = new Globals();
 		
+		// Creating an instance of the avatar.
 		adam = new Avatar(getScene());
+		
+		// Resize the avatar so it fits the screen and align it to the top centre
 		adam.getListeningImageView().setFitHeight(90);
-		
-		helpButton = new JFXButton("?");
-		StackPane.setAlignment(helpButton, Pos.TOP_RIGHT);
-		helpButton.getStyleClass().add("button-help");
-		
-		backButton = new JFXButton("<");
-		StackPane.setAlignment(backButton, Pos.TOP_LEFT);
-		backButton.getStyleClass().add("button-back");
-		backButton.setVisible(false);
-		
 		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
 		
+		// Creating the help button
+		// Get the style class from the css resource
+		// Align the help button to the top right
+		helpButton = new JFXButton("?"); 
+		helpButton.getStyleClass().add("button-help");
+		StackPane.setAlignment(helpButton, Pos.TOP_RIGHT);
+		
+		// Creating the back button
+		// Get the style class from the css resource
+		// Align the help button to the top left
+		backButton = new JFXButton("<");
+		backButton.getStyleClass().add("button-back");
+		
+		// Setting the visibility to false
+		// (there is no back screen at the start of the program)
+		backButton.setVisible(false);
+		StackPane.setAlignment(backButton, Pos.TOP_LEFT);
+		
+		// Adding the components to the topPane and align the pane to the top centre
 		topPane.getChildren().addAll(backButton, adam.getListeningImageView(), helpButton);
 		topPane.setPadding(new Insets(10, 10, 10, 10));
 		topPane.getStyleClass().add("top-pane");
-		
+		topPane.setStyle("-fx-background-color: rgb(230,230,230);");
 		BorderPane.setAlignment(topPane, Pos.TOP_CENTER);
 		
-		topPane.setStyle("-fx-background-color: rgb(230,230,230);");
-		
+		// Setting the centre and the top parts of the border pane.
 		setCenter(sessionChooserPane);
 		setTop(topPane);
 	}
 	
+	/**
+	 * A method used to change the views (mostly the center node 
+	 * of what is displayed to the user).
+	 * @param toView The Pane used to switch the center node of the application.
+	 */
 	public void transition(Pane toView) {
+		
+		// If "toView" is an instance of ManualPane
+		// we have to remove the session chooser pane from the center
+		// and change it to the new view.
 		if (toView instanceof ManualPane) {
 			topPane.getChildren().add(0, toView);
 			getChildren().remove(sessionChooserPane);
 			setCenter(chartPane);
 			
+			// Resizing the window to a reasonable size.
 			getScene().getWindow().setWidth(800);
 			getScene().getWindow().setHeight(560);
 			getScene().getWindow().centerOnScreen();
 			
+			// Showing helper buttons
 			backButton.setVisible(true);
 			helpButton.setVisible(true);
 		}
 		else if (toView instanceof QuizPane) {
 			setCenter(toView);
 			
+			// Resizing the window to a reasonable size.
 			getScene().getWindow().setWidth(800);
 			getScene().getWindow().setHeight(560);
 			getScene().getWindow().centerOnScreen();
 			
+			// Showing helper buttons
 			helpButton.setVisible(false);
 			backButton.setVisible(true);
 		} else if (toView instanceof SessionChooserPane) {
+			
+			// Resizing the window to a reasonable size.
 			getScene().getWindow().setWidth(500);
 			getScene().getWindow().setHeight(300);
 			getScene().getWindow().centerOnScreen();
@@ -94,48 +138,82 @@ public class MainView extends BorderPane {
 				topPane.getChildren().remove(manualSessionPane);
 			}
 			
+			// Showing helper buttons
 			helpButton.setVisible(true);
 			backButton.setVisible(false);
 			setCenter(toView);
-		}
-		else
-		{
+		} else {
 			setCenter(toView);
 		}
 	}
 	
+	/**
+	 * A method that adds the loading screen in the center of the Pane.
+	 * It is used to show feedback to the user when loading.
+	 */
 	public void addLoadingScreen() {
 		transition(loadingSpinner);
 	}
 	
+	/**
+	 * A method that removes the loading screen from the view.
+	 */
 	public void removeLoadingScreen() {
 		getChildren().remove(loadingSpinner);
 	}
 	
+	/**
+	 * A getter for the back Button that is present when switching the different panes.
+	 * @return An object that represents the back Button.
+	 */
 	public Button getBackButton() {
 		return backButton;
 	}
 	
+	/**
+	 * A getter for the help Button present in the manual pane.
+	 * @return An object that represents the help Button. 
+	 */
 	public Button getHelpButton() {
 		return helpButton;
 	}
 	
+	/**
+	 * A getter for the globals object which holds global methods within the view.
+	 * @return An object that represents the globals class of the view.
+	 */
 	public Globals getGlobals() {
 		return globals;
 	}
 	
+	/**
+	 * This is a getter for the Session Chooser Pane
+	 * @return An object that represents an instance of the Session Chooser Pane
+	 */
 	public SessionChooserPane getSessionChooserPane() {
 		return sessionChooserPane;
 	}
 	
+	/**
+	 * This is a getter for the avatar (the image from the top part of the view)
+	 * @return An object that represents the Avatar (the top image)
+	 */
 	public Avatar getAvatar() {
 		return adam;
 	}
 	
+	/**
+	 * This is a getter for the Manual Session Pane.
+	 * @return An object that represents an instance of the Manual Pane.
+	 */
 	public ManualPane getManualSessionPane() {
 		return manualSessionPane;
 	}
 	
+	/**
+	 * This is a getter for the quiz pane.
+	 * @return An object that represents an instance of the quiz pane.
+	 */
 	public QuizPane getQuizPane() {
 		return quizPane;
 	}
