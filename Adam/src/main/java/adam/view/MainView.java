@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXSpinner;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -32,8 +33,10 @@ public class MainView extends BorderPane {
 	private Button backButton;
 	private Button helpButton;
 	
-	// Private field for the loading component
+	// Private fields for the loading component
 	private JFXSpinner loadingSpinner;
+	private StackPane loadingPane;
+	private Label loadingLabel;
 	
 	// Private field for the globals object
 	private Globals globals;
@@ -51,6 +54,10 @@ public class MainView extends BorderPane {
 		
 		// Creating the loading component
 		loadingSpinner = new JFXSpinner();
+		loadingLabel = new Label("%");
+		loadingLabel.setPadding(new Insets(60,0,0,0));
+		loadingPane = new StackPane();
+		loadingPane.getChildren().addAll(loadingSpinner, loadingLabel);
 		
 		// Creating an object for the global methods within the view.
 		globals = new Globals();
@@ -152,14 +159,21 @@ public class MainView extends BorderPane {
 	 * It is used to show feedback to the user when loading.
 	 */
 	public void addLoadingScreen() {
-		transition(loadingSpinner);
+		transition(loadingPane);
 	}
-	
+
 	/**
 	 * A method that removes the loading screen from the view.
 	 */
 	public void removeLoadingScreen() {
-		getChildren().remove(loadingSpinner);
+		getChildren().remove(loadingPane);
+	}
+	
+	/**
+	 * A method to set the loading label to appear a text 
+	 */
+	public void setLoadingLabel(int value) {
+		loadingLabel.setText(Integer.toString(value));
 	}
 	
 	/**
