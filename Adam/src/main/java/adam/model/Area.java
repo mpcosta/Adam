@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 public abstract class Area
 {
+	public static final int GDP = 0, CPI = 1, BOP = 2, UNEMPLOYMENT = 3, INFLATION = 4, GOVERNMENT_SPENDING = 5, GOVERNMENT_CONSUMPTION = 6;
+	
 	protected static final String EX_CODE_INVALID = "Area code provided was not valid";
 	
 	protected static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
@@ -17,6 +19,8 @@ public abstract class Area
 	protected Code code;
 	
 	private String name;
+	private HashMap<Integer, HashMap<Integer, Double>> indicators;
+	private HashMap<Integer, Integer> indicators_minYear, indicators_maxYear;
 	private HashMap<Integer, Double> gdp, cpi, bop, unemployment, inflation, governmentSpending, governmentConsumption;
 	
 	protected Area(String c) throws Exception
@@ -33,6 +37,10 @@ public abstract class Area
 	private void initialise()
 	{
 		name = null;
+		indicators = new HashMap<Integer, HashMap<Integer, Double>>();
+		indicators_minYear = new HashMap<Integer, Integer>();
+		indicators_maxYear = new HashMap<Integer, Integer>();
+		
 		gdp = new HashMap<Integer, Double>();
 		cpi = new HashMap<Integer, Double>();
 		bop = new HashMap<Integer, Double>();
@@ -62,53 +70,24 @@ public abstract class Area
 		return name;
 	}
 	
-	public double getGDP(int year) throws Exception
+	public HashMap<Integer, Double> getIndicatorData(int indicator, int startYear, int endYear)
 	{
-		if (!gdp.containsKey(year))
-			gdp.put(year, dataFetcher.getGDP(code.get(), year));
-		return gdp.get(year);
-	}
-	
-	public double getCPI(int year) throws Exception
-	{
-		if (!cpi.containsKey(year))
-			cpi.put(year, dataFetcher.getCPI(code.get(), year));
-		return cpi.get(year);
-	}
-	
-	public double getBOP(int year) throws Exception
-	{
-		if (!bop.containsKey(year))
-			bop.put(year, dataFetcher.getBOP(code.get(), year));
-		return bop.get(year);
-	}
-	
-	public double getUnemployment(int year) throws Exception
-	{
-		if (!unemployment.containsKey(year))
-			unemployment.put(year, dataFetcher.getUnemployment(code.get(), year));
-		return unemployment.get(year);
-	}
-	
-	public double getInflation(int year) throws Exception
-	{
-		if (!inflation.containsKey(year))
-			inflation.put(year, dataFetcher.getInflation(code.get(), year));
-		return inflation.get(year);
-	}
-	
-	public double getGovernmentSpending(int year) throws Exception
-	{
-		if (!governmentSpending.containsKey(year))
-			governmentSpending.put(year, dataFetcher.getGovernmentSpending(code.get(), year));
-		return governmentSpending.get(year);
-	}
-	
-	public double getGovernmentConsumption(int year) throws Exception
-	{
-		if (!governmentConsumption.containsKey(year))
-			governmentConsumption.put(year, dataFetcher.getGovernmentConsumption(code.get(), year));
-		return governmentConsumption.get(year);
+		if (!indicators.containsKey(indicator))
+			indicators.put(indicator, new HashMap<Integer, Double>());
+		HashMap<Integer, Double> cached = indicators.get(indicator);
+		if (!indicators_minYear.containsKey(indicator) || !indicators_maxYear.containsKey(indicator) || indicators_minYear.get(indicator) > startYear || indicators_maxYear.get(indicator) < endYear)
+		{
+			cached.putAll(dataFetcher.getIndicatorData(code.get(), indicator, startYear, endYear));
+			indicators_minYear.put(indicator, startYear);
+			indicators_maxYear.put(indicator, endYear);
+		}
+		HashMap<Integer, Double> data = new HashMap<Integer, Double>();
+		for (int year = startYear; year <= endYear; year++)
+		{
+			if (cached.containsKey(year))
+				data.put(year, cached.get(year));
+		}
+		return data;
 	}
 	
 	public static Area getAreaFromCode(String c) throws Exception
@@ -192,6 +171,18 @@ public abstract class Area
 		public String get()
 		{
 			return code;
+		}
+		
+		public int hashCode()
+		{
+			return code.hashCode();
+		}
+		
+		public boolean equals(Object o)
+		{
+			if (!(o instanceof Code))
+				return super.equals(o);
+			return code.equals(((Code)o).code);
 		}
 	}
 }

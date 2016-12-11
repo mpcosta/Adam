@@ -1,18 +1,18 @@
 package adam.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import adam.model.Area;
 import adam.view.ChartPane;
-import adam.view.ManualPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Label;
 import javafx.scene.chart.XYChart.Data;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -20,7 +20,7 @@ public class CommandProcessor
 {
 	private final String[] DATA = new String[]
 	{
-		"GDP", "CPI", "BOP"
+		"GDP", "CPI", "BOP", "unemployment", "inflation", "government spending", "government consumption" 
 	},
 	CHARTS = new String[]
 	{
@@ -30,8 +30,7 @@ public class CommandProcessor
 	{
 		"from", "to"
 	};
-	private final int GDP = 0, CPI = 1, BOP = 2,
-			LINE = 0, BAR = 1, PIE = 2,
+	private final int LINE = 0, BAR = 1, PIE = 2,
 			FROM = 0, TO = 1;
 	private final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*");
 	
@@ -167,7 +166,7 @@ public class CommandProcessor
 				invalidRange = startingYear == -1 || endingYear == -1;
 		if (noAreas || invalidDataType || invalidChartType || invalidRange)
 		{
-			String errorMessage = "Information required: \n";
+			String errorMessage = "Information required:\n";
 			if (noAreas)
 				errorMessage += "- Country/Region\n";
 			if (invalidDataType)
@@ -182,38 +181,26 @@ public class CommandProcessor
 			return pane;
 		}
 		
+		return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
+	}
+	
+	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear)
+	{
 		ObservableList<Series<String, Double>> chartData = FXCollections.observableArrayList();
 		for (Area area : areas)
 		{
 			Series<String, Double> series = new Series<String, Double>();
 			series.setName(area.getName());
-			for (int year = startingYear; year <= endingYear; year++)
+			
+			ObservableList<Data<String, Double>> data = series.getData();
+			HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
+			for (int year : indicatorData.keySet())
 			{
-				try
-				{
-					ObservableList<Data<String, Double>> data = series.getData();
-					double dataPoint = 0;
-					switch (dataType)
-					{
-						case GDP:
-							dataPoint = area.getGDP(year);
-							break;
-						case CPI:
-							dataPoint = area.getCPI(year);
-							break;
-						case BOP:
-							dataPoint = area.getBOP(year);
-							break;
-					}
-					data.add(new Data<String, Double>(Integer.toString(year), dataPoint));
-				}
-				catch (Exception e)
-				{
-					//Indicator data not available for specified year.
-				}
+				data.add(new Data<String, Double>(String.valueOf(year), indicatorData.get(year)));
 			}
 			chartData.add(series);
 		}
+		//chartData.sort((s1, s2) -> s1.getData().get(0).getXValue().compareTo(s2.getData().get(0).getXValue()));
 		ChartPane chartPane = new ChartPane(chartType, title);
 		chartPane.setChartData(chartData);
 		

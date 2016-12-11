@@ -58,20 +58,17 @@ public class WorldBankDataFetcher {
 	 * @param  url  a string that represents the URL
 	 * @return document - a document type with all the data gotten from the HTTP request
 	 */
-	private static Document loadDocument(String url) {
+	private static Document loadDocument(String url) throws IOException, ParserConfigurationException, SAXException
+	{
 		if (!cachedDocuments.containsKey(url))
 		{
 			// Parser to get XML Data from URL Given
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			Document document = null;
 			
-			try { // Put this on separate private method
-				DocumentBuilder dBuilder = builderFactory.newDocumentBuilder();
-				document = dBuilder.parse(new URL(url).openStream());
-				
-			} catch (ParserConfigurationException | SAXException | IOException e) {
-				e.printStackTrace();
-			}
+			DocumentBuilder dBuilder = builderFactory.newDocumentBuilder();
+			document = dBuilder.parse(new URL(url).openStream());
+			
 			cachedDocuments.put(url, document);
 		}
 		return cachedDocuments.get(url);
@@ -113,6 +110,7 @@ public class WorldBankDataFetcher {
 	 * @param  endYear an Integer with the end year (inclusive)
 	 * @return indicatorData - corresponds to the data desired with it's associated year
 	 */
+	/*
 	public HashMap<String, HashMap<Integer, String>> getIndicatorDataByYear(String indicatorName, int startYear, int endYear) {
 		HashMap<String, HashMap<Integer, String>> indicatorData = new HashMap<String, HashMap<Integer, String>>();
 		
@@ -137,7 +135,7 @@ public class WorldBankDataFetcher {
 		// Return HashMap<Country, HashMap<Year, Value>>	
 		return indicatorData;
 	}
-	
+	*/
 	
 	
 	
@@ -159,6 +157,7 @@ public class WorldBankDataFetcher {
 	 *
 	 * @return allCInfoData - Return the HashMap with all the data from each country
 	 */
+	/*
 	public HashMap<String, String[]> getAllCountriesInfo() {
 		// HashMap< CountryName, StringArray with all the info
 		HashMap<String, String[]> allCInfoData = new HashMap<String, String[]>();
@@ -183,10 +182,19 @@ public class WorldBankDataFetcher {
 		}
 		return allCInfoData;
 	}
+	*/
 	
 	public String getAreaCodeFromName(String name)
 	{
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		Document document = null;
+		try
+		{
+			document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		}
+		catch (Exception e)
+		{
+			return "";
+		}
 		NodeList names = document.getElementsByTagName("wb:name"),
 				codes = document.getElementsByTagName("wb:iso2Code");
 		for (int i = 0; i < names.getLength(); i++)
@@ -200,7 +208,15 @@ public class WorldBankDataFetcher {
 	
 	public ArrayList<String> estimateNamesFromFragment(String fragment)
 	{
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
+		Document document = null;
+		try
+		{
+			document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		}
+		catch (Exception e)
+		{
+			return new ArrayList<String>();
+		}
 		NodeList namesNodeList = document.getElementsByTagName("wb:name"),
 				codeNodeList = document.getElementsByTagName("wb:iso2Code");
 		ArrayList<String> names = new ArrayList<String>();
@@ -217,7 +233,15 @@ public class WorldBankDataFetcher {
 	
 	public ArrayList<String> getAllNames()
 	{
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		Document document;
+		try
+		{
+			document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		}
+		catch (Exception e)
+		{
+			return new ArrayList<String>();
+		}
 		NodeList namesNodeList = document.getElementsByTagName("wb:name");
 		ArrayList<String> names = new ArrayList<String>();
 		for (int i = 0; i < namesNodeList.getLength(); i++)
@@ -229,7 +253,15 @@ public class WorldBankDataFetcher {
 	
 	public void cacheAllNames()
 	{
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=1000");
+		Document document = null;
+		try
+		{
+			document = loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		}
+		catch (Exception e)
+		{
+			return;
+		}
 		NodeList codes = document.getElementsByTagName("wb:iso2Code");
 		for (int i = 0; i < codes.getLength(); i++)
 		{
@@ -360,85 +392,53 @@ public class WorldBankDataFetcher {
 	 * @param code	The Indicator code.
 	 * @return	The Indicator Description.
 	 */
-	public String getIndicatorInfo(String indicator) {
+	private String getIndicatorInfo(String indicator)
+	{
 		return getIndicatorDescription(indicator); 
 	}
 	
-	/**
-	 * Gets the GDP of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The GDP Value of the Area on that year.
-	 */
-	public double getGDP(String code, int year) throws Exception
+	private String getIndicatorCodeFromID(int indicatorID)
 	{
-		return Double.parseDouble(getIndicatorData(code, GDP, year));
+		switch (indicatorID)
+		{
+			case Area.GDP:
+				return GDP;
+			case Area.CPI:
+				return CPI;
+			case Area.BOP:
+				return BOP;
+			case Area.GOVERNMENT_CONSUMPTION:
+				return GOVERNMENT_CONSUMPTION;
+			case Area.GOVERNMENT_SPENDING:
+				return GOVERNMENT_SPENDING;
+			case Area.INFLATION:
+				return INFLATION;
+			case Area.UNEMPLOYMENT:
+				return UNEMPLOYMENT;
+		}
+		return null;
 	}
 	
-	/**
-	 * Gets the Consumer Price Index of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The CPI Value of the Area on that year.
-	 */
-	public double getCPI(String code, int year) throws Exception
+	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear)
 	{
-		return Double.parseDouble(getIndicatorData(code, CPI, year));
-	}
-	
-	/**
-	 * Gets the Balance of Payments of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The BOB Value of the Area on that year.
-	 */
-	public double getBOP(String code, int year) throws Exception
-	{
-		return Double.parseDouble(getIndicatorData(code, BOP, year));
-	}
-	
-	/**
-	 * Gets the Unemployment of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The Unemployment Value of the Area on that year.
-	 */
-	public double getUnemployment(String code, int year) throws Exception
-	{
-		return Double.parseDouble(getIndicatorData(code, UNEMPLOYMENT, year));
-	}
-	
-	/**
-	 * Gets the Inflation of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The Inflation Value of the Area on that year.
-	 */
-	public double getInflation(String code, int year) throws Exception
-	{
-		return Double.parseDouble(getIndicatorData(code, INFLATION, year));
-	}
-	
-	/**
-	 * Gets the Government Spending of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The Government Spending Value of the Area on that year.
-	 */
-	public double getGovernmentSpending(String code, int year) throws Exception
-	{
-		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_SPENDING, year));
-	}
-	
-	/**
-	 * Gets the Government Consumption of an Area from its code on a determined year.
-	 * @param code	The Area code.
-	 * @param year	The Year wanted.
-	 * @return	The Government Consumption Value of the Area on that year.
-	 */
-	public double getGovernmentConsumption(String code, int year) throws Exception
-	{
-		return Double.parseDouble(getIndicatorData(code, GOVERNMENT_CONSUMPTION, year));
+		HashMap<Integer, Double> data = new HashMap<Integer, Double>();
+		Document document = null;
+		try
+		{
+			document = loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + getIndicatorCodeFromID(indicator) + "?date=" + startYear + ":" + endYear + "&per_page=" + ITEMS_PER_PAGE);
+		}
+		catch (Exception e)
+		{
+			return data;
+		}
+		NodeList dates = document.getElementsByTagName("wb:date"), values = document.getElementsByTagName("wb:value");
+		for (int i = 0; i < values.getLength(); i++)
+		{
+			String textContent = values.item(i).getTextContent();
+			if (!textContent.equals(""))
+				data.put(Integer.parseInt(dates.item(i).getTextContent()), Double.parseDouble(textContent));
+		}
+		return data;
 	}
 	
 	/**
@@ -477,7 +477,14 @@ public class WorldBankDataFetcher {
 	 */
 	private Document getDocumentForArea(String code)
 	{
-		return loadDocument(BASE_COUNTRY_URL + "/" + code);
+		try
+		{
+			return loadDocument(BASE_COUNTRY_URL + "/" + code);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}
 	
 	/**
@@ -515,12 +522,27 @@ public class WorldBankDataFetcher {
 	 */
 	private Document getIndicatorDocumentForInfo(String indicator)
 	{
-		return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
+		try
+		{
+			return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
+		
 	}
 	
 	private Document getDocumentForAllAreas()
 	{
-		return loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		try
+		{
+			return loadDocument(BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}
 	
 	
@@ -533,7 +555,14 @@ public class WorldBankDataFetcher {
 	 */
 	private Document getIndicatorDocumentForArea(String code, String indicator, int year)
 	{
-		return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
+		try
+		{
+			return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}	
 	
 	/**
