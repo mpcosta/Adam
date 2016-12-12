@@ -1,6 +1,7 @@
 package adam.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -8,6 +9,8 @@ import java.util.regex.Matcher;
 
 import adam.model.Area;
 import adam.view.ChartPane;
+import adam.view.MainView;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart.Series;
@@ -34,10 +37,13 @@ public class CommandProcessor
 			FROM = 0, TO = 1;
 	private final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*");
 	
+	private MainView mainView;
+	
 	private String command;
 	
-	public CommandProcessor()
+	public CommandProcessor(MainView m)
 	{
+		mainView = m;
 		command = null;
 	}
 	
@@ -184,11 +190,25 @@ public class CommandProcessor
 		return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
 	}
 	
+	private void updateProgress(String status)
+	{
+		final String newValue = status;
+		Platform.runLater(new Runnable()
+		{
+			public void run()
+			{
+				mainView.setLoadingLabel(newValue);
+			}
+		});
+	}
+	
 	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear)
 	{
 		ObservableList<Series<String, Double>> chartData = FXCollections.observableArrayList();
+		//areas.sort((a1, a2) -> 
 		for (Area area : areas)
 		{
+			updateProgress("Collecting information for " + area.getName() + "...");
 			Series<String, Double> series = new Series<String, Double>();
 			series.setName(area.getName());
 			
@@ -198,9 +218,10 @@ public class CommandProcessor
 			{
 				data.add(new Data<String, Double>(String.valueOf(year), indicatorData.get(year)));
 			}
-			chartData.add(series);
+			if (data.size() > 0)
+				chartData.add(series);
 		}
-		//chartData.sort((s1, s2) -> s1.getData().get(0).getXValue().compareTo(s2.getData().get(0).getXValue()));
+		chartData.sort((s1, s2) -> s1.getData().get(0).getXValue().compareTo(s2.getData().get(0).getXValue()));
 		ChartPane chartPane = new ChartPane(chartType, title);
 		chartPane.setChartData(chartData);
 		

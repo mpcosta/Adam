@@ -29,7 +29,7 @@ public class MainController {
 
 	public MainController(MainView mainView) {
 		this.mainView = mainView;
-		commandProcessor = new CommandProcessor();
+		commandProcessor = new CommandProcessor(mainView);
 		commandProcessorThread = null;
 		
 		init();
