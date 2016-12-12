@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import adam.model.Area;
+import adam.model.Region;
 import adam.view.ChartPane;
 import adam.view.MainView;
 import javafx.application.Platform;
@@ -35,7 +36,8 @@ public class CommandProcessor
 	};
 	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
 			FROM = 0, TO = 1;
-	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*");
+	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*"),
+			PATTERN_SINGLE = Pattern.compile(".*(\\d\\d\\d\\d).*");
 	
 	private MainView mainView;
 	
@@ -182,6 +184,15 @@ public class CommandProcessor
 			startingYear = Integer.parseInt(rangeMatcher.group(1));
 			endingYear = Integer.parseInt(rangeMatcher.group(2));
 		}
+		if (startingYear == -1 || endingYear == -1)
+		{
+			Matcher singleMatcher = PATTERN_SINGLE.matcher(command);
+			if (singleMatcher.matches())
+			{
+				startingYear = Integer.parseInt(singleMatcher.group(1));
+				endingYear = startingYear;
+			}
+		}
 			
 		//if (startingYear == -1 || endingYear == -1)
 		//	return null;
@@ -233,10 +244,18 @@ public class CommandProcessor
 			ObservableList<Double> areaValues = FXCollections.observableArrayList();
 			for (Area area : areas)
 			{
-				areaCodes.add(area.getCode());
+				if (area instanceof Region)
+					continue;
+				updateProgress("Collecting information for " + area.getName() + "...");
 				HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
-				areaValues.add(indicatorData.get(startingYear));
+				Double d = indicatorData.get(startingYear);
+				if (d == null)
+					continue;
+				areaCodes.add(area.getCode());
+				areaValues.add(d);
 			}
+			if (areaValues.size() == 0)
+				return null;
 			chartPane.setMapData(areaCodes, areaValues);
 		}
 		else
