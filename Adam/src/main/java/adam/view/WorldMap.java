@@ -39,7 +39,12 @@ public class WorldMap extends StackPane {
 		
 		currentMapSource = "";
 		mapView = new ImageView();
+		mapView.setPreserveRatio(true);
+		
 		getChildren().add(mapView);
+		
+		mapView.fitWidthProperty().bind(MainView.primaryStage.widthProperty());
+//		mapView.fitHeightProperty().bind(MainView.primaryStage.widthProperty());
 	}
 	
 	public ImageView changeMap(ObservableList<String> countriesList, ObservableList<Double> values) {
@@ -63,10 +68,7 @@ public class WorldMap extends StackPane {
 		
 		mapView.setImage(new Image(currentMapSource));
 		
-		System.out.println(currentMapSource);
-		
-		mapView.setPreserveRatio(true);
-		mapView.setFitWidth(800);
+		System.out.println(currentMapSource);		
 		
 		return mapView;
 	}

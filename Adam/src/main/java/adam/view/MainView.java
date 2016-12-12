@@ -20,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
  * This is the Main View class which extends the BorderPane.
@@ -33,7 +34,7 @@ public class MainView extends BorderPane {
 	 * An enum that defines the styles for different type
 	 * of elements used throughout the view.
 	 */
-	public static enum STYLES {
+	protected static enum STYLES {
 	    BUTTON_RAISED("-fx-font-size: 14px; -fx-button-type: RAISED; -fx-background-color: rgb(77,102,204); -fx-min-width: 80; -fx-text-fill: WHITE;"),
 	    BUTTON_BACK("-fx-background-radius: 5em; -fx-font-size: 16px; -fx-button-type: RAISED; -fx-background-color: rgb(222,129,111); -fx-text-fill: WHITE; -fx-font-weight: bold;"),
 	    QUESTION_LABEL("-fx-font-size: 16px; -fx-font-weight: bold;")
@@ -72,6 +73,17 @@ public class MainView extends BorderPane {
 	private JFXSpinner loadingSpinner;
 	private StackPane loadingPane;
 	private Label loadingLabel;
+	
+	// The primary stage of this application.
+	protected static Stage primaryStage;
+	
+	/**
+	 * A constructor which takes a reference to the primary stage of this Application.
+	 * @param primaryStage A Stage that represents the primary stage of this Application.
+	 */
+	public MainView(Stage primaryStage) {
+		MainView.primaryStage = primaryStage;
+	}
 	
 	/**
 	 * A method used to initialise all the components within this view.

@@ -6,17 +6,28 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * A class that represents the Main of this application.
+ * 
+ * Sets up the model, view and controller and gives the appropriate references where necessary.
+ * @author Team Blue
+ */
 public class MainApp extends Application {
+	
+	// The title of the application.
+	private final String title = "Adam - Your Macro-Economics Friend";
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			MainView root = new MainView();
+			MainView root = new MainView(primaryStage);
 			Scene scene = new Scene(root,500,300);
 			root.initComponents();
 			
+			@SuppressWarnings("unused") // TODO: Usable here?
 			MainController controller = new MainController(root);
 			
-			primaryStage.setTitle("Adam - Your Macro-Economics Friend");
+			primaryStage.setTitle(title);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch(Exception e) {
