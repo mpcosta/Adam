@@ -21,21 +21,21 @@ import javafx.scene.layout.StackPane;
 
 public class CommandProcessor
 {
-	private final String[] DATA = new String[]
+	private static final String[] DATA = new String[]
 	{
 		"GDP", "CPI", "BOP", "unemployment", "inflation", "government spending", "government consumption" 
 	},
 	CHARTS = new String[]
 	{
-		"line", "bar", "pie"
+		"line", "bar", "pie", "map"
 	},
 	TIME = new String[]
 	{
 		"from", "to"
 	};
-	private final int LINE = 0, BAR = 1, PIE = 2,
+	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
 			FROM = 0, TO = 1;
-	private final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*");
+	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*");
 	
 	private MainView mainView;
 	
@@ -45,6 +45,26 @@ public class CommandProcessor
 	{
 		mainView = m;
 		command = null;
+	}
+	
+	public static ArrayList<String> getAllIndicators()
+	{
+		ArrayList<String> indicators = new ArrayList<String>();
+		for (String data : DATA)
+		{
+			indicators.add(data);
+		}
+		return indicators;
+	}
+	
+	public static ArrayList<String> getAllGraphs()
+	{
+		ArrayList<String> graphs = new ArrayList<String>();
+		for (String graph : CHARTS)
+		{
+			graphs.add(graph);
+		}
+		return graphs;
 	}
 	
 	public void getSuggestions(String existing, String segment, String full, LinkedList<String> display, LinkedList<String> override)
@@ -204,27 +224,43 @@ public class CommandProcessor
 	
 	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear)
 	{
-		ObservableList<Series<String, Double>> chartData = FXCollections.observableArrayList();
-		//areas.sort((a1, a2) -> 
-		for (Area area : areas)
-		{
-			updateProgress("Collecting information for " + area.getName() + "...");
-			Series<String, Double> series = new Series<String, Double>();
-			series.setName(area.getName());
-			
-			ObservableList<Data<String, Double>> data = series.getData();
-			HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
-			for (int year : indicatorData.keySet())
-			{
-				data.add(new Data<String, Double>(String.valueOf(year), indicatorData.get(year)));
-			}
-			if (data.size() > 0)
-				chartData.add(series);
-		}
-		chartData.sort((s1, s2) -> s1.getData().get(0).getXValue().compareTo(s2.getData().get(0).getXValue()));
 		ChartPane chartPane = new ChartPane(chartType, title);
-		chartPane.setChartData(chartData);
-		
+		if (chartType == MAP)
+		{
+			if (startingYear != endingYear)
+				return null;
+			ObservableList<String> areaCodes = FXCollections.observableArrayList();
+			ObservableList<Double> areaValues = FXCollections.observableArrayList();
+			for (Area area : areas)
+			{
+				areaCodes.add(area.getCode());
+				HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
+				areaValues.add(indicatorData.get(startingYear));
+			}
+			chartPane.setMapData(areaCodes, areaValues);
+		}
+		else
+		{
+			ObservableList<Series<String, Double>> chartData = FXCollections.observableArrayList();
+			for (Area area : areas)
+			{
+				updateProgress("Collecting information for " + area.getName() + "...");
+				Series<String, Double> series = new Series<String, Double>();
+				series.setName(area.getName());
+				
+				ObservableList<Data<String, Double>> data = series.getData();
+				HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
+				for (int year : indicatorData.keySet())
+				{
+					data.add(new Data<String, Double>(String.valueOf(year), indicatorData.get(year)));
+				}
+				if (data.size() > 0)
+					chartData.add(series);
+			}
+			chartData.sort((s1, s2) -> s1.getData().get(0).getXValue().compareTo(s2.getData().get(0).getXValue()));
+			
+			chartPane.setChartData(chartData);
+		}
 		return chartPane;
 	}
 	

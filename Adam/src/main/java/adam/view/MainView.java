@@ -77,14 +77,6 @@ public class MainView extends BorderPane {
 		advancedToggleButton = new JFXToggleButton();
 		advancedToggleButton.setText("Simple");
 		StackPane.setAlignment(advancedToggleButton, Pos.TOP_RIGHT);
-		// TODO: move this in the controller
-		advancedToggleButton.setOnAction(handler -> {
-			if (advancedToggleButton.isSelected()) {
-				advancedToggleButton.setText(manualSessionPane.switchToAdvancedMode());
-			} else {
-				advancedToggleButton.setText(manualSessionPane.switchToSimpleMode());
-			}
-		});
 		
 		advancedToggleButton.setVisible(false);
 		
@@ -186,6 +178,11 @@ public class MainView extends BorderPane {
 	 */
 	public void setLoadingLabel(String value) {
 		loadingLabel.setText(value);
+	}
+	
+	public ToggleButton getAdvancedToggleButton()
+	{
+		return advancedToggleButton;
 	}
 	
 	/**

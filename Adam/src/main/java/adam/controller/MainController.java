@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import adam.model.Area;
 import adam.view.AutoCompleteTextField;
 import adam.view.MainView;
+import adam.view.ManualPane;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert.AlertType;
@@ -17,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
@@ -121,11 +124,33 @@ public class MainController {
 			textField.updateDisplay();
 		});
 		
+		ToggleButton advancedToggleButton = mainView.getAdvancedToggleButton();
+		advancedToggleButton.setOnAction(handler -> {
+			ManualPane manualPane = mainView.getManualSessionPane();
+			if (advancedToggleButton.isSelected()) {
+				advancedToggleButton.setText(manualPane.switchToAdvancedMode());
+			} else {
+				advancedToggleButton.setText(manualPane.switchToSimpleMode());
+			}
+		});
+		
 		Thread thread = new Thread()
 		{
 			public void run()
 			{
 				Area.cacheAllNames();
+				Platform.runLater(new Runnable()
+				{
+					public void run()
+					{
+						ManualPane manualPane = mainView.getManualSessionPane();
+						
+						manualPane.setCountries(FXCollections.observableArrayList(Area.getAllNames()));
+						manualPane.setIndicators(FXCollections.observableArrayList(CommandProcessor.getAllIndicators()));
+						manualPane.setGraphs(FXCollections.observableArrayList(CommandProcessor.getAllGraphs()));
+						
+					}
+				});
 			}
 		};
 		thread.start();
