@@ -1,10 +1,7 @@
 package adam.view;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import com.jfoenix.controls.JFXTextField;
 

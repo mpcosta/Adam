@@ -41,12 +41,12 @@ public class QuizPane extends StackPane {
 		questionLabel = new Label();
 		questionLabel.setWrapText(true);
 		questionLabel.setPadding(new Insets(20, 40, 20, 40));
-		questionLabel.getStyleClass().add("question-label");
+		questionLabel.setStyle(MainView.STYLES.QUESTION_LABEL.toString());
 		
 		resLabel = new Label();
 		submitButton = new JFXButton("Submit");
 		submitButton.setDisable(true);
-		submitButton.getStyleClass().add("button-raised");
+		submitButton.setStyle(MainView.STYLES.BUTTON_RAISED.toString());
 		
 		answersList = new ArrayList<RadioButton>();
 		questionBox = new VBox();

@@ -14,9 +14,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -45,10 +43,6 @@ public class MainController {
 		
 		mainView.getBackButton().setOnAction(handler -> {
 			mainView.transition(mainView.getSessionChooserPane());
-		});
-		
-		mainView.getHelpButton().setOnAction(handler -> {
-			mainView.getGlobals().showDialog("Instructions", "", "In order to search for..", null, AlertType.INFORMATION);
 		});
 		
 		mainView.getSessionChooserPane().getLessonButtonOnActionProperty().set(handler -> { 
