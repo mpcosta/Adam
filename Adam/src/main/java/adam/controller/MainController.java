@@ -78,34 +78,12 @@ public class MainController {
 			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP || (commandProcessorThread != null && commandProcessorThread.isAlive()))
 				return;
 			
-			String text = ((TextField)key.getSource()).getText();
-			
-			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
+			AutoCompleteTextField textField = (AutoCompleteTextField)key.getSource();
+			String text = textField.getText();
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-				Thread thread = new Thread()
-				{
-					public void run()
-					{
-						final Pane newPane = commandProcessor.process(text);
-						Platform.runLater(new Runnable()
-						{
-							public void run()
-							{
-								mainView.removeLoadingScreen();
-								if (newPane != null)
-								{
-									mainView.transition(newPane);
-									textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
-									textField.updateDisplay();
-								}
-							}
-						});
-					}
-				};
-				mainView.addLoadingScreen();
-				thread.start();
+				processRequest(textField);
 				return;
 			}
 			
@@ -134,6 +112,11 @@ public class MainController {
 			}
 		});
 		
+		mainView.getManualSessionPane().getOnActionProperty().set(event ->
+		{
+			processRequest(mainView.getManualSessionPane().getAutoCompleteTextField());
+		});
+		
 		Thread thread = new Thread()
 		{
 			public void run()
@@ -153,6 +136,33 @@ public class MainController {
 				});
 			}
 		};
+		thread.start();
+	}
+	
+	private void processRequest(AutoCompleteTextField textField)
+	{
+		String text = textField.getText();
+		Thread thread = new Thread()
+		{
+			public void run()
+			{
+				final Pane newPane = commandProcessor.process(text);
+				Platform.runLater(new Runnable()
+				{
+					public void run()
+					{
+						mainView.removeLoadingScreen();
+						if (newPane != null)
+						{
+							mainView.transition(newPane);
+							textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
+							textField.updateDisplay();
+						}
+					}
+				});
+			}
+		};
+		mainView.addLoadingScreen();
 		thread.start();
 	}
 	
