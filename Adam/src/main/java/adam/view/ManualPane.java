@@ -143,6 +143,10 @@ public class ManualPane extends StackPane {
 	public ComboBox<String> getIndicatorComboBox() {
 		return indicatorComboBox;
 	}
+	
+	public ComboBox<String> getGraphTypeComboBox() {
+		return graphTypeComboBox;
+	}
 
 	public StringProperty getFromYearFieldTextInputProperty() {
 		return fromYearField.textProperty();
