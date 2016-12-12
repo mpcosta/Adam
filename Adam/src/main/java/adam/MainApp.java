@@ -12,13 +12,11 @@ public class MainApp extends Application {
 		try {
 			MainView root = new MainView();
 			Scene scene = new Scene(root,500,300);
-			scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());
 			root.initComponents();
 			
 			MainController controller = new MainController(root);
 			
 			primaryStage.setTitle("Adam - Your Macro-Economics Friend");
-			
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch(Exception e) {

@@ -10,11 +10,11 @@ import com.jfoenix.controls.JFXToggleButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -28,6 +28,31 @@ import javafx.scene.layout.StackPane;
  * @author Team Blue
  */
 public class MainView extends BorderPane {
+	
+	/**
+	 * An enum that defines the styles for different type
+	 * of elements used throughout the view.
+	 */
+	public static enum STYLES {
+	    BUTTON_RAISED("-fx-font-size: 14px; -fx-button-type: RAISED; -fx-background-color: rgb(77,102,204); -fx-min-width: 80; -fx-text-fill: WHITE;"),
+	    BUTTON_BACK("-fx-background-radius: 5em; -fx-font-size: 16px; -fx-button-type: RAISED; -fx-background-color: rgb(222,129,111); -fx-text-fill: WHITE; -fx-font-weight: bold;"),
+	    QUESTION_LABEL("-fx-font-size: 16px; -fx-font-weight: bold;")
+	    ;
+
+	    private final String text;
+
+	    /**
+	     * @param text
+	     */
+	    private STYLES(final String text) {
+	        this.text = text;
+	    }
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
+    }
 	
 	// Private pane fields used in the view
 	private SessionChooserPane sessionChooserPane;
@@ -83,7 +108,7 @@ public class MainView extends BorderPane {
 		// Get the style class from the css resource
 		// Align the help button to the top left
 		backButton = new JFXButton("<");
-		backButton.getStyleClass().add("button-back");
+		backButton.setStyle(STYLES.BUTTON_BACK.toString());
 		
 		// Setting the visibility to false
 		// (there is no back screen at the start of the program)
@@ -93,7 +118,6 @@ public class MainView extends BorderPane {
 		// Adding the components to the topPane and align the pane to the top centre
 		topPane.getChildren().addAll(backButton, adam.getListeningImageView(), advancedToggleButton);
 		topPane.setPadding(new Insets(10, 10, 10, 10));
-		topPane.getStyleClass().add("top-pane");
 		topPane.setStyle("-fx-background-color: rgb(230,230,230);");
 		BorderPane.setAlignment(topPane, Pos.TOP_CENTER);
 		

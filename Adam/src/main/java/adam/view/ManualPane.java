@@ -44,7 +44,7 @@ public class ManualPane extends StackPane {
 		super();
 		
 		submitButton = new JFXButton("Search");
-		submitButton.getStyleClass().add("button-raised");
+		submitButton.setStyle(MainView.STYLES.BUTTON_RAISED.toString());
 		
 		initSimpleBar();
 		initAdvancedBar();
