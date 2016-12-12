@@ -107,8 +107,7 @@ public class MainView extends BorderPane {
 		adam = new Avatar(getScene());
 		
 		// Resize the avatar so it fits the screen and align it to the top centre
-		adam.getListeningImageView().setFitHeight(90);
-		StackPane.setAlignment(adam.getListeningImageView(), Pos.TOP_CENTER);
+		StackPane.setAlignment(adam.getStaticImage(), Pos.TOP_CENTER);
 		
 		advancedToggleButton = new JFXToggleButton();
 		advancedToggleButton.setText("Simple");
@@ -128,7 +127,7 @@ public class MainView extends BorderPane {
 		StackPane.setAlignment(backButton, Pos.TOP_LEFT);
 		
 		// Adding the components to the topPane and align the pane to the top centre
-		topPane.getChildren().addAll(backButton, adam.getListeningImageView(), advancedToggleButton);
+		topPane.getChildren().addAll(backButton, adam.getStaticImage(), advancedToggleButton);
 		topPane.setPadding(new Insets(10, 10, 10, 10));
 		topPane.setStyle("-fx-background-color: rgb(230,230,230);");
 		BorderPane.setAlignment(topPane, Pos.TOP_CENTER);
@@ -300,5 +299,9 @@ public class MainView extends BorderPane {
 		}
 		
 		alert.showAndWait();
+	}
+	
+	public StackPane getTopPane() {
+		return topPane;
 	}
 }

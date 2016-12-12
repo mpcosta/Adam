@@ -8,5 +8,4 @@
 
 grammar adam;
 
-public <show> = (Show me) ( statistics );
-public <adam> = (Adam) ( what time is it );
+public <indicator> = (Show me) (gross domestic product | consumer price index | balance of payments | unemployment | inflation | government spending | government consumption );

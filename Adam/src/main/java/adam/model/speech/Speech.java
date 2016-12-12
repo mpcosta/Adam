@@ -131,7 +131,7 @@ public class Speech {
 				String option = "";
 				
 				// A pattern to match the available.
-				Pattern pattern = Pattern.compile("(?<option>statistics|time)");
+				Pattern pattern = Pattern.compile("(?<option>(gross\\sdomestic\\sproduct)|(consumer\\sprice\\sindex)|(balance\\sof\\spayments)|(unemployment)|(inflation)|(government\\sspending)|(government\\sconsumption))");
 				Matcher matcher = pattern.matcher(resultText);
 				
 				if (matcher.find()) {
@@ -142,7 +142,7 @@ public class Speech {
 					
 					synchronized (recognizer) {
 						// Speak the appropriate message.
-						speakMessage(option);
+//						speakMessage(option);
 						
 						// Closing the action of listening.
 						shouldBeListening = false;
@@ -202,16 +202,16 @@ public class Speech {
 	 */
 	private void speakMessage(String option) {
 		if (!option.equals("")) {
-			speak("Here is your " + option + "!");
+			speak("You said " + option + "!");
 		} else {
 			speak("I am not sure what you said there.");
 		}
 	}
 	
-//	public static void main(String[] args) {
-//		Speech test = new Speech();
-//		test.speak(test.listenVoiceToString());
+	public static void main(String[] args) {
+		Speech test = new Speech();
+		System.out.println(test.listenVoiceToString());
 //		test.speak("Hello Toma, I am a robot and I can speak to you!");
-//	}
+	}
 
 }
