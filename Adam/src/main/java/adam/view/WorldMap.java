@@ -40,12 +40,7 @@ public class WorldMap extends StackPane {
 		
 		currentMapSource = "";
 		mapView = new ImageView();
-		ObservableList<String> cTest = FXCollections.observableArrayList();
-		cTest.addAll("RO", "US");
-		ObservableList<Double> vTest = FXCollections.observableArrayList(); 
-		vTest.add(25445.0);
-		vTest.add(34382374.0);
-		getChildren().add(changeMap(cTest, vTest));
+		getChildren().add(mapView);
 	}
 	
 	public ImageView changeMap(ObservableList<String> countriesList, ObservableList<Double> values) {
