@@ -33,9 +33,14 @@ public class CommandProcessor
 	TIME = new String[]
 	{
 		"from", "to"
+	},
+	AREAS = new String[]
+	{
+		"all areas"
 	};
 	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
-			FROM = 0, TO = 1;
+			FROM = 0, TO = 1,
+			ALL_AREAS = 0;
 	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*"),
 			PATTERN_SINGLE = Pattern.compile(".*(\\d\\d\\d\\d).*");
 	
@@ -79,11 +84,11 @@ public class CommandProcessor
 		}
 		for (String s : CHARTS)
 		{
-			String suggestion = "on a " + s + " ";
+			String suggestion = "on a " + s;
 			if (s.equals(CHARTS[LINE]) || s.equals(CHARTS[PIE]))
-				suggestion += "graph";
+				suggestion += " graph";
 			else if (s.equals(CHARTS[BAR]))
-				suggestion += "chart";
+				suggestion += " chart";
 			if (suggestion.contains(segment))
 				suggestions.add(suggestion);
 		}
@@ -96,6 +101,12 @@ public class CommandProcessor
 				else if (existing.contains(TIME[FROM]))
 					suggestions.add(TIME[TO]);
 			}
+		}
+		
+		for (String s : AREAS)
+		{
+			if (s.contains(segment))
+				suggestions.add(s);
 		}
 		
 		for (String suggestion : suggestions)
@@ -120,6 +131,10 @@ public class CommandProcessor
 		ArrayList<String> names = Area.getAllNames(),
 				foundNames = findAllThatMatch(names.toArray(new String[0]));
 		ArrayList<Area> areas = new ArrayList<Area>();
+		
+		if (command.contains(AREAS[ALL_AREAS]))
+			foundNames.addAll(Area.getAllNames());
+		
 		final String AREA_SEPARATOR = " vs ";
 		for (String name : foundNames)
 		{
@@ -137,6 +152,7 @@ public class CommandProcessor
 		}
 		if (areas.size() > 0)
 			title = title.substring(0, title.length() - AREA_SEPARATOR.length());
+			
 		
 		boolean keyWordIdentitified = false;
 		int dataType = -1;

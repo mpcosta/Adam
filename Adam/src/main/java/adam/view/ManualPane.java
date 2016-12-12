@@ -82,11 +82,11 @@ public class ManualPane extends StackPane {
 		advancedBar.setAlignment(Pos.TOP_CENTER);
 		
 		countryComboBox = new JFXComboBox<String>();
-		countryComboBox.setPromptText("Countries");
+		countryComboBox.setPromptText("Area");
 		countryComboBox.setPrefWidth(200);
 		
 		indicatorComboBox = new JFXComboBox<String>();
-		indicatorComboBox.setPromptText("Indicators");
+		indicatorComboBox.setPromptText("Indicator");
 		indicatorComboBox.setPrefWidth(200);
 		
 		graphTypeComboBox = new JFXComboBox<String>();
