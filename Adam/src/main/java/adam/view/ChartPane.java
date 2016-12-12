@@ -19,6 +19,7 @@ public class ChartPane extends StackPane {
 	private XYChart chart;
 	private PieChart pieChart;
 	private String title;
+	private WorldMap worldMap;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	/**
@@ -50,7 +51,8 @@ public class ChartPane extends StackPane {
 			}
 	
 			case MAP: {
-				System.err.println("Google Map is not yet implemented, try line/bar chart.");
+				worldMap = new WorldMap();
+				getChildren().add(worldMap);
 				break;
 			}
 			
@@ -61,7 +63,9 @@ public class ChartPane extends StackPane {
 		}
 		
 		this.title = title;
-		chart.setTitle(this.title);
+		if (chart != null) {
+			chart.setTitle(this.title);
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
