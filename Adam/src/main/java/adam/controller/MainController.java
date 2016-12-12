@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import adam.model.Area;
+import adam.model.speech.Speech;
 import adam.view.AutoCompleteTextField;
 import adam.view.MainView;
 import adam.view.ManualPane;
@@ -25,6 +26,7 @@ public class MainController {
 	
 	private MainView mainView;
 	private CommandProcessor commandProcessor;
+	private Speech speech;
 	
 	private Thread commandProcessorThread;
 
@@ -32,11 +34,30 @@ public class MainController {
 		this.mainView = mainView;
 		commandProcessor = new CommandProcessor(mainView);
 		commandProcessorThread = null;
+		speech = new Speech();
 		
 		init();
 	}
 	
-	private void init() {		
+	private void init() {
+		mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
+			System.out.println("I have to listen now..");
+			mainView.getTopPane().getChildren().remove(mainView.getAvatar().getStaticImage());
+			mainView.getTopPane().getChildren().add(mainView.getAvatar().getListeningImage());
+			Thread thread = new Thread() {
+				public void run() {
+					System.out.println(speech.listenVoiceToString());
+				}
+			};
+			thread.start();
+		});
+		
+		mainView.getAvatar().getListeningImage().setOnMouseClicked(handler -> {
+			System.out.println("I will stop listening..");
+			mainView.getTopPane().getChildren().remove(mainView.getAvatar().getListeningImage());
+			mainView.getTopPane().getChildren().add(mainView.getAvatar().getStaticImage());
+		});
+			
 		QHandler qHandler = new QHandler(mainView.getQuizPane().getQuestionAndAnswers().entrySet().iterator(), mainView.getQuizPane().getCorrectAnswers());
 		
 		mainView.getQuizPane().getButton().setOnAction(qHandler);
@@ -57,14 +78,6 @@ public class MainController {
 		
 		mainView.getSessionChooserPane().getManualButtonOnActionProperty().set(handler -> {
 			mainView.transition(mainView.getManualSessionPane());
-		});
-		
-		mainView.getAvatar().getListeningImageView().setOnMouseClicked(handler -> {
-			System.out.println("Listening...");
-		});
-		
-		mainView.getAvatar().getSpeakingImageView().setOnMouseClicked(handler -> {
-			System.out.println("Speaking...");
 		});
 		
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
