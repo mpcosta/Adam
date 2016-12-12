@@ -140,7 +140,7 @@ public class ManualPane extends StackPane {
 	public ObjectProperty<EventHandler<ActionEvent>> getSubmitButtonOnActionProperty() {
 		return submitButton.onActionProperty();
 	}
-
+	
 	public ComboBox<String> getCountryComboBox() {
 		return countryComboBox;
 	}
@@ -157,7 +157,12 @@ public class ManualPane extends StackPane {
 		return fromYearField.textProperty();
 	}
 
-	public StringProperty getToYearField() {
+	public StringProperty getToYearFieldTextInputProperty() {
 		return toYearField.textProperty();
+	}
+	
+	public boolean isOnAdvancedMode()
+	{
+		return getChildren().contains(advancedBar);
 	}
 }

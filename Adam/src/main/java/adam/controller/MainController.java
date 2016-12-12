@@ -13,6 +13,7 @@ import adam.view.ManualPane;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -83,7 +84,7 @@ public class MainController {
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-				processRequest(textField);
+				processRequest(key);
 				return;
 			}
 			
@@ -114,7 +115,7 @@ public class MainController {
 		
 		mainView.getManualSessionPane().getOnActionProperty().set(event ->
 		{
-			processRequest(mainView.getManualSessionPane().getAutoCompleteTextField());
+			processRequest(event);
 		});
 		
 		Thread thread = new Thread()
@@ -139,9 +140,30 @@ public class MainController {
 		thread.start();
 	}
 	
-	private void processRequest(AutoCompleteTextField textField)
+	private void processRequest(Event event)
 	{
-		String text = textField.getText();
+		ManualPane manualPane = mainView.getManualSessionPane();
+		AutoCompleteTextField textField;
+		String text_construct;
+		final boolean advanced = manualPane.isOnAdvancedMode();
+		if (advanced)
+		{
+			textField = null;
+			text_construct = manualPane.getCountryComboBox().getSelectionModel().getSelectedItem() + " "
+					+ manualPane.getIndicatorComboBox().getSelectionModel().getSelectedItem() + " ";
+			String chart = manualPane.getGraphTypeComboBox().getSelectionModel().getSelectedItem();
+			text_construct += chart + " ";
+			if (chart.contains("map"))
+				text_construct += manualPane.getFromYearFieldTextInputProperty().get();
+			else
+				text_construct += manualPane.getFromYearFieldTextInputProperty().get() + " to " + manualPane.getToYearFieldTextInputProperty().get();
+		}
+		else
+		{
+			textField = manualPane.getAutoCompleteTextField();
+			text_construct = textField.getText();
+		}
+		final String text = text_construct;
 		Thread thread = new Thread()
 		{
 			public void run()
@@ -152,9 +174,11 @@ public class MainController {
 					public void run()
 					{
 						mainView.removeLoadingScreen();
-						if (newPane != null)
+						if (newPane == null)
+							return;
+						mainView.transition(newPane);
+						if (!advanced)
 						{
-							mainView.transition(newPane);
 							textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
 							textField.updateDisplay();
 						}
