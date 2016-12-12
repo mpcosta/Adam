@@ -14,6 +14,7 @@ import adam.view.ManualPane;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -85,34 +86,12 @@ public class MainController {
 			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP || (commandProcessorThread != null && commandProcessorThread.isAlive()))
 				return;
 			
-			String text = ((TextField)key.getSource()).getText();
-			
-			AutoCompleteTextField textField = mainView.getManualSessionPane().getAutoCompleteTextField();
+			AutoCompleteTextField textField = (AutoCompleteTextField)key.getSource();
+			String text = textField.getText();
 			
 			if (key.getCode() == KeyCode.ENTER)
 			{
-				Thread thread = new Thread()
-				{
-					public void run()
-					{
-						final Pane newPane = commandProcessor.process(text);
-						Platform.runLater(new Runnable()
-						{
-							public void run()
-							{
-								mainView.removeLoadingScreen();
-								if (newPane != null)
-								{
-									mainView.transition(newPane);
-									textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
-									textField.updateDisplay();
-								}
-							}
-						});
-					}
-				};
-				mainView.addLoadingScreen();
-				thread.start();
+				processRequest(key);
 				return;
 			}
 			
@@ -141,6 +120,11 @@ public class MainController {
 			}
 		});
 		
+		mainView.getManualSessionPane().getSubmitButtonOnActionProperty().set(event ->
+		{
+			processRequest(event);
+		});
+		
 		Thread thread = new Thread()
 		{
 			public void run()
@@ -160,6 +144,56 @@ public class MainController {
 				});
 			}
 		};
+		thread.start();
+	}
+	
+	private void processRequest(Event event)
+	{
+		ManualPane manualPane = mainView.getManualSessionPane();
+		AutoCompleteTextField textField;
+		String text_construct;
+		final boolean advanced = manualPane.isOnAdvancedMode();
+		if (advanced)
+		{
+			textField = null;
+			text_construct = manualPane.getCountryComboBox().getSelectionModel().getSelectedItem() + " "
+					+ manualPane.getIndicatorComboBox().getSelectionModel().getSelectedItem() + " ";
+			String chart = manualPane.getGraphTypeComboBox().getSelectionModel().getSelectedItem();
+			text_construct += chart + " ";
+			if (chart.contains("map"))
+				text_construct += manualPane.getFromYearFieldTextInputProperty().get();
+			else
+				text_construct += manualPane.getFromYearFieldTextInputProperty().get() + " to " + manualPane.getToYearFieldTextInputProperty().get();
+		}
+		else
+		{
+			textField = manualPane.getAutoCompleteTextField();
+			text_construct = textField.getText();
+		}
+		final String text = text_construct;
+		Thread thread = new Thread()
+		{
+			public void run()
+			{
+				final Pane newPane = commandProcessor.process(text);
+				Platform.runLater(new Runnable()
+				{
+					public void run()
+					{
+						mainView.removeLoadingScreen();
+						if (newPane == null)
+							return;
+						mainView.transition(newPane);
+						if (!advanced)
+						{
+							textField.setEntries(new LinkedList<String>(), new LinkedList<String>());
+							textField.updateDisplay();
+						}
+					}
+				});
+			}
+		};
+		mainView.addLoadingScreen();
 		thread.start();
 	}
 	

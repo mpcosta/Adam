@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -193,5 +194,30 @@ public class ManualPane extends StackPane {
 	 */
 	public ObjectProperty<EventHandler<ActionEvent>> getSubmitButtonOnActionProperty() {
 		return submitButton.onActionProperty();
+	}
+	
+	public ComboBox<String> getCountryComboBox() {
+		return countryComboBox;
+	}
+
+	public ComboBox<String> getIndicatorComboBox() {
+		return indicatorComboBox;
+	}
+	
+	public ComboBox<String> getGraphTypeComboBox() {
+		return graphTypeComboBox;
+	}
+
+	public StringProperty getFromYearFieldTextInputProperty() {
+		return fromYearField.textProperty();
+	}
+
+	public StringProperty getToYearFieldTextInputProperty() {
+		return toYearField.textProperty();
+	}
+	
+	public boolean isOnAdvancedMode()
+	{
+		return getChildren().contains(advancedBar);
 	}
 }
