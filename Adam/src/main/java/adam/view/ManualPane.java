@@ -131,6 +131,11 @@ public class ManualPane extends StackPane {
 	public void setCountries(ObservableList<String> countriesList) {
 		countryComboBox.setItems(countriesList);
 	}
+	
+	public void setGraphs(ObservableList<String> graphList)
+	{
+		graphTypeComboBox.setItems(graphList);
+	}
 
 	public ObjectProperty<EventHandler<ActionEvent>> getSubmitButtonOnActionProperty() {
 		return submitButton.onActionProperty();
