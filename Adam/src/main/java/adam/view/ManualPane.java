@@ -27,6 +27,7 @@ public class ManualPane extends StackPane {
 	
 	private ComboBox<String> countryComboBox;
 	private ComboBox<String> indicatorComboBox;
+	private ComboBox<String> graphTypeComboBox;
 	private TextField fromYearField;
 	private TextField toYearField;
 	
@@ -39,7 +40,7 @@ public class ManualPane extends StackPane {
 		initSimpleBar();
 		initAdvancedBar();
 		
-		advancedBar.getChildren().addAll(countryComboBox, indicatorComboBox, fromYearField, toYearField, submitButton);
+		advancedBar.getChildren().addAll(countryComboBox, indicatorComboBox, fromYearField, toYearField, graphTypeComboBox, submitButton);
 		searchBar.getChildren().addAll(textField, submitButton);
 		
 		getChildren().add(searchBar);
@@ -47,8 +48,8 @@ public class ManualPane extends StackPane {
 
 	private void initSimpleBar() {
 		textField = new AutoCompleteTextField();
-		textField.setPromptText("GDP for United States vs United Kingdom from 2010 to 2015");
-		textField.setPrefSize(420, 20);
+		textField.setPromptText("GDP for United States vs United Kingdom from 2010 to 2015 on a line graph");
+		textField.setPrefSize(500, 20);
 		
 		searchBar = new HBox();
 		searchBar.setPadding(new Insets(90, 10, 10, 10));
@@ -65,7 +66,9 @@ public class ManualPane extends StackPane {
 		countryComboBox = new JFXComboBox<String>();
 		countryComboBox.setPromptText("Countries");
 		indicatorComboBox = new JFXComboBox<String>();
-		indicatorComboBox.setPromptText("Indicators");		
+		indicatorComboBox.setPromptText("Indicators");	
+		graphTypeComboBox = new JFXComboBox<String>();
+		graphTypeComboBox.setPromptText("Graph type");
 		fromYearField = new JFXTextField();
 		fromYearField.setPromptText("From");
 		fromYearField.setPrefWidth(50);
