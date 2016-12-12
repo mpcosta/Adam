@@ -25,9 +25,9 @@ public class SessionChooserPane extends StackPane {
 		setPrefSize(800, 560);
 		
 		lessonButton = new JFXButton("Quiz");
-		lessonButton.getStyleClass().add("button-raised");
+		lessonButton.setStyle(MainView.STYLES.BUTTON_RAISED.toString());
 		manualButton = new JFXButton("Search");
-		manualButton.getStyleClass().add("button-raised");
+		manualButton.setStyle(MainView.STYLES.BUTTON_RAISED.toString());
 		
 		buttonsBox = new HBox();
 		buttonsBox.setAlignment(Pos.TOP_CENTER);

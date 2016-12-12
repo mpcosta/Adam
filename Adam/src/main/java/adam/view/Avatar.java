@@ -15,22 +15,30 @@ public class Avatar {
 
 	private static final Image SPEAKING_IMAGE = new Image("adam/view/res/speaking_animation.png");
 	private static final Image LISTENING_IMAGE = new Image("adam/view/res/ears_and_eyes.png");
-	private static final Image STATIC_IMAGE = new Image("adam/view/res/ears_and_eyes.png");
+	private static final Image STATIC_IMAGE = new Image("adam/view/res/static_image.png");
 	private static final int FRAMES_SPEAKING_IMAGE = 4;
 	private static final int FRAME_LISTENING_IMAGE = 16;
-
-	private ImageView staticImageView;
-	private ImageView listeningImageView;
-	private ImageView speakingImageView;
 	
 	private Scene scene;
+	
+	private ImageView staticImage, speakingImage, listeningImage; 
 
 	public Avatar(Scene scene) {
 		this.scene = scene;
 		
-		staticImageView = new ImageView(STATIC_IMAGE);
-		listeningImageView = createAnimatedImageView(LISTENING_IMAGE, 601, 582, FRAMES_SPEAKING_IMAGE, 700);
-		speakingImageView = createAnimatedImageView(SPEAKING_IMAGE, 601, 582, FRAME_LISTENING_IMAGE, 450);
+		initStaticImage();
+		
+		listeningImage = createAnimatedImageView(LISTENING_IMAGE, 601, 582, FRAMES_SPEAKING_IMAGE, 700);
+		listeningImage.setFitHeight(90);
+		speakingImage = createAnimatedImageView(SPEAKING_IMAGE, 601, 582, FRAME_LISTENING_IMAGE, 450);
+		speakingImage.setFitHeight(90);
+	}
+
+	private void initStaticImage() {
+		staticImage = new ImageView(STATIC_IMAGE);
+		staticImage.setPreserveRatio(true);
+		staticImage.setFitHeight(90);
+		addButtonCapabilities(staticImage);
 	}
 
 	private ImageView createAnimatedImageView(Image image, int frameWidth, int frameHeight, int framesNumber,
@@ -59,20 +67,8 @@ public class Avatar {
 			}
 		});
 	}
-	
-	public ImageView getListeningImageView() {
-		return listeningImageView;
-	}
-	
-	public ImageView getSpeakingImageView() {
-		return speakingImageView;
-	}
-	
-	public ImageView getStaticImageView() {
-		return staticImageView;
-	}
 
-	public class SpriteAnimation extends Transition {
+	private class SpriteAnimation extends Transition {
 		private final ImageView imageView;
 		private final int columns;
 		private final int width;
@@ -97,5 +93,17 @@ public class Avatar {
 				lastIndex = index;
 			}
 		}
+	}
+
+	public ImageView getStaticImage() {
+		return staticImage;
+	}
+
+	public ImageView getSpeakingImage() {
+		return speakingImage;
+	}
+
+	public ImageView getListeningImage() {
+		return listeningImage;
 	}
 }

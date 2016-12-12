@@ -95,7 +95,7 @@
     <component name="jsgfGrammar" type="edu.cmu.sphinx.jsgf.JSGFGrammar">
         <property name="dictionary" value="dictionary"/>
         <property name="grammarLocation"
-             value="resource:/Adam/src/main/java/adam/model/speech/"/>
+             value="resource:/adam/model/speech/"/>
         <property name="grammarName" value="adam"/>
 	<property name="logMath" value="logMath"/>
     </component>
