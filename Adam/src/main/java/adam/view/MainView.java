@@ -57,7 +57,7 @@ public class MainView extends BorderPane {
 		
 		// Creating the loading component
 		loadingSpinner = new JFXSpinner();
-		loadingLabel = new Label("%");
+		loadingLabel = new Label("Loading...");
 		loadingLabel.setPadding(new Insets(60,0,0,0));
 		loadingPane = new StackPane();
 		loadingPane.getChildren().addAll(loadingSpinner, loadingLabel);
@@ -184,8 +184,8 @@ public class MainView extends BorderPane {
 	/**
 	 * A method to set the loading label to appear a text 
 	 */
-	public void setLoadingLabel(int value) {
-		loadingLabel.setText(value + "%");
+	public void setLoadingLabel(String value) {
+		loadingLabel.setText(value);
 	}
 	
 	/**
