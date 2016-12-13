@@ -1,9 +1,10 @@
 package adam.view;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.apache.commons.io.IOUtils;
 
 public class Questions {
 	
@@ -24,26 +25,18 @@ public class Questions {
 		return correctAnswers;
 	}
 
+	@SuppressWarnings("deprecation")
 	private String readStateFromFile() {
+		String result = "";
 
-		String dataString = "";
-
+		ClassLoader classLoader = getClass().getClassLoader();
 		try {
-			FileInputStream in = new FileInputStream(Questions.class.getResource("/Questions.txt").getPath());
-			int i = 0;
-							
-			while ((i = in.read()) != -1) {
-				dataString = dataString + (char) i;
-			}
-			
-			in.close();
-			
+		    result = IOUtils.toString(classLoader.getResourceAsStream("Questions.txt"));
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 		}
 
-		return dataString;
+		return result;
 	}
 
 	private Object getDataFromFile(String type) {

@@ -17,8 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -42,21 +41,18 @@ public class MainController {
 	
 	private void init() {
 		mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
-			System.out.println("I have to listen now..");
-			mainView.getTopPane().getChildren().remove(mainView.getAvatar().getStaticImage());
-			mainView.getTopPane().getChildren().add(mainView.getAvatar().getListeningImage());
 			Thread thread = new Thread() {
 				public void run() {
-					System.out.println(speech.listenVoiceToString());
+					String result = speech.listenVoiceToString();
+					
+					speech.speakMessage(result);
+					
+					if (result.contains("exit")) {
+						System.exit(1);
+					}
 				}
 			};
 			thread.start();
-		});
-		
-		mainView.getAvatar().getListeningImage().setOnMouseClicked(handler -> {
-			System.out.println("I will stop listening..");
-			mainView.getTopPane().getChildren().remove(mainView.getAvatar().getListeningImage());
-			mainView.getTopPane().getChildren().add(mainView.getAvatar().getStaticImage());
 		});
 			
 		QHandler qHandler = new QHandler(mainView.getQuizPane().getQuestionAndAnswers().entrySet().iterator(), mainView.getQuizPane().getCorrectAnswers());
@@ -218,13 +214,13 @@ public class MainController {
 				if (firstTime) {
 					entry = entryIterator.next();
 					mainView.getQuizPane().changeQuestion(entry.getKey(), entry.getValue(), correct.get(entry.getKey()));
-					mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+					mainView.getQuizPane().setHandlersForAnswers(new CheckBoxesHandler(mainView.getQuizPane().getButton()));
 					firstTime = false;
 				} else {
 					if (correctAnswer) {
 						entry = entryIterator.next();
 						mainView.getQuizPane().changeQuestion(entry.getKey(), entry.getValue(), correct.get(entry.getKey()));
-						mainView.getQuizPane().setHandlersForAnswers(new RadioButtonsHandler(mainView.getQuizPane().getButton()));
+						mainView.getQuizPane().setHandlersForAnswers(new CheckBoxesHandler(mainView.getQuizPane().getButton()));
 						correctAnswer = false;
 						mainView.getQuizPane().getButton().setText("Submit");
 					} else {
@@ -265,17 +261,17 @@ public class MainController {
 		}
 	}
 	
-	private static class RadioButtonsHandler implements EventHandler<ActionEvent> {
+	private static class CheckBoxesHandler implements EventHandler<ActionEvent> {
 		
 		private Button submitButton;
 		
-		public RadioButtonsHandler(Button submitButton) {
+		public CheckBoxesHandler(Button submitButton) {
 			this.submitButton = submitButton;
 		}
 
 		@Override
 		public void handle(ActionEvent event) {
-			submitButton.setDisable(((RadioButton) event.getSource()).isDisabled());
+			submitButton.setDisable(((CheckBox) event.getSource()).isDisabled());
 		}
 		
 	}

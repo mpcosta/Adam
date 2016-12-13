@@ -1,0 +1,10 @@
+#JSGF V1.0;
+
+grammar adam;
+
+<menu_command> =  [[change | switch] chart] [to] map |
+                  [go to [the]] bank account |
+                  weather forecast           |
+                  exit [[the] program]       ;
+
+public <command> = <menu_command>;
