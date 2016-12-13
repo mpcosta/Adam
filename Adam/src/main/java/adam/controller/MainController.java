@@ -26,7 +26,9 @@ public class MainController {
 	
 	private MainView mainView;
 	private CommandProcessor commandProcessor;
+	
 	private Speech speech;
+	private boolean canActivateSpeech = false;
 	
 	private Thread commandProcessorThread;
 
@@ -34,26 +36,35 @@ public class MainController {
 		this.mainView = mainView;
 		commandProcessor = new CommandProcessor(mainView);
 		commandProcessorThread = null;
-		speech = new Speech();
+		
+		try {
+			speech = new Speech();
+			canActivateSpeech = true;
+		} catch (Exception e) {
+			System.err.println("SpeechException: Microphone/Speakers cannot be found!");
+			canActivateSpeech = false;
+		}
 		
 		init();
 	}
 	
 	private void init() {
-		mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
-			Thread thread = new Thread() {
-				public void run() {
-					String result = speech.listenVoiceToString();
-					
-					speech.speakMessage(result);
-					
-					if (result.contains("exit")) {
-						System.exit(1);
+		if (canActivateSpeech) {
+			mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
+				Thread thread = new Thread() {
+					public void run() {
+						String result = speech.listenVoiceToString();
+						
+						speech.speakMessage(result);
+						
+						if (result.contains("exit")) {
+							System.exit(1);
+						}
 					}
-				}
-			};
-			thread.start();
-		});
+				};
+				thread.start();
+			});
+		}
 			
 		QHandler qHandler = new QHandler(mainView.getQuizPane().getQuestionAndAnswers().entrySet().iterator(), mainView.getQuizPane().getCorrectAnswers());
 		

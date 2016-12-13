@@ -1,10 +1,11 @@
 package adam.view;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.apache.commons.io.IOUtils;
 
 public class Questions {
 	
@@ -25,17 +26,28 @@ public class Questions {
 		return correctAnswers;
 	}
 
-	@SuppressWarnings("deprecation")
 	private String readStateFromFile() {
 		String result = "";
-
-		ClassLoader classLoader = getClass().getClassLoader();
+		
+		InputStream in = getClass().getResourceAsStream("/Questions.txt"); 
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		
 		try {
-		    result = IOUtils.toString(classLoader.getResourceAsStream("Questions.txt"));
+			String currentLine;
+			while ((currentLine = reader.readLine()) != null) {
+				result += currentLine + "\n";
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
-
+		
 		return result;
 	}
 

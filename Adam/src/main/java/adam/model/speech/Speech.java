@@ -42,7 +42,7 @@ public class Speech {
 	/**
 	 * A constructor for the speech model.
 	 */
-	public Speech() {	
+	public Speech() throws Exception {	
 		Configuration configuration = new Configuration();
         configuration.setAcousticModelPath(ACOUSTIC_MODEL);
         configuration.setDictionaryPath(DICTIONARY_PATH);
