@@ -46,7 +46,7 @@ public class WorldMap extends StackPane {
 		
 		getChildren().add(mapView);
 		
-//		mapView.fitWidthProperty().bind(MainView.primaryStage.widthProperty());
+		mapView.fitWidthProperty().bind(MainView.primaryStage.widthProperty());
 //		mapView.fitHeightProperty().bind(MainView.primaryStage.widthProperty());
 	}
 	
