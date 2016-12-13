@@ -1,4 +1,4 @@
-package adam.view.res;
+package adam.view;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class Questions {
 		String dataString = "";
 
 		try {
-			FileInputStream in = new FileInputStream("src/main/java/adam/view/res/Questions.txt");
+			FileInputStream in = new FileInputStream(Questions.class.getResource("/Questions.txt").getPath());
 			int i = 0;
 							
 			while ((i = in.read()) != -1) {

@@ -13,9 +13,9 @@ import javafx.util.Duration;
 
 public class Avatar {
 
-	private static final Image SPEAKING_IMAGE = new Image("adam/view/res/speaking_animation.png");
-	private static final Image LISTENING_IMAGE = new Image("adam/view/res/ears_and_eyes.png");
-	private static final Image STATIC_IMAGE = new Image("adam/view/res/static_image.png");
+	private final Image SPEAKING_IMAGE = new Image("/speaking_animation.png");
+	private final Image LISTENING_IMAGE = new Image("/ears_and_eyes.png");
+	private final Image STATIC_IMAGE = new Image("/static_image.png");
 	private static final int FRAMES_SPEAKING_IMAGE = 4;
 	private static final int FRAME_LISTENING_IMAGE = 16;
 	

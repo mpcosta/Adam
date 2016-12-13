@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import com.jfoenix.controls.JFXButton;
 
-import adam.view.res.Questions;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

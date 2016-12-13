@@ -54,7 +54,7 @@ public class Speech {
 	public Speech() {
 		
 		// Getting resources.
-		cm = new ConfigurationManager(Speech.class.getResource("adam.config.xml"));
+		cm = new ConfigurationManager(Speech.class.getResource("/adam.config.xml"));
 
 		// Initiated the recognizer.
 		recognizer = (Recognizer) cm.lookup("recognizer");
