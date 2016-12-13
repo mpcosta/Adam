@@ -11,7 +11,7 @@ public class Region extends Area
 		super(c);
 	}
 	
-	protected static boolean codeIsValid(Code code)
+	protected static boolean codeIsValid(Code code) throws RequestException
 	{
 		return (areas.containsKey(code) && areas.get(code) instanceof Region)
 				|| dataFetcher.regionCodeExists(code.get());

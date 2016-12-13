@@ -318,7 +318,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The code of the Area.
 	 * @return	True if a Area exists with the specified code.
 	 */
-	public boolean areaCodeExists(String code)
+	public boolean areaCodeExists(String code) throws RequestException
 	{
 		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
@@ -336,7 +336,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The query code.
 	 * @return	True if the specified code matches to a Country.
 	 */
-	public boolean countryCodeExists(String code)
+	public boolean countryCodeExists(String code) throws RequestException
 	{
 		return areaCodeExists(code) && !isRegion(code);
 	}
@@ -346,7 +346,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The query code.
 	 * @return	True if the specified code matches to a Region.
 	 */
-	public boolean regionCodeExists(String code)
+	public boolean regionCodeExists(String code) throws RequestException
 	{
 		return areaCodeExists(code) && isRegion(code);
 	}
@@ -356,7 +356,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The area code.
 	 * @return	True if the specified code matches to a region.
 	 */
-	public boolean isRegion(String code)
+	public boolean isRegion(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:capitalCity").equals("");
 	}
@@ -366,7 +366,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Area code.
 	 * @return	The name of the Area.
 	 */
-	public String getNameFromCode(String code)
+	public String getNameFromCode(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:name");
 	}
@@ -376,7 +376,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The name of the region which Country is part of.
 	 */
-	public String getRegionFromCode(String code)
+	public String getRegionFromCode(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:region");
 	}
@@ -386,7 +386,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The income level for the specified Country.
 	 */
-	public String getIncomeLevelFromCode(String code)
+	public String getIncomeLevelFromCode(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:incomeLevel");
 	}
@@ -396,7 +396,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The lending type for the specified Country.
 	 */
-	public String getLendingType(String code)
+	public String getLendingType(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:lendingType");
 	}
@@ -406,7 +406,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The name of the Countries capital city.
 	 */
-	public String getCapitalCity(String code)
+	public String getCapitalCity(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:capitalCity");
 	}
@@ -416,7 +416,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The longitude of the Country. 
 	 */
-	public double getLongitude(String code)
+	public double getLongitude(String code) throws RequestException
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:longitude"));
 	}
@@ -426,7 +426,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The latitude of the Country.
 	 */
-	public double getLatitude(String code)
+	public double getLatitude(String code) throws RequestException
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
 	}
@@ -493,7 +493,10 @@ public class WorldBankDataFetcher {
 					}
 				}
 			}
-			throw new RequestException(RequestException.NO_CONNECTION, "Cached data exists for the years " + minStart + " to " + maxEnd + ".");
+			if (minStart != 0 && maxEnd != 0)
+				throw new RequestException(RequestException.NO_CONNECTION, "Cached data exists for the years " + minStart + " to " + maxEnd + ".");
+			else
+				throw new RequestException(RequestException.NO_CONNECTION);
 		}
 		NodeList dates = document.getElementsByTagName("wb:date"), values = document.getElementsByTagName("wb:value");
 		for (int i = 0; i < values.getLength(); i++)
@@ -511,7 +514,7 @@ public class WorldBankDataFetcher {
 	 * @param tagName the tagName of the data we want.
 	 * @return	A String with the data we wanted.
 	 */
-	private String getDataFromCode(String code, String tagName)
+	private String getDataFromCode(String code, String tagName) throws RequestException
 	{
 		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
@@ -567,7 +570,11 @@ public class WorldBankDataFetcher {
 		
 	}
 	
-	private Document getDocumentForAllAreas()
+	/**
+	 * Retrieve the worldbank document for all areas.
+	 * @return
+	 */
+	private Document getDocumentForAllAreas() throws RequestException
 	{
 		try
 		{
@@ -575,33 +582,16 @@ public class WorldBankDataFetcher {
 		}
 		catch (Exception e)
 		{
-			return null;
+			throw new RequestException(RequestException.NO_CONNECTION);
 		}
 	}
 	
 	/**
-	 *  Private void method to print the whole Document type of variable
-	 *  Check if all the data is on the Document
-	 *
-	 * @param  doc  a Document type of variable
-	 * @param  out  an OutputStream type
+	 * Transform a Document into a String.
+	 * @param document	The document to transform.
+	 * @return	The String representation of the document.
+	 * @throws Exception
 	 */
-	private static void printDocument(Document doc, OutputStream out) {
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer;
-		try {
-			transformer = tf.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			transformer.transform(new DOMSource(doc), 
-			new StreamResult(new OutputStreamWriter(out, "UTF-8")));
-						
-		} catch (UnsupportedEncodingException | TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
-	}
-	
 	private static String documentAsString(Document document) throws Exception
 	{
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();

@@ -28,7 +28,7 @@ public class MainController {
 	private CommandProcessor commandProcessor;
 	
 	private Speech speech;
-	private boolean canActivateSpeech = false;
+	private boolean canActivateSpeech;
 	
 	private Thread commandProcessorThread;
 
@@ -41,7 +41,6 @@ public class MainController {
 			speech = new Speech();
 			canActivateSpeech = true;
 		} catch (Exception e) {
-			System.err.println("SpeechException: Microphone/Speakers cannot be found!");
 			canActivateSpeech = false;
 		}
 		
@@ -58,7 +57,7 @@ public class MainController {
 						speech.speakMessage(result);
 						
 						if (result.contains("exit")) {
-							System.exit(1);
+							System.exit(0);
 						}
 					}
 				};
@@ -156,6 +155,7 @@ public class MainController {
 	
 	private void processRequest(Event event)
 	{
+		mainView.getManualSessionPane().setSearchDisabled(true);
 		ManualPane manualPane = mainView.getManualSessionPane();
 		AutoCompleteTextField textField;
 		String text_construct;
@@ -188,6 +188,7 @@ public class MainController {
 					public void run()
 					{
 						mainView.removeLoadingScreen();
+						mainView.getManualSessionPane().setSearchDisabled(false);
 						if (newPane == null)
 							return;
 						mainView.transition(newPane);

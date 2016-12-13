@@ -63,7 +63,7 @@ public abstract class Area
 	 * Gets the name for the Area.
 	 * @return	The Area name.
 	 */
-	public String getName()
+	public String getName() throws RequestException
 	{
 		if (name == null)
 			name = dataFetcher.getNameFromCode(code.get());
@@ -137,19 +137,19 @@ public abstract class Area
 	 * @param code	The query code.
 	 * @return	True if an Area exists with the specified code.
 	 */
-	public static boolean codeIsValid(String code)
+	public static boolean codeIsValid(String code) throws RequestException
 	{
 		try
 		{
 			return codeIsValid(new Code(code));
 		}
-		catch (Exception e)
+		catch (CodeInvalidException e)
 		{
 			return false;
 		}
 	}
 	
-	protected static boolean codeIsValid(Code code)
+	protected static boolean codeIsValid(Code code) throws RequestException
 	{
 		return areas.containsKey(code) || dataFetcher.areaCodeExists(code.get());
 	}
@@ -160,10 +160,10 @@ public abstract class Area
 		
 		private String code;
 		
-		public Code(String c) throws Exception
+		public Code(String c) throws CodeInvalidException
 		{
 			if (c.length() != CODE_LENGTH)
-				throw new Exception(EX_CODE_INVALID + ": " + c + "; Code length must be " + CODE_LENGTH);
+				throw new CodeInvalidException(c);
 			code = c.toLowerCase();
 		}
 		
@@ -186,6 +186,14 @@ public abstract class Area
 			if (!(o instanceof Code))
 				return super.equals(o);
 			return code.equals(((Code)o).code);
+		}
+	}
+	
+	protected static class CodeInvalidException extends Exception
+	{
+		public CodeInvalidException(String code)
+		{
+			super(EX_CODE_INVALID + ": " + code + "; Code length must be " + Code.CODE_LENGTH);
 		}
 	}
 }

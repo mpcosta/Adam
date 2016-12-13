@@ -220,4 +220,10 @@ public class ManualPane extends StackPane {
 	{
 		return getChildren().contains(advancedBar);
 	}
+	
+	public void setSearchDisabled(boolean value)
+	{
+		submitButton.setDisable(value);
+		textField.setDisable(value);
+	}
 }

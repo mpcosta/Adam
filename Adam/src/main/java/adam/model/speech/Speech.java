@@ -58,48 +58,40 @@ public class Speech {
         if (configFile == null)
         	System.setProperty("java.util.logging.config.file", "ignoreAllSphinx4LoggingOutput");
         
-        try {
-			recognizer = new LiveSpeechRecognizer(configuration);
-		} catch (IOException e1) {
-			System.out.println("Cannot load recongizer configurations!");
-		}
+        recognizer = new LiveSpeechRecognizer(configuration);
 
-		try {
-			// Setting properties and configurations.
-			System.setProperty("FreeTTSSynthEngineCentral", "com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
-			System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
-			Central.registerEngineCentral("com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
-			
-			// Initiating the SynthesizerModeDesc
-			desc = new SynthesizerModeDesc(null, "general", Locale.US, null, null);
-			
-			// Initiating the synthesizer.
-			synth = Central.createSynthesizer(desc);
-			
-			// Allocating memory to the synthesizer.
-			synth.allocate();
-			
-			// Getting the engine for the syntesizer
-	        desc = (SynthesizerModeDesc) synth.getEngineModeDesc();
-	        
-	        // Getting the voice from the resources.
-	        Voice[] voices = desc.getVoices();
-	        voice = null;
-	        for (Voice entry : voices) {
-	            if(entry.getName().equals("kevin16")) {
-	                voice = entry;
-	                break;
-	            }
-	        }
-			
-			// Setting the voice for the synthesizer.
-			synth.getSynthesizerProperties().setVoice(voice);
-			
-			// Resuming the object.
-			synth.resume();
-		} catch (EngineException | PropertyVetoException | AudioException | EngineStateError e) {
-			e.printStackTrace();
-		}
+        // Setting properties and configurations.
+     	System.setProperty("FreeTTSSynthEngineCentral", "com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
+     	System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
+     	Central.registerEngineCentral("com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
+     			
+     	// Initiating the SynthesizerModeDesc
+     	desc = new SynthesizerModeDesc(null, "general", Locale.US, null, null);
+     			
+     	// Initiating the synthesizer.
+     	synth = Central.createSynthesizer(desc);
+     			
+     	// Allocating memory to the synthesizer.
+     	synth.allocate();
+     			
+     	// Getting the engine for the syntesizer
+     	desc = (SynthesizerModeDesc) synth.getEngineModeDesc();
+     	        
+     	// Getting the voice from the resources.
+     	Voice[] voices = desc.getVoices();
+     	voice = null;
+     	for (Voice entry : voices) {
+     		if(entry.getName().equals("kevin16")) {
+     	    	voice = entry;
+     	    	break;
+     		}
+     	}
+     			
+     	// Setting the voice for the synthesizer.
+     	synth.getSynthesizerProperties().setVoice(voice);
+     			
+     	// Resuming the object.
+     	synth.resume();
 	}
 
 	/**
@@ -111,17 +103,12 @@ public class Speech {
 		recognizer.startRecognition(true);
         while (true) {
             utterance = recognizer.getResult().getHypothesis();
-            
-            System.out.println("Exit\n"
-            		+ "Change/Switch chart to map/line/bar");
 
             if (utterance.startsWith("exit")) {
-            	System.out.println("All right, exiting the aplication");
                 break;
             }
 
             if (utterance.contains("chart")) {
-                System.out.println("You said " + utterance);
                 break;
             }
         }
@@ -143,9 +130,6 @@ public class Speech {
 			// Speak the text.
 			synth.speakPlainText(text, null);
 			
-			// Feedback
-			System.out.println("Speaking: " + text);
-			
 			// Wait until the queue is empty.
 			synth.waitEngineState(Synthesizer.QUEUE_EMPTY);
 		} catch (Exception e) {
@@ -159,7 +143,7 @@ public class Speech {
 	}
 	
 	/**
-	 * A method to speak the favourites sentence.
+	 * A method to speak a message.
 	 */
 	public void speakMessage(String option) {
 		if (!option.equals("")) {
