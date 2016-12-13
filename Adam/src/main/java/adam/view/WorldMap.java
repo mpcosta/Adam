@@ -25,6 +25,9 @@ public class WorldMap extends StackPane {
 	// Countries separated by |
 	private String mapCountries = "chld=";
 	
+	// Countries separated by | for legend
+	private String mapCountriesForLegend = "chdl=";
+	
 	// Percentage separated by ,
 	private String mapColorValuesPercentage = "chd=t:";
 	
@@ -47,10 +50,17 @@ public class WorldMap extends StackPane {
 //		mapView.fitHeightProperty().bind(MainView.primaryStage.widthProperty());
 	}
 	
-	public ImageView changeMap(ObservableList<String> countriesList, ObservableList<Double> values) {
+	public ImageView changeMap(ObservableList<String> countriesCodes, ObservableList<String> countriesNames, ObservableList<Double> values) {
 		currentMapSource = urlSource + mapOrientation + URL_SEPARATOR + mapSize + URL_SEPARATOR + mapCountries;
 		
-		for (String country : countriesList) {
+		for (String country : countriesCodes) {
+			currentMapSource += (country.toUpperCase() + COUNTRY_SEPARATOR);
+		}
+		
+		currentMapSource = currentMapSource.substring(0, currentMapSource.length() - 1) + URL_SEPARATOR;
+		
+		currentMapSource += mapCountriesForLegend;
+		for (String country : countriesNames) {
 			currentMapSource += (country.toUpperCase() + COUNTRY_SEPARATOR);
 		}
 		
@@ -65,6 +75,8 @@ public class WorldMap extends StackPane {
 		currentMapSource = currentMapSource.substring(0, currentMapSource.length() - 1);
 		
 		currentMapSource += (URL_SEPARATOR + mapColorRanges);
+		
+		currentMapSource = currentMapSource.replaceAll("\\s", "%20");
 		
 		mapView.setImage(new Image(currentMapSource));
 		

@@ -80,8 +80,8 @@ public class ChartPane extends StackPane {
 			pieChart.setData(data);
 	}
 	
-	public void setMapData(ObservableList<String> countriesList, ObservableList<Double> values) {
-		worldMap.changeMap(countriesList, values);
+	public void setMapData(ObservableList<String> countriesCodes, ObservableList<String> countriesNames, ObservableList<Double> values) {
+		worldMap.changeMap(countriesCodes, countriesNames, values);
 	}
 	
 	public void setTitle(String title) {

@@ -29,6 +29,7 @@ public class MainApp extends Application {
 			
 			primaryStage.setTitle(title);
 			primaryStage.setScene(scene);
+			primaryStage.setOnCloseRequest(e -> System.exit(0)); // TODO: Fix why app does not exit without this
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -1,10 +1,8 @@
 package adam.model.speech;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 import java.util.Locale;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.speech.AudioException;
 import javax.speech.Central;
@@ -14,32 +12,18 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 import javax.speech.synthesis.Voice;
 
-import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
 /**
- * The speech model that uses a synthesizer and a recognizer for the voice.
+ * The speech model that uses a synthesiser and a recogniser for the voice.
  * 
  * Using 3rd party libraries under GNU and MIT licenses (FreeTTS & Sphinx 4).
  * @author Razvan-Gabriel Geangu
  */
 public class Speech {
 	
-	// A String that is used for the result text of the recognized text from the user's voice.
-	private String resultText;
-
-	// A ConfigurationManager object.
-	private ConfigurationManager cm;
-
-	// A Recognizer object.
-	private Recognizer recognizer;
-	
-	// A Microphone object.
-	private Microphone microphone;
-	
-	// A Synthesizer object.
+	// A Synthesiser object.
 	private Synthesizer synth;
 	
 	// A SynthesizerModeDesc object.
@@ -48,25 +32,29 @@ public class Speech {
 	// A Voice object.
 	private Voice voice;
 	
+	private static final String ACOUSTIC_MODEL = "resource:/edu/cmu/sphinx/models/en-us/en-us";
+    private static final String DICTIONARY_PATH = "resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict";
+    private static final String GRAMMAR_PATH = "resource:/gram";
+    
+    private LiveSpeechRecognizer recognizer;
+	
 	/**
 	 * A constructor for the speech model.
 	 */
 	public Speech() {
-		
-		// Getting resources.
-		cm = new ConfigurationManager(Speech.class.getResource("/adam.config.xml"));
+		Configuration configuration = new Configuration();
+        configuration.setAcousticModelPath(ACOUSTIC_MODEL);
+        configuration.setDictionaryPath(DICTIONARY_PATH);
+        configuration.setGrammarPath(GRAMMAR_PATH);
+        configuration.setUseGrammar(true);
 
-		// Initiated the recognizer.
-		recognizer = (Recognizer) cm.lookup("recognizer");
-		
-		// Start the microphone if it is possible.
-		microphone = (Microphone) cm.lookup("microphone");
-		if (!microphone.startRecording()) {
-			System.out.println("Cannot start microphone.");
-			recognizer.deallocate();
-			System.exit(1);
+        configuration.setGrammarName("adam");
+        try {
+			recognizer = new LiveSpeechRecognizer(configuration);
+		} catch (IOException e1) {
+			System.out.println("Cannot load recongizer configurations!");
 		}
-		
+
 		try {
 			// Setting properties and configurations.
 			System.setProperty("FreeTTSSynthEngineCentral", "com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
@@ -112,61 +100,29 @@ public class Speech {
 	 * A method that uses a 3rd party library to listen to the voice of the user.
 	 */
 	public String listenVoiceToString() {
+		String utterance = "";
 		
-		// A boolean value to know when to stop listening.
-		boolean shouldBeListening = true;
-		
-		recognizer.allocate();
-		
-		System.out.println("Start speaking!");
+		recognizer.startRecognition(true);
+        while (true) {
+            utterance = recognizer.getResult().getHypothesis();
+            
+            System.out.println("Exit\n"
+            		+ "Change/Switch chart to map/line/bar");
 
-		// Loop the recognition until it matches any of the available options.
-		while (shouldBeListening) {
+            if (utterance.startsWith("exit")) {
+            	System.out.println("All right, exiting the aplication");
+                break;
+            }
 
-			Result result = recognizer.recognize();
-
-			if (result != null) {
-				resultText = result.getBestFinalResultNoFiller();
-				
-				String option = "";
-				
-				// A pattern to match the available.
-				Pattern pattern = Pattern.compile("(?<option>(gross\\sdomestic\\sproduct)|(consumer\\sprice\\sindex)|(balance\\sof\\spayments)|(unemployment)|(inflation)|(government\\sspending)|(government\\sconsumption))");
-				Matcher matcher = pattern.matcher(resultText);
-				
-				if (matcher.find()) {
-					option = matcher.group("option");
-					
-					// Feedback
-					System.out.println("You said: " + resultText + '\n');
-					
-					synchronized (recognizer) {
-						// Speak the appropriate message.
-//						speakMessage(option);
-						
-						// Closing the action of listening.
-						shouldBeListening = false;
-						recognizer.deallocate();
-						microphone.stopRecording();
-					}
-					
-					return option;
-				} else {
-					System.out.println("Sorry, can you try again?");
-					Random random = new Random();
-					int i = random.nextInt(2);
-					
-					if (i == 1 || i == 2) {
-						speakMessage("Sorry, can you try again");
-					}
-				}
-			} else {
-				System.out.println("I can't hear what you said.\n");
-				microphone.startRecording();
-			}
-		}
+            if (utterance.contains("chart")) {
+                System.out.println("You said " + utterance);
+                break;
+            }
+        }
+        
+        recognizer.stopRecognition();
 		
-		return "Nothing matched";
+		return utterance;
 	}
 
 	/**
@@ -178,7 +134,6 @@ public class Speech {
 			return;
 
 		try {
-			
 			// Speak the text.
 			synth.speakPlainText(text, null);
 			
@@ -200,18 +155,11 @@ public class Speech {
 	/**
 	 * A method to speak the favourites sentence.
 	 */
-	private void speakMessage(String option) {
+	public void speakMessage(String option) {
 		if (!option.equals("")) {
-			speak("You said " + option + "!");
+			speak(option);
 		} else {
 			speak("I am not sure what you said there.");
 		}
 	}
-	
-	public static void main(String[] args) {
-		Speech test = new Speech();
-		System.out.println(test.listenVoiceToString());
-//		test.speak("Hello Toma, I am a robot and I can speak to you!");
-	}
-
 }

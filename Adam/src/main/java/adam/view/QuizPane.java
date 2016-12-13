@@ -10,8 +10,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -20,7 +20,7 @@ public class QuizPane extends StackPane {
 	private Label questionLabel;
 	private Label resLabel;
 	private Button submitButton;
-	private ArrayList<RadioButton> answersList;
+	private ArrayList<CheckBox> answersList;
 	private VBox questionBox;
 	private int currentQuestion;
 	private Questions questionsRes;
@@ -47,10 +47,11 @@ public class QuizPane extends StackPane {
 		submitButton.setDisable(true);
 		submitButton.setStyle(MainView.STYLES.BUTTON_RAISED.toString());
 		
-		answersList = new ArrayList<RadioButton>();
+		answersList = new ArrayList<CheckBox>();
 		questionBox = new VBox();
 		questionBox.setAlignment(Pos.TOP_CENTER);
 		questionBox.setSpacing(10);
+		questionBox.setPadding(new Insets(10, 40, 10, 40));
 		
 		getChildren().add(questionBox);
 	}
@@ -62,9 +63,9 @@ public class QuizPane extends StackPane {
 		answersList.clear();
 		
 		for (int i = 0; i < answers.size(); ++i){
-			RadioButton one = new RadioButton(answers.get(i));
+			CheckBox one = new CheckBox(answers.get(i));
+			
 			one.setWrapText(true);
-			one.setPadding(new Insets(0,40,0,40));
 			
 			answersList.add(one);
 		}
@@ -94,12 +95,12 @@ public class QuizPane extends StackPane {
 	}
 	
 	public void setHandlersForAnswers(EventHandler<ActionEvent> handler) {
-		for (RadioButton radioButton : answersList) {
-			radioButton.setOnAction(handler);
+		for (CheckBox checkBox : answersList) {
+			checkBox.setOnAction(handler);
 		}
 	}
 	
-	public ArrayList<RadioButton> getAnswersList() {
+	public ArrayList<CheckBox> getAnswersList() {
 		return answersList;
 	}
 	

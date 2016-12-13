@@ -1,11 +1,10 @@
 package adam.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import adam.model.Area;
 import adam.model.Region;
@@ -14,8 +13,8 @@ import adam.view.MainView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -257,6 +256,7 @@ public class CommandProcessor
 			if (startingYear != endingYear)
 				return null;
 			ObservableList<String> areaCodes = FXCollections.observableArrayList();
+			ObservableList<String> areaNames = FXCollections.observableArrayList();
 			ObservableList<Double> areaValues = FXCollections.observableArrayList();
 			for (Area area : areas)
 			{
@@ -268,11 +268,12 @@ public class CommandProcessor
 				if (d == null)
 					continue;
 				areaCodes.add(area.getCode());
+				areaNames.add(area.getName());
 				areaValues.add(d);
 			}
 			if (areaValues.size() == 0)
 				return null;
-			chartPane.setMapData(areaCodes, areaValues);
+			chartPane.setMapData(areaCodes, areaNames, areaValues);
 		}
 		else
 		{
