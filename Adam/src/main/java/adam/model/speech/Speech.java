@@ -48,10 +48,16 @@ public class Speech {
         configuration.setDictionaryPath(DICTIONARY_PATH);
         configuration.setGrammarPath(GRAMMAR_PATH);
         configuration.setUseGrammar(true);
-        
-        cleanConsoleLog();
 
         configuration.setGrammarName("adam");
+        
+        //Prevent LiveSpeechRecognizer from printing to the console:
+        Logger logger = Logger.getLogger("default.config");
+        logger.setLevel(java.util.logging.Level.OFF);
+        String configFile = System.getProperty("java.util.logging.config.file");
+        if (configFile == null)
+        	System.setProperty("java.util.logging.config.file", "ignoreAllSphinx4LoggingOutput");
+        
         try {
 			recognizer = new LiveSpeechRecognizer(configuration);
 		} catch (IOException e1) {
@@ -94,12 +100,6 @@ public class Speech {
 		} catch (EngineException | PropertyVetoException | AudioException | EngineStateError e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void cleanConsoleLog() {
-		Logger logger = Logger.getLogger("default.config"); logger.setLevel(java.util.logging.Level.OFF);
-        String configFile = System.getProperty("java.util.logging.config.file");
-        if (configFile == null) System.setProperty("java.util.logging.config.file", "ignoreAllSphinx4LoggingOutput");
 	}
 
 	/**
