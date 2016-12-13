@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,7 +50,29 @@ public class WorldBankDataFetcher {
 		
 	}
 	
-	
+	/**
+	 * Private method that checks if the user has connection to the Internet
+	 *
+	 * @return true - if the user is connected to the Internet
+	 */
+	private static boolean checkConnection() {
+		try {
+			URL url = new URL("http://www.google.com");
+			URLConnection connection = url.openConnection();
+
+			if(connection.getContentLength() == -1){
+				// Fail to Verify Connection
+				return false;
+			} else {
+				// Connection Established
+				return true;
+			}
+		} catch (IOException e) {
+			// Fail to Open a connection
+			e.printStackTrace();
+		}
+		return false;
+	}
 	
 	
 	/**
@@ -60,7 +83,7 @@ public class WorldBankDataFetcher {
 	 */
 	private static Document loadDocument(String url) throws IOException, ParserConfigurationException, SAXException
 	{
-		if (!cachedDocuments.containsKey(url))
+		if (!cachedDocuments.containsKey(url) && checkConnection() == true)
 		{
 			// Parser to get XML Data from URL Given
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -70,6 +93,9 @@ public class WorldBankDataFetcher {
 			document = dBuilder.parse(new URL(url).openStream());
 			
 			cachedDocuments.put(url, document);
+		} else {
+			// Grab the XML Document we need
+			// URL Could be 2 types - BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE OR BASE_INDICATOR_URL + "/" + indicator
 		}
 		return cachedDocuments.get(url);
 	}
