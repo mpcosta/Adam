@@ -3,6 +3,7 @@ package adam.model.speech;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.speech.AudioException;
 import javax.speech.Central;
@@ -41,12 +42,14 @@ public class Speech {
 	/**
 	 * A constructor for the speech model.
 	 */
-	public Speech() {
+	public Speech() {	
 		Configuration configuration = new Configuration();
         configuration.setAcousticModelPath(ACOUSTIC_MODEL);
         configuration.setDictionaryPath(DICTIONARY_PATH);
         configuration.setGrammarPath(GRAMMAR_PATH);
         configuration.setUseGrammar(true);
+        
+        cleanConsoleLog();
 
         configuration.setGrammarName("adam");
         try {
@@ -91,9 +94,12 @@ public class Speech {
 		} catch (EngineException | PropertyVetoException | AudioException | EngineStateError e) {
 			e.printStackTrace();
 		}
-		
-		// Feedback
-		System.out.println("Speech initiated!");
+	}
+
+	private void cleanConsoleLog() {
+		Logger logger = Logger.getLogger("default.config"); logger.setLevel(java.util.logging.Level.OFF);
+        String configFile = System.getProperty("java.util.logging.config.file");
+        if (configFile == null) System.setProperty("java.util.logging.config.file", "ignoreAllSphinx4LoggingOutput");
 	}
 
 	/**
