@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import adam.model.Area;
 import adam.model.Region;
+import adam.model.RequestException;
 import adam.view.ChartPane;
 import adam.view.MainView;
 import javafx.application.Platform;
@@ -40,6 +41,9 @@ public class CommandProcessor
 	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
 			FROM = 0, TO = 1,
 			ALL_AREAS = 0;
+	private static final String REQUESTEX_DEFAULT = "An error occured when attempting to retrieve results.",
+			REQUESTEX_NO_CONNECTION = "Cannot connect to server and no offline data exists for the specified request. Check your internet connection, or try a smaller year range.",
+			REQUESTEX_INVALID_RANGE = "Invalid range specified. Start year must occur before end year.";
 	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*"),
 			PATTERN_SINGLE = Pattern.compile(".*(\\d\\d\\d\\d).*");
 	
@@ -227,13 +231,22 @@ public class CommandProcessor
 				errorMessage += "- Chart type (e.g. line).\n";
 			if (invalidRange)
 				errorMessage += "- Year range (e.g. 2010 to 2012).\n";
-			StackPane pane = new StackPane();
-			Label label = new Label(errorMessage);
-			pane.getChildren().add(label);
-			return pane;
+			return constructMessagePane(errorMessage);
 		}
 		
-		return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
+		try
+		{
+			return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
+		}
+		catch (RequestException e)
+		{
+			if (e.getType() == RequestException.NO_CONNECTION)
+				return constructMessagePane(REQUESTEX_NO_CONNECTION + " " + e.getInfo());
+			else if (e.getType() == RequestException.INVALID_RANGE)
+				return constructMessagePane(REQUESTEX_INVALID_RANGE + " " + e.getInfo());
+			else
+				return constructMessagePane(REQUESTEX_DEFAULT + " " + e.getInfo());
+		}
 	}
 	
 	private void updateProgress(String status)
@@ -248,7 +261,7 @@ public class CommandProcessor
 		});
 	}
 	
-	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear)
+	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear) throws RequestException
 	{
 		ChartPane chartPane = new ChartPane(chartType, title);
 		if (chartType == MAP)
@@ -298,6 +311,14 @@ public class CommandProcessor
 			chartPane.setChartData(chartData);
 		}
 		return chartPane;
+	}
+	
+	private Pane constructMessagePane(String message)
+	{
+		StackPane pane = new StackPane();
+		Label label = new Label(message);
+		pane.getChildren().add(label);
+		return pane;
 	}
 	
 	private ArrayList<String> findAllThatMatch(String[] possibilities)

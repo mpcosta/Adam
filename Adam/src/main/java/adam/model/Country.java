@@ -1,7 +1,5 @@
 package adam.model;
 
-import java.util.HashMap;
-
 public class Country extends Area
 {
 	private String region, incomeLevel, lendingType, capitalCity;

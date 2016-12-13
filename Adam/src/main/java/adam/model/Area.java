@@ -70,14 +70,17 @@ public abstract class Area
 		return name;
 	}
 	
-	public HashMap<Integer, Double> getIndicatorData(int indicator, int startYear, int endYear)
+	public HashMap<Integer, Double> getIndicatorData(int indicator, int startYear, int endYear) throws RequestException
 	{
+		if (endYear < startYear)
+			throw new RequestException(RequestException.INVALID_RANGE);
 		if (!indicators.containsKey(indicator))
 			indicators.put(indicator, new HashMap<Integer, Double>());
 		HashMap<Integer, Double> cached = indicators.get(indicator);
 		if (!indicators_minYear.containsKey(indicator) || !indicators_maxYear.containsKey(indicator) || indicators_minYear.get(indicator) > startYear || indicators_maxYear.get(indicator) < endYear)
 		{
-			cached.putAll(dataFetcher.getIndicatorData(code.get(), indicator, startYear, endYear));
+			HashMap<Integer, Double> toCache = dataFetcher.getIndicatorData(code.get(), indicator, startYear, endYear);
+			cached.putAll(toCache);
 			indicators_minYear.put(indicator, startYear);
 			indicators_maxYear.put(indicator, endYear);
 		}

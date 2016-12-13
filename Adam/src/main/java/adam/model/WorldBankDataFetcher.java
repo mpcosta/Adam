@@ -1,12 +1,24 @@
 package adam.model;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.FileWriter;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,20 +49,29 @@ public class WorldBankDataFetcher {
 			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
 			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS",
 			
-			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year";
+			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year",
+			
+			OFFLINE_CACHING_PATH = "res/offline-data/";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
-	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
-	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>();
+	private static final Pattern INDICATOR_RANGE_QUERY = Pattern.compile("api.worldbank.org_countries_(..)_indicators_(.*)_date=(\\d\\d\\d\\d)_(\\d\\d\\d\\d).*");
 	
+	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
+	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>(); 
 	
 	public WorldBankDataFetcher()
 	{
 		
 	}
 	
-	
-	
+	private static String urlToFilename(String url)
+	{
+		url = url.replace("http://", "");
+		url = url.replace('/', '_');
+		url = url.replace(':', '_');
+		url = url.replace('?', '_');
+		return OFFLINE_CACHING_PATH + url;
+	}
 	
 	/**
 	 * Private method that loads the XML Document from a specific URL 
@@ -62,16 +83,39 @@ public class WorldBankDataFetcher {
 	{
 		if (!cachedDocuments.containsKey(url))
 		{
-			// Parser to get XML Data from URL Given
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			Document document = null;
-			
 			DocumentBuilder dBuilder = builderFactory.newDocumentBuilder();
-			document = dBuilder.parse(new URL(url).openStream());
+			try
+			{
+				InputStream stream = new URL(url).openStream();
+				document = dBuilder.parse(stream);
+				String filename = urlToFilename(url);
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
+				writer.write(documentAsString(document));
+				writer.close();
+			}
+			catch (IOException e)
+			{
+				document = loadOfflineDocument(dBuilder, url);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 			
 			cachedDocuments.put(url, document);
+		} else {
+			// Grab the XML Document we need
+			// URL Could be 2 types - BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE OR BASE_INDICATOR_URL + "/" + indicator
 		}
 		return cachedDocuments.get(url);
+	}
+	
+	private static Document loadOfflineDocument(DocumentBuilder dBuilder, String url) throws IOException, SAXException
+	{
+		File file = new File(urlToFilename(url));
+		return dBuilder.parse(file);
 	}
 	
 	
@@ -419,17 +463,37 @@ public class WorldBankDataFetcher {
 		return null;
 	}
 	
-	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear)
+	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear) throws RequestException
 	{
 		HashMap<Integer, Double> data = new HashMap<Integer, Double>();
+		String indicatorCode = getIndicatorCodeFromID(indicator);
 		Document document = null;
 		try
 		{
-			document = loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + getIndicatorCodeFromID(indicator) + "?date=" + startYear + ":" + endYear + "&per_page=" + ITEMS_PER_PAGE);
+			document = loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicatorCode + "?date=" + startYear + ":" + endYear + "&per_page=" + ITEMS_PER_PAGE);
 		}
 		catch (Exception e)
 		{
-			return data;
+			File folder = new File(OFFLINE_CACHING_PATH);
+			File[] files = folder.listFiles();
+			int minStart = 0, maxEnd = 0;
+			for (File file : files)
+			{
+				Matcher matcher = INDICATOR_RANGE_QUERY.matcher(file.getName());
+				if (matcher.matches() && matcher.group(1).equals(code) && matcher.group(2).equals(indicatorCode))
+				{
+					int start = Integer.parseInt(matcher.group(3)),
+							end = Integer.parseInt(matcher.group(4));
+					if (start <= startYear && end >= endYear)
+						return getIndicatorData(code, indicator, start, end);
+					if (end - start > maxEnd - minStart)
+					{
+						minStart = start;
+						maxEnd = end;
+					}
+				}
+			}
+			throw new RequestException(RequestException.NO_CONNECTION, "Cached data exists for the years " + minStart + " to " + maxEnd + ".");
 		}
 		NodeList dates = document.getElementsByTagName("wb:date"), values = document.getElementsByTagName("wb:value");
 		for (int i = 0; i < values.getLength(); i++)
@@ -439,19 +503,6 @@ public class WorldBankDataFetcher {
 				data.put(Integer.parseInt(dates.item(i).getTextContent()), Double.parseDouble(textContent));
 		}
 		return data;
-	}
-	
-	/**
-	 * Checks if a tag exists in the Country Document
-	 * @param code	The Country code.
-	 * @param tagName The name of the Tag.
-	 * @return	True if the Tag Exists
-	 */
-	private boolean tagExistsInCountryDocument(String code, String tagName)
-	{
-		Document document = getDocumentForArea(code);
-		NodeList nodeList = document.getElementsByTagName(tagName);
-		return nodeList.getLength() > 0;
 	}
 	
 	/**
@@ -485,23 +536,6 @@ public class WorldBankDataFetcher {
 		{
 			return null;
 		}
-	}
-	
-	/**
-	 * Gets the Indicator Data based on a set of arguments
-	 * @param code	The Area code.
-	 * @param indicator The Indicator Code
-	 * @param year	The Year wanted.
-	 * @return	The Indicator Data on that Year for that specific Area.
-	 */
-	private String getIndicatorData(String code, String indicator, int year) throws Exception
-	{
-		Document document = getIndicatorDocumentForArea(code, indicator, year);
-		NodeList nodeList = document.getElementsByTagName("wb:value");
-		String text = nodeList.item(0).getTextContent();
-		if (text.equals(""))
-			throw new Exception(EX_INDICATOR_DATA_NOT_FOUND);
-		return text;
 	}
 	
 	/**
@@ -545,26 +579,6 @@ public class WorldBankDataFetcher {
 		}
 	}
 	
-	
-	/**
-	 * Gets the Indicator Document based on a set of arguments
-	 * @param code	The Area code.
-	 * @param indicator The Indicator Code
-	 * @param year	The Year wanted.
-	 * @return	The Document with the Indicator Data on that Year for that specific Area.
-	 */
-	private Document getIndicatorDocumentForArea(String code, String indicator, int year)
-	{
-		try
-		{
-			return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-	}	
-	
 	/**
 	 *  Private void method to print the whole Document type of variable
 	 *  Check if all the data is on the Document
@@ -586,5 +600,18 @@ public class WorldBankDataFetcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
+	}
+	
+	private static String documentAsString(Document document) throws Exception
+	{
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		transformer.setOutputProperty(OutputKeys.MEDIA_TYPE, "xml");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		
+		StringWriter stringWriter = new StringWriter();
+		transformer.transform(new DOMSource(document),  new StreamResult(stringWriter));
+		return stringWriter.toString();
 	}
 }
