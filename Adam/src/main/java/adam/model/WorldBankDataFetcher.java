@@ -17,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,9 +54,10 @@ public class WorldBankDataFetcher {
 			OFFLINE_CACHING_PATH = "res/offline-data/";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
-	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
-	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>();
+	private static final Pattern INDICATOR_RANGE_QUERY = Pattern.compile("api.worldbank.org_countries_(..)_indicators_(.*)_date=(\\d\\d\\d\\d)_(\\d\\d\\d\\d).*");
 	
+	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
+	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>(); 
 	
 	public WorldBankDataFetcher()
 	{
@@ -92,7 +95,7 @@ public class WorldBankDataFetcher {
 				writer.write(documentAsString(document));
 				writer.close();
 			}
-			catch (UnknownHostException e)
+			catch (IOException e)
 			{
 				document = loadOfflineDocument(dBuilder, url);
 			}
@@ -463,14 +466,28 @@ public class WorldBankDataFetcher {
 	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear)
 	{
 		HashMap<Integer, Double> data = new HashMap<Integer, Double>();
+		String indicatorCode = getIndicatorCodeFromID(indicator);
 		Document document = null;
 		try
 		{
-			document = loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + getIndicatorCodeFromID(indicator) + "?date=" + startYear + ":" + endYear + "&per_page=" + ITEMS_PER_PAGE);
+			document = loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicatorCode + "?date=" + startYear + ":" + endYear + "&per_page=" + ITEMS_PER_PAGE);
 		}
 		catch (Exception e)
 		{
-			return data;
+			File folder = new File(OFFLINE_CACHING_PATH);
+			File[] files = folder.listFiles();
+			for (File file : files)
+			{
+				Matcher matcher = INDICATOR_RANGE_QUERY.matcher(file.getName());
+				if (matcher.matches() && matcher.group(1).equals(code) && matcher.group(2).equals(indicatorCode))
+				{
+					int start = Integer.parseInt(matcher.group(3)),
+							end = Integer.parseInt(matcher.group(4));
+					if (start <= startYear && end >= endYear)
+						return getIndicatorData(code, indicator, start, end);
+				}
+			}
+			return null;
 		}
 		NodeList dates = document.getElementsByTagName("wb:date"), values = document.getElementsByTagName("wb:value");
 		for (int i = 0; i < values.getLength(); i++)

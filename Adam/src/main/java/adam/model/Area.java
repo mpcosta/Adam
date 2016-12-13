@@ -77,7 +77,10 @@ public abstract class Area
 		HashMap<Integer, Double> cached = indicators.get(indicator);
 		if (!indicators_minYear.containsKey(indicator) || !indicators_maxYear.containsKey(indicator) || indicators_minYear.get(indicator) > startYear || indicators_maxYear.get(indicator) < endYear)
 		{
-			cached.putAll(dataFetcher.getIndicatorData(code.get(), indicator, startYear, endYear));
+			HashMap<Integer, Double> toCache = dataFetcher.getIndicatorData(code.get(), indicator, startYear, endYear);
+			if (toCache == null)
+				return null;
+			cached.putAll(toCache);
 			indicators_minYear.put(indicator, startYear);
 			indicators_maxYear.put(indicator, endYear);
 		}

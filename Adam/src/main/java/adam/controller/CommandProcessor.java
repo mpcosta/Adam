@@ -228,13 +228,17 @@ public class CommandProcessor
 				errorMessage += "- Chart type (e.g. line).\n";
 			if (invalidRange)
 				errorMessage += "- Year range (e.g. 2010 to 2012).\n";
-			StackPane pane = new StackPane();
-			Label label = new Label(errorMessage);
-			pane.getChildren().add(label);
-			return pane;
+			return constructMessagePane(errorMessage);
 		}
 		
-		return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
+		try
+		{
+			return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
+		}
+		catch (Exception e)
+		{
+			return constructMessagePane("Cannot complete request: Check your internet connection.");
+		}
 	}
 	
 	private void updateProgress(String status)
@@ -249,7 +253,7 @@ public class CommandProcessor
 		});
 	}
 	
-	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear)
+	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear) throws Exception
 	{
 		ChartPane chartPane = new ChartPane(chartType, title);
 		if (chartType == MAP)
@@ -264,6 +268,8 @@ public class CommandProcessor
 					continue;
 				updateProgress("Collecting information for " + area.getName() + "...");
 				HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
+				if (indicatorData == null)
+					throw new Exception("Cannot complete request for data provided");
 				Double d = indicatorData.get(startingYear);
 				if (d == null)
 					continue;
@@ -297,6 +303,14 @@ public class CommandProcessor
 			chartPane.setChartData(chartData);
 		}
 		return chartPane;
+	}
+	
+	private Pane constructMessagePane(String message)
+	{
+		StackPane pane = new StackPane();
+		Label label = new Label(message);
+		pane.getChildren().add(label);
+		return pane;
 	}
 	
 	private ArrayList<String> findAllThatMatch(String[] possibilities)
