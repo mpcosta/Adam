@@ -463,7 +463,7 @@ public class WorldBankDataFetcher {
 		return null;
 	}
 	
-	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear)
+	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear) throws RequestException
 	{
 		HashMap<Integer, Double> data = new HashMap<Integer, Double>();
 		String indicatorCode = getIndicatorCodeFromID(indicator);
@@ -476,6 +476,7 @@ public class WorldBankDataFetcher {
 		{
 			File folder = new File(OFFLINE_CACHING_PATH);
 			File[] files = folder.listFiles();
+			int minStart = 0, maxEnd = 0;
 			for (File file : files)
 			{
 				Matcher matcher = INDICATOR_RANGE_QUERY.matcher(file.getName());
@@ -485,9 +486,14 @@ public class WorldBankDataFetcher {
 							end = Integer.parseInt(matcher.group(4));
 					if (start <= startYear && end >= endYear)
 						return getIndicatorData(code, indicator, start, end);
+					if (end - start > maxEnd - minStart)
+					{
+						minStart = start;
+						maxEnd = end;
+					}
 				}
 			}
-			return null;
+			throw new RequestException(RequestException.NO_CONNECTION, "Cached data exists for the years " + minStart + " to " + maxEnd + ".");
 		}
 		NodeList dates = document.getElementsByTagName("wb:date"), values = document.getElementsByTagName("wb:value");
 		for (int i = 0; i < values.getLength(); i++)
@@ -497,19 +503,6 @@ public class WorldBankDataFetcher {
 				data.put(Integer.parseInt(dates.item(i).getTextContent()), Double.parseDouble(textContent));
 		}
 		return data;
-	}
-	
-	/**
-	 * Checks if a tag exists in the Country Document
-	 * @param code	The Country code.
-	 * @param tagName The name of the Tag.
-	 * @return	True if the Tag Exists
-	 */
-	private boolean tagExistsInCountryDocument(String code, String tagName)
-	{
-		Document document = getDocumentForArea(code);
-		NodeList nodeList = document.getElementsByTagName(tagName);
-		return nodeList.getLength() > 0;
 	}
 	
 	/**
@@ -543,23 +536,6 @@ public class WorldBankDataFetcher {
 		{
 			return null;
 		}
-	}
-	
-	/**
-	 * Gets the Indicator Data based on a set of arguments
-	 * @param code	The Area code.
-	 * @param indicator The Indicator Code
-	 * @param year	The Year wanted.
-	 * @return	The Indicator Data on that Year for that specific Area.
-	 */
-	private String getIndicatorData(String code, String indicator, int year) throws Exception
-	{
-		Document document = getIndicatorDocumentForArea(code, indicator, year);
-		NodeList nodeList = document.getElementsByTagName("wb:value");
-		String text = nodeList.item(0).getTextContent();
-		if (text.equals(""))
-			throw new Exception(EX_INDICATOR_DATA_NOT_FOUND);
-		return text;
 	}
 	
 	/**
@@ -602,26 +578,6 @@ public class WorldBankDataFetcher {
 			return null;
 		}
 	}
-	
-	
-	/**
-	 * Gets the Indicator Document based on a set of arguments
-	 * @param code	The Area code.
-	 * @param indicator The Indicator Code
-	 * @param year	The Year wanted.
-	 * @return	The Document with the Indicator Data on that Year for that specific Area.
-	 */
-	private Document getIndicatorDocumentForArea(String code, String indicator, int year)
-	{
-		try
-		{
-			return loadDocument(BASE_COUNTRY_URL + "/" + code + "/indicators/" + indicator + "?date=" + year);
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-	}	
 	
 	/**
 	 *  Private void method to print the whole Document type of variable

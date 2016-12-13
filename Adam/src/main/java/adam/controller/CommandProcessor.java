@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 
 import adam.model.Area;
 import adam.model.Region;
+import adam.model.RequestException;
 import adam.view.ChartPane;
 import adam.view.MainView;
 import javafx.application.Platform;
@@ -41,6 +42,9 @@ public class CommandProcessor
 	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
 			FROM = 0, TO = 1,
 			ALL_AREAS = 0;
+	private static final String REQUESTEX_DEFAULT = "An error occured when attempting to retrieve results.",
+			REQUESTEX_NO_CONNECTION = "Cannot connect to server and no offline data exists for the specified request. Check your internet connection, or try a smaller year range.",
+			REQUESTEX_INVALID_RANGE = "Invalid range specified. Start year must occur before end year.";
 	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*"),
 			PATTERN_SINGLE = Pattern.compile(".*(\\d\\d\\d\\d).*");
 	
@@ -235,9 +239,14 @@ public class CommandProcessor
 		{
 			return constructChart(title, areas, chartType, dataType, startingYear, endingYear);
 		}
-		catch (Exception e)
+		catch (RequestException e)
 		{
-			return constructMessagePane("Cannot complete request: Check your internet connection.");
+			if (e.getType() == RequestException.NO_CONNECTION)
+				return constructMessagePane(REQUESTEX_NO_CONNECTION + " " + e.getInfo());
+			else if (e.getType() == RequestException.INVALID_RANGE)
+				return constructMessagePane(REQUESTEX_INVALID_RANGE + " " + e.getInfo());
+			else
+				return constructMessagePane(REQUESTEX_DEFAULT + " " + e.getInfo());
 		}
 	}
 	
@@ -253,7 +262,7 @@ public class CommandProcessor
 		});
 	}
 	
-	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear) throws Exception
+	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear) throws RequestException
 	{
 		ChartPane chartPane = new ChartPane(chartType, title);
 		if (chartType == MAP)
@@ -268,8 +277,6 @@ public class CommandProcessor
 					continue;
 				updateProgress("Collecting information for " + area.getName() + "...");
 				HashMap<Integer, Double> indicatorData = area.getIndicatorData(dataType, startingYear, endingYear);
-				if (indicatorData == null)
-					throw new Exception("Cannot complete request for data provided");
 				Double d = indicatorData.get(startingYear);
 				if (d == null)
 					continue;
