@@ -1,11 +1,20 @@
 package adam.model;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.FileWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,7 +47,9 @@ public class WorldBankDataFetcher {
 			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
 			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS",
 			
-			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year";
+			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year",
+			
+			OFFLINE_CACHING_PATH = "res/offline-data/";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
 	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
@@ -50,30 +61,14 @@ public class WorldBankDataFetcher {
 		
 	}
 	
-	/**
-	 * Private method that checks if the user has connection to the Internet
-	 *
-	 * @return true - if the user is connected to the Internet
-	 */
-	private static boolean checkConnection() {
-		try {
-			URL url = new URL("http://www.google.com");
-			URLConnection connection = url.openConnection();
-
-			if(connection.getContentLength() == -1){
-				// Fail to Verify Connection
-				return false;
-			} else {
-				// Connection Established
-				return true;
-			}
-		} catch (IOException e) {
-			// Fail to Open a connection
-			e.printStackTrace();
-		}
-		return false;
+	private static String urlToFilename(String url)
+	{
+		url = url.replace("http://", "");
+		url = url.replace('/', '_');
+		url = url.replace(':', '_');
+		url = url.replace('?', '_');
+		return OFFLINE_CACHING_PATH + url;
 	}
-	
 	
 	/**
 	 * Private method that loads the XML Document from a specific URL 
@@ -83,14 +78,28 @@ public class WorldBankDataFetcher {
 	 */
 	private static Document loadDocument(String url) throws IOException, ParserConfigurationException, SAXException
 	{
-		if (!cachedDocuments.containsKey(url) && checkConnection() == true)
+		if (!cachedDocuments.containsKey(url))
 		{
-			// Parser to get XML Data from URL Given
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			Document document = null;
-			
 			DocumentBuilder dBuilder = builderFactory.newDocumentBuilder();
-			document = dBuilder.parse(new URL(url).openStream());
+			try
+			{
+				InputStream stream = new URL(url).openStream();
+				document = dBuilder.parse(stream);
+				String filename = urlToFilename(url);
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
+				writer.write(documentAsString(document));
+				writer.close();
+			}
+			catch (UnknownHostException e)
+			{
+				document = loadOfflineDocument(dBuilder, url);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 			
 			cachedDocuments.put(url, document);
 		} else {
@@ -98,6 +107,12 @@ public class WorldBankDataFetcher {
 			// URL Could be 2 types - BASE_COUNTRY_URL + "/all?per_page=" + ITEMS_PER_PAGE OR BASE_INDICATOR_URL + "/" + indicator
 		}
 		return cachedDocuments.get(url);
+	}
+	
+	private static Document loadOfflineDocument(DocumentBuilder dBuilder, String url) throws IOException, SAXException
+	{
+		File file = new File(urlToFilename(url));
+		return dBuilder.parse(file);
 	}
 	
 	
@@ -612,5 +627,18 @@ public class WorldBankDataFetcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
+	}
+	
+	private static String documentAsString(Document document) throws Exception
+	{
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		transformer.setOutputProperty(OutputKeys.MEDIA_TYPE, "xml");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		
+		StringWriter stringWriter = new StringWriter();
+		transformer.transform(new DOMSource(document),  new StreamResult(stringWriter));
+		return stringWriter.toString();
 	}
 }
