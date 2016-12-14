@@ -5,10 +5,16 @@ import java.util.HashMap;
 
 public abstract class Area
 {
+	/**
+	 * Seven macroeconomic topics the user can search 
+	 */
 	public static final int GDP = 0, CPI = 1, BOP = 2, UNEMPLOYMENT = 3, INFLATION = 4, GOVERNMENT_SPENDING = 5, GOVERNMENT_CONSUMPTION = 6;
 	
 	protected static final String EX_CODE_INVALID = "Area code provided was not valid";
-	
+	/**
+	 * Calling the static data Fetcher from the World Bank 
+	 * Calling the codes and names for a specific area 
+	 */
 	protected static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
 	protected static HashMap<Code, Area> areas = new HashMap<Code, Area>();
 	
@@ -17,23 +23,35 @@ public abstract class Area
 	private static ArrayList<String> allNames = new ArrayList<String>();
 	
 	protected Code code;
-	
+	/**
+	 * Private hash maps for the indicators and macroeconomic topics 
+	 */
 	private String name;
 	private HashMap<Integer, HashMap<Integer, Double>> indicators;
 	private HashMap<Integer, Integer> indicators_minYear, indicators_maxYear;
 	private HashMap<Integer, Double> gdp, cpi, bop, unemployment, inflation, governmentSpending, governmentConsumption;
-	
+	/**
+	 * Initialises the code for the specified area 
+	 * @param c The code that matches to a country 
+	 * @throws Exception if the area of the code does not exist 
+	 */
 	protected Area(String c) throws Exception
 	{
 		code = new Code(c);
 		initialise();
 	}
+	/**
+	 * Initialises the code for the area 
+	 * @param c the code for the country 
+	 */
 	protected Area(Code c)
 	{
 		code = c;
 		initialise();
 	}
-	
+	/**
+	 * Initialises all data needed for a chart/graph to appear 
+	 */
 	private void initialise()
 	{
 		name = null;
@@ -69,7 +87,13 @@ public abstract class Area
 			name = dataFetcher.getNameFromCode(code.get());
 		return name;
 	}
-	
+	/**
+	 * Gets the data for the Area 
+	 * @param indicator
+	 * @param startYear
+	 * @param endYear
+	 * @return the data for the area 
+	 */
 	public HashMap<Integer, Double> getIndicatorData(int indicator, int startYear, int endYear) throws RequestException
 	{
 		if (endYear < startYear)
@@ -92,7 +116,12 @@ public abstract class Area
 		}
 		return data;
 	}
-	
+	/**
+	 * Gets the area from the code 
+	 * @param c the code for the country 
+	 * @return the code of the area 
+	 * @throws Exception if the area code does not exist 
+	 */
 	public static Area getAreaFromCode(String c) throws Exception
 	{
 		Code code = new Code(c);
@@ -105,28 +134,41 @@ public abstract class Area
 		}
 		return areas.get(code);
 	}
-	
+	/**
+	 * Gets the name of the area code 
+	 * @param name
+	 * @return the name of the area code 
+	 */
 	public static String getAreaCodeFromName(String name)
 	{
 		if (!namesToCodes.containsKey(name))
 			namesToCodes.put(name, dataFetcher.getAreaCodeFromName(name));
 		return namesToCodes.get(name);
 	}
-	
+	/**
+	 * Estimates the possible names from the fragment inputed 
+	 * @param fragment of the possible options 
+	 * @return possible names 
+	 */
 	public static ArrayList<String> estimateNamesFromFragment(String fragment)
 	{
 		if (!fragmentsToNamesEstimates.containsKey(fragment))
 			fragmentsToNamesEstimates.put(fragment, dataFetcher.estimateNamesFromFragment(fragment));
 		return fragmentsToNamesEstimates.get(fragment);
 	}
-	
+	/**
+	 * A getter for all the names in the data fetcher 
+	 * @return an array list of all the names
+	 */
 	public static ArrayList<String> getAllNames()
 	{
 		if (allNames.size() == 0)
 			allNames = dataFetcher.getAllNames();
 		return new ArrayList<String>(allNames);
 	}
-	
+	/**
+	 * A method to store the names that will be used 
+	 */
 	public static void cacheAllNames()
 	{
 		dataFetcher.cacheAllNames();
@@ -148,12 +190,20 @@ public abstract class Area
 			return false;
 		}
 	}
-	
+	/**
+	 * Boolean to check whether the code exists or not 
+	 * @param code for the country 
+	 * @return the code if it exists or not 
+	 */
 	protected static boolean codeIsValid(Code code)
 	{
 		return areas.containsKey(code) || dataFetcher.areaCodeExists(code.get());
 	}
-	
+	/**
+	 * A protected method for the codes length to check whether its valid or not 
+	 * @author hagerabdo
+	 * Containing a boolean to see whether the codes are equal 
+	 */
 	protected static class Code
 	{
 		private static final int CODE_LENGTH = 2;
