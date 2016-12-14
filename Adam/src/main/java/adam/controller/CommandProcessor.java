@@ -14,6 +14,7 @@ import adam.view.MainView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
@@ -31,7 +32,7 @@ public class CommandProcessor
 	},
 	CHARTS = new String[]
 	{
-		"line", "bar", "pie", "map"
+		"line", "bar", "map"
 	},
 	TIME = new String[]
 	{
@@ -40,18 +41,24 @@ public class CommandProcessor
 	AREAS = new String[]
 	{
 		"all areas"
+	},
+	COMMANDS = new String[]
+	{
+		"explain"
 	};
-	/**
-	 * A static method for the three types of charts 
-	 */
-	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
+	//The following constants correlate to indexes in the above arrays of valid keywords:
+	private static final int LINE = 0, BAR = 1, MAP = 2,
 			FROM = 0, TO = 1,
-			ALL_AREAS = 0;
+			ALL_AREAS = 0,
+			EXPLAIN = 0;
 	private static final String REQUESTEX_DEFAULT = "An error occured when attempting to retrieve results.",
-			REQUESTEX_NO_CONNECTION = "Cannot connect to server and no offline data exists for the specified request. Check your internet connection, or try a smaller year range.",
+			REQUESTEX_NO_CONNECTION = "Cannot connect to server and no offline data exists for the specified request.",
+			REQUESTEX_NO_CONNECTION_RANGE = REQUESTEX_NO_CONNECTION + " Check your internet connection, or try a smaller year range.",
 			REQUESTEX_INVALID_RANGE = "Invalid range specified. Start year must occur before end year.",
 			REQUESTEX_MAP_INVALID_RANGE = "Map can only display data for one year. Please specify one year, rather than a range.",
-			REQUESTEX_MAP_NO_DATA = "No data to display.";
+			REQUESTEX_MAP_NO_DATA = "No data to display.",
+			
+			DEFAULT_HELP = "Type commands into the box above. Commands can either describe a graph or a map to display, or can be used to explain certain concepts.\n\nExamples:\nGDP for the European Union vs the Russian Federation from 2000 to 2015 on a line graph.\nexplain CPI.";
 	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*"),
 			PATTERN_SINGLE = Pattern.compile(".*(\\d\\d\\d\\d).*");
 	
@@ -109,7 +116,7 @@ public class CommandProcessor
 		for (String s : CHARTS)
 		{
 			String suggestion = "on a " + s;
-			if (s.equals(CHARTS[LINE]) || s.equals(CHARTS[PIE]))
+			if (s.equals(CHARTS[LINE]))
 				suggestion += " graph";
 			else if (s.equals(CHARTS[BAR]))
 				suggestion += " chart";
@@ -126,8 +133,12 @@ public class CommandProcessor
 					suggestions.add(TIME[TO]);
 			}
 		}
-		
 		for (String s : AREAS)
+		{
+			if (s.contains(segment))
+				suggestions.add(s);
+		}
+		for (String s : COMMANDS)
 		{
 			if (s.contains(segment))
 				suggestions.add(s);
@@ -158,6 +169,13 @@ public class CommandProcessor
 	public Pane process(String c)
 	{
 		command = c;
+		
+		if (command.equals(""))
+			return constructMessagePane(DEFAULT_HELP);
+		
+		if (command.contains(COMMANDS[EXPLAIN]))
+			return explainIndicatorData();
+		
 		String title = "";
 		ArrayList<String> names = Area.getAllNames(),
 				foundNames = findAllThatMatch(names.toArray(new String[0]));
@@ -264,7 +282,7 @@ public class CommandProcessor
 			switch (e.getType())
 			{
 				case RequestException.NO_CONNECTION:
-					return constructMessagePane(REQUESTEX_NO_CONNECTION + " " + e.getInfo());
+					return constructMessagePane(REQUESTEX_NO_CONNECTION_RANGE + " " + e.getInfo());
 				case RequestException.INVALID_RANGE:
 					return constructMessagePane(REQUESTEX_INVALID_RANGE + " " + e.getInfo());
 				case RequestException.MAP_INVALID_RANGE:
@@ -357,9 +375,45 @@ public class CommandProcessor
 	{
 		StackPane pane = new StackPane();
 		Label label = new Label(message);
+		label.setWrapText(true);
+		label.setPadding(new Insets(5));
 		pane.getChildren().add(label);
 		return pane;
 	}
+	
+	private Pane explainIndicatorData()
+	{
+		String explanation = null;
+		for (int i = 0; i < DATA.length; i++)
+		{
+			if (command.contains(DATA[i]))
+			{
+				explanation = "Here is some information about " + DATA[i] + ":\n";
+				try
+				{
+					explanation += Area.getIndicatorInfo(i, Area.INDICATOR_NAME) + "\n\n";
+					explanation += "Source Note:\n" + Area.getIndicatorInfo(i, Area.INDICATOR_SOURCE_NOTE) + "\n\n";
+					explanation += "Source Organisation:\n" + Area.getIndicatorInfo(i, Area.INDICATOR_SOURCE_ORGANISATION) + "\n\n";
+					explanation += "Topics:\n" + Area.getIndicatorInfo(i, Area.INDICATOR_TOPICS) + "\n\n";
+				}
+				catch (RequestException e)
+				{
+					explanation = REQUESTEX_NO_CONNECTION;
+				}
+				break;
+			}
+		}
+		if (explanation == null)
+		{
+			explanation = "Cannot find information for specified item. Valid items are:\n";
+			for (String data : DATA)
+			{
+				explanation += data + "\n";
+			}
+		}
+		return constructMessagePane(explanation);
+	}
+	
 	/**
 	 * A method for the User to see possible options related to what they are typing in the search bar 
 	 * @param possibilities

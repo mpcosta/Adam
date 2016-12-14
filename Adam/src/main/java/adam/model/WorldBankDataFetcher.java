@@ -49,7 +49,7 @@ public class WorldBankDataFetcher {
 	private static final Pattern INDICATOR_RANGE_QUERY = Pattern.compile("api.worldbank.org_countries_(..)_indicators_(.*)_date=(\\d\\d\\d\\d)_(\\d\\d\\d\\d).*");
 	
 	private static HashMap<String, Document> cachedDocuments = new HashMap<String, Document>();
-	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>(); 
+	private static HashMap<String, Integer> areaCodeToDocumentIndex = new HashMap<String, Integer>();
 	
 	public WorldBankDataFetcher()
 	{
@@ -221,6 +221,54 @@ public class WorldBankDataFetcher {
 		return allCInfoData;
 	}
 	*/
+	
+	public String getIndicatorInfo(int indicator, int informationType) throws RequestException
+	{
+		Document document = getIndicatorDocumentForInfo(getIndicatorCodeFromID(indicator));
+		String tag = null;
+		switch (informationType)
+		{
+			case Area.INDICATOR_NAME:
+				tag = "wb:name";
+				break;
+			case Area.INDICATOR_SOURCE_NOTE:
+				tag = "wb:sourceNote";
+				break;
+			case Area.INDICATOR_SOURCE_ORGANISATION:
+				tag = "wb:sourceOrganization";
+			case Area.INDICATOR_TOPICS:
+				tag = "wb:topic";
+				break;
+		}
+		if (tag == null)
+			throw new RequestException(RequestException.INVALID_INDICATOR_INFO);
+		NodeList nodeList = document.getElementsByTagName(tag);
+		int length = nodeList.getLength();
+		String result = "";
+		for (int i = 0; i < length - 2; i++)
+		{
+			result += nodeList.item(i).getTextContent() + ", ";
+		}
+		if (length > 1)
+			result += nodeList.item(length - 2).getTextContent() + " and ";
+		if (length > 0)
+			result += nodeList.item(length - 1).getTextContent()  + ".";
+		return result;
+	}
+	
+	/**
+	 * Gets the Indicator Information.
+	 * @param indicator The Indicator Code
+	 * @return	The Indicator Brief Description.
+	 */
+	private String getIndicatorDescription(String indicator)
+	{
+		Document document = getIndicatorDocumentForInfo(indicator);
+		NodeList nodeList = document.getElementsByTagName("wb:sourceNote");
+		return nodeList.item(0).getTextContent();
+	}
+	
+	
 	/**
 	 * A getter method to get the area code from the name from the world bank data 
 	 * @param name
@@ -529,6 +577,24 @@ public class WorldBankDataFetcher {
 		NodeList nodeList = document.getElementsByTagName(tagName);
 		int index = areaCodeToDocumentIndex.get(code);
 		return nodeList.item(index).getTextContent();
+	}
+	
+	/**
+	 * Gets the Indicator Document based on a set of arguments
+	 * @param indicator	The Indicator Code.
+	 * @return	The Document with the Indicator Info.
+	 */
+	private Document getIndicatorDocumentForInfo(String indicator)
+	{
+		try
+		{
+			return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
+		
 	}
 	
 	/**
