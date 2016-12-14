@@ -1,14 +1,9 @@
 package adam.model.speech;
 
-import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import javax.speech.AudioException;
 import javax.speech.Central;
-import javax.speech.EngineException;
-import javax.speech.EngineStateError;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 import javax.speech.synthesis.Voice;

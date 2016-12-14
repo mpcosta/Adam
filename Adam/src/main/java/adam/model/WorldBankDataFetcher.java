@@ -5,16 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.FileWriter;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -25,7 +18,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -49,9 +41,7 @@ public class WorldBankDataFetcher {
 			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
 			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS",
 			
-			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year",
-			
-			OFFLINE_CACHING_PATH = "res/offline-data/";
+			OFFLINE_CACHING_PATH = "cached-offline-data/";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
 	private static final Pattern INDICATOR_RANGE_QUERY = Pattern.compile("api.worldbank.org_countries_(..)_indicators_(.*)_date=(\\d\\d\\d\\d)_(\\d\\d\\d\\d).*");
@@ -61,7 +51,9 @@ public class WorldBankDataFetcher {
 	
 	public WorldBankDataFetcher()
 	{
-		
+		File folder = new File(OFFLINE_CACHING_PATH);
+		if (!folder.exists())
+			folder.mkdirs();
 	}
 	
 	private static String urlToFilename(String url)
@@ -431,16 +423,6 @@ public class WorldBankDataFetcher {
 		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
 	}
 	
-	/**
-	 * Gets the Indicator Description.
-	 * @param code	The Indicator code.
-	 * @return	The Indicator Description.
-	 */
-	private String getIndicatorInfo(String indicator)
-	{
-		return getIndicatorDescription(indicator); 
-	}
-	
 	private String getIndicatorCodeFromID(int indicatorID)
 	{
 		switch (indicatorID)
@@ -521,53 +503,6 @@ public class WorldBankDataFetcher {
 		NodeList nodeList = document.getElementsByTagName(tagName);
 		int index = areaCodeToDocumentIndex.get(code);
 		return nodeList.item(index).getTextContent();
-	}
-	
-	
-	/**
-	 * Gets the Document of an Area from its code.
-	 * @param code	The Area code.
-	 * @return	The Document for that Area
-	 */
-	private Document getDocumentForArea(String code)
-	{
-		try
-		{
-			return loadDocument(BASE_COUNTRY_URL + "/" + code);
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-	}
-	
-	/**
-	 * Gets the Indicator Information.
-	 * @param indicator The Indicator Code
-	 * @return	The Indicator Brief Description.
-	 */
-	private String getIndicatorDescription(String indicator) {
-		Document document = getIndicatorDocumentForInfo(indicator);
-		NodeList nodeList = document.getElementsByTagName("wb:sourceNote");
-		return nodeList.item(0).getTextContent();
-	}
-	
-	/**
-	 * Gets the Indicator Document based on a set of arguments
-	 * @param indicator	The Indicator Code.
-	 * @return	The Document with the Indicator Info.
-	 */
-	private Document getIndicatorDocumentForInfo(String indicator)
-	{
-		try
-		{
-			return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-		
 	}
 	
 	/**

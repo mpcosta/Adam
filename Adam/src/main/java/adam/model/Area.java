@@ -21,7 +21,6 @@ public abstract class Area
 	private String name;
 	private HashMap<Integer, HashMap<Integer, Double>> indicators;
 	private HashMap<Integer, Integer> indicators_minYear, indicators_maxYear;
-	private HashMap<Integer, Double> gdp, cpi, bop, unemployment, inflation, governmentSpending, governmentConsumption;
 	
 	protected Area(String c) throws Exception
 	{
@@ -40,14 +39,6 @@ public abstract class Area
 		indicators = new HashMap<Integer, HashMap<Integer, Double>>();
 		indicators_minYear = new HashMap<Integer, Integer>();
 		indicators_maxYear = new HashMap<Integer, Integer>();
-		
-		gdp = new HashMap<Integer, Double>();
-		cpi = new HashMap<Integer, Double>();
-		bop = new HashMap<Integer, Double>();
-		unemployment = new HashMap<Integer, Double>();
-		inflation = new HashMap<Integer, Double>();
-		governmentSpending = new HashMap<Integer, Double>();
-		governmentConsumption = new HashMap<Integer, Double>();
 	}
 	
 	/**
