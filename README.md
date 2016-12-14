@@ -44,7 +44,7 @@ This is version **1.0.0**.
 ## Authors
 * [Hager Abdo](https://github.com/hagerabdo)
 * [Marco Paulo Pacheco Costa](https://github.com/mpcosta)
-* Michael Peecock
+* [Michael Peecock](https://github.com/MichaelPeecock)
 * Prakash Malam
 * [Razvan-Gabriel Geangu](https://github.com/RazvanGeangu)
 * Robin Mason
