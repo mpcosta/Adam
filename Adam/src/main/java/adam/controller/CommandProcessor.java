@@ -23,9 +23,7 @@ import javafx.scene.layout.StackPane;
 
 public class CommandProcessor
 {
-	/**
-	 * A String method containing data for the user to input the key words in the search bar
-	 */
+	//The following are keywords that the user can enter into the search bar:
 	private static final String[] DATA = new String[]
 	{
 		"GDP", "CPI", "BOP", "unemployment", "inflation", "government spending", "government consumption" 
@@ -371,6 +369,11 @@ public class CommandProcessor
 		return chartPane;
 	}
 	
+	/**
+	 * Private helper method for constructing message panes from a string.
+	 * @param message	The message to display.
+	 * @return	A Pane containing the message.
+	 */
 	private Pane constructMessagePane(String message)
 	{
 		StackPane pane = new StackPane();
@@ -381,6 +384,10 @@ public class CommandProcessor
 		return pane;
 	}
 	
+	/**
+	 * Returns a pane with information about the indicator data specified in the current command.
+	 * @return	A Pane displaying the information.
+	 */
 	private Pane explainIndicatorData()
 	{
 		String explanation = null;
