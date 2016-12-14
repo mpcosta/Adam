@@ -8,7 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 public class WorldMap extends StackPane {
-	
+	/**
+	 * Variables for the url, country, and percentage separator
+	 */
 	private final String URL_SEPARATOR = "&";
 	private final String COUNTRY_SEPARATOR = "|";
 	private final String PERCENTAGE_SEPARATOR = ",";
@@ -37,7 +39,9 @@ public class WorldMap extends StackPane {
 	private String currentMapSource;
 	
 	private ImageView mapView;
-
+/**
+	 * A constructor that creates the world map view and adds it to the pane 
+	 */
 	public WorldMap() {
 		
 		currentMapSource = "";
@@ -49,7 +53,12 @@ public class WorldMap extends StackPane {
 		mapView.fitWidthProperty().bind(MainView.primaryStage.widthProperty());
 //		mapView.fitHeightProperty().bind(MainView.primaryStage.widthProperty());
 	}
-	
+	/**
+	 * A method to change the map depending on the values of the country known from the url separator and url source 
+	 * @param countriesList
+	 * @param values
+	 * @return the map view after the changes 
+	 */
 	public ImageView changeMap(ObservableList<String> countriesCodes, ObservableList<String> countriesNames, ObservableList<Double> values) {
 		currentMapSource = urlSource + mapOrientation + URL_SEPARATOR + mapSize + URL_SEPARATOR + mapCountries;
 		
