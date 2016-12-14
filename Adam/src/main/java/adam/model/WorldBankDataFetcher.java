@@ -112,116 +112,13 @@ public class WorldBankDataFetcher {
 		return dBuilder.parse(file);
 	}
 	
-	
-	
 	/**
-	 * Private method that gets the proper indicator code from a given string 
-	 *
-	 * @param  idName  a string that represents the common indicator name
-	 * @return String - the proper Indicator Code for the wanted indicator
+	 * Gets the indicator info for the specified indicator.
+	 * @param indicator	The ID of the indicator. (e.g. Area.GDP).
+	 * @param informationType	The information type to retrieve about the indicator (e.g. Area.INDICATOR_NAME).
+	 * @return	The string containing the information gathered.
+	 * @throws RequestException	If there is no connection, or if the indicator info given is invalid.
 	 */
-	/*
-	private String getIndicatorCode(String idName) {
-		// TODO: Could also load from the XML indicator if needed - Recommended usage -> if designed for all indicators
-		switch (idName) {
-			case "GDP": case "gross domestic product ": return "NY.GDP.MKTP.CD";
-			case "CPI": case "consumer price index": return "FP.CPI.TOTL";
-			case "Unemployment": return "SL.UEM.TOTL.ZS";
-			case "BOP": case "balance of payments": return "BN.CAB.XOKA.CD";
-			case "inflation": return "FP.CPI.TOTL.ZG";
-			// TODO: Investment must be chosen based on the options wanted 
-			case "government spending": return "NE.CON.TETC.ZS";
-			case "government consumption": return "NE.CON.GOVT.ZS";
-			// TODO: Add More IDs as soon as we need them
-		}
-		return "Invalid Indicator Code";
-	}*/
-	
-	
-	
-	/**
-	 *  Gets all the data for every counter for the wanted indicator
-	 *  If the value for a current year is an EmptyString it means there is no data yet for that year 
-	 *
-	 * @param  indicatorName  a String with the (NAME) of the the indicator we need data 
-	 * @param  startYear an Integer with the start year (inclusive)
-	 * @param  endYear an Integer with the end year (inclusive)
-	 * @return indicatorData - corresponds to the data desired with it's associated year
-	 */
-	/*
-	public HashMap<String, HashMap<Integer, String>> getIndicatorDataByYear(String indicatorName, int startYear, int endYear) {
-		HashMap<String, HashMap<Integer, String>> indicatorData = new HashMap<String, HashMap<Integer, String>>();
-		
-		String url = BASE_COUNTRY_URL + "/all/indicators/" + indicatorName + "?per_page=" + ITEMS_PER_PAGE + "&date=" + startYear + ":" + endYear + "&format=xml";
-		Document document = loadDocument(url);
-			
-		// Get All the Nodes into Node List
-		NodeList rootNodes = document.getElementsByTagName("wb:data");
-		
-		//Create HashMap for <Date and Value>
-		HashMap<Integer, String> valueData = new HashMap<Integer, String>();
-		
-		// Get All the Information Needed from all the Nodes
-		for (int i = 0; i < rootNodes.getLength() - 1; i++) { 
-			
-			// Grab Date and Respective Value
-			valueData.put(Integer.parseInt(document.getElementsByTagName("wb:date").item(i).getTextContent()),  document.getElementsByTagName("wb:value").item(i).getTextContent());
-			
-			//Add necessary data to HashMap <Country, HashMap<Date and Value>>
-			indicatorData.put(document.getElementsByTagName("wb:country").item(i).getTextContent(), valueData);	
-		}
-		// Return HashMap<Country, HashMap<Year, Value>>	
-		return indicatorData;
-	}
-	*/
-	
-	
-	
-	//TODO: Method to get information about all indicators -> Cache Information
-	//TODO: Since there is a lot of indicators maybe only get the ones we are going to use 
-	//http://api.worldbank.org/indicators/NY.GDP.MKTP.CD?per_page=1000&date=2015:2016&format=xml
-	
-	
-	
-	
-	
-
-	
-
-	/**
-	 * Get all info from all countries in a HashMap
-	 * Data represented in order by: 
-	 * (region, adminregion, incomeLevel, lendingType, capital City, longitude latitude)
-	 *
-	 * @return allCInfoData - Return the HashMap with all the data from each country
-	 */
-	/*
-	public HashMap<String, String[]> getAllCountriesInfo() {
-		// HashMap< CountryName, StringArray with all the info
-		HashMap<String, String[]> allCInfoData = new HashMap<String, String[]>();
-		
-		Document document = loadDocument(BASE_COUNTRY_URL + "/all/?per_page=" + ITEMS_PER_PAGE);
-		NodeList rootNodes = document.getElementsByTagName("wb:country");
-		
-		// Get All the Information Needed from all the Nodes
-		for (int i = 0; i < rootNodes.getLength(); i++) { 
-			// Add all specific country data in the String[]
-			String[] data = new String[7];
-			data[0] = document.getElementsByTagName("wb:region").item(i).getTextContent();
-			data[1] = document.getElementsByTagName("wb:adminregion").item(i).getTextContent();
-			data[2] = document.getElementsByTagName("wb:incomeLevel").item(i).getTextContent();
-			data[3] = document.getElementsByTagName("wb:lendingType").item(i).getTextContent();
-			data[4] = document.getElementsByTagName("wb:capitalCity").item(i).getTextContent();
-			data[5] = document.getElementsByTagName("wb:longitude").item(i).getTextContent();
-			data[6] = document.getElementsByTagName("wb:latitude").item(i).getTextContent();
-			
-			// Grab Data and Put it on HashMap					
-			allCInfoData.put(document.getElementsByTagName("wb:name").item(i).getTextContent(), data);
-		}
-		return allCInfoData;
-	}
-	*/
-	
 	public String getIndicatorInfo(int indicator, int informationType) throws RequestException
 	{
 		Document document = getIndicatorDocumentForInfo(getIndicatorCodeFromID(indicator));
