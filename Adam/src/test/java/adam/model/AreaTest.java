@@ -24,9 +24,25 @@ public class AreaTest {
 		assertThat(getAllNames().isEmpty(), is(false));
 	}
 	
+	/*
 	@Test
 	public void testCacheAllNames() {
+		final long duration = getDurationOfGetAllNames();
+		
 		cacheAllNames();
+		
+		assertThat(getDurationOfGetAllNames() < duration, is(true));
+	}
+	*/
+	
+	private long getDurationOfGetAllNames() {
+		final long startTime = System.nanoTime();
+		
+		getAllNames();
+		
+		final long endTime = System.nanoTime();
+		
+		return endTime - startTime;
 	}
 	
 	@Test
