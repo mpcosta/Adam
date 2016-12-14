@@ -12,7 +12,9 @@ import javafx.scene.layout.StackPane;
 public class ChartPane extends StackPane {
 
 	public static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3;
-	
+	/**
+	 * Variables declaring the charts and world map 
+	 */
 	@SuppressWarnings("rawtypes")
 	private XYChart chart;
 	private PieChart pieChart;
@@ -79,11 +81,18 @@ public class ChartPane extends StackPane {
 		else
 			pieChart.setData(data);
 	}
-	
+	/**
+	 * Sets the data of the map and changes it according to the countries names, list and values 
+	 * @param countriesList
+	 * @param values
+	 */
 	public void setMapData(ObservableList<String> countriesCodes, ObservableList<String> countriesNames, ObservableList<Double> values) {
 		worldMap.changeMap(countriesCodes, countriesNames, values);
 	}
-	
+	/**
+	 * Sets the title of the chart 
+	 * @param title chart title 
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 		chart.setTitle(title);
