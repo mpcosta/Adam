@@ -9,12 +9,12 @@ public class CountryTest {
 	
 	@Test
 	public void testInitialise() {
-		final String code = "AA";
+		final String code = "US";
 		
 		try {
 			final Country country = Country.getCountry(code);
 			
-			assertThat(code, is(country.getCode()));
+			assertThat(country.getCode().toUpperCase(), is(code));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
