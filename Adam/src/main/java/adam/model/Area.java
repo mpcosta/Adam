@@ -8,7 +8,8 @@ public abstract class Area
 	/**
 	 * Seven macroeconomic topics the user can search 
 	 */
-	public static final int GDP = 0, CPI = 1, BOP = 2, UNEMPLOYMENT = 3, INFLATION = 4, GOVERNMENT_SPENDING = 5, GOVERNMENT_CONSUMPTION = 6;
+	public static final int GDP = 0, CPI = 1, BOP = 2, UNEMPLOYMENT = 3, INFLATION = 4, GOVERNMENT_SPENDING = 5, GOVERNMENT_CONSUMPTION = 6,
+			INDICATOR_NAME = 0, INDICATOR_SOURCE_NOTE = 1, INDICATOR_SOURCE_ORGANISATION = 2, INDICATOR_TOPICS = 3;
 	
 	protected static final String EX_CODE_INVALID = "Area code provided was not valid";
 	
@@ -22,6 +23,7 @@ public abstract class Area
 	private static HashMap<String, String> namesToCodes = new HashMap<String, String>();
 	private static HashMap<String, ArrayList<String>> fragmentsToNamesEstimates = new HashMap<String, ArrayList<String>>();
 	private static ArrayList<String> allNames = new ArrayList<String>();
+	private static HashMap<Integer, HashMap<Integer, String>> indicators_info = new HashMap<Integer, HashMap<Integer, String>>();
 	
 	protected Code code;
 	
@@ -159,6 +161,16 @@ public abstract class Area
 	public static void cacheAllNames()
 	{
 		dataFetcher.cacheAllNames();
+	}
+	
+	public static String getIndicatorInfo(int indicator, int infoType) throws RequestException
+	{
+		if (!indicators_info.containsKey(indicator))
+			indicators_info.put(indicator, new HashMap<Integer, String>());
+		HashMap<Integer, String> cached = indicators_info.get(indicator);
+		if (!cached.containsKey(infoType))
+			cached.put(infoType, dataFetcher.getIndicatorInfo(indicator, infoType));
+		return cached.get(infoType);
 	}
 	
 	/**

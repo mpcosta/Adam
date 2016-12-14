@@ -106,6 +106,7 @@ public class MainController {
 		
 		mainView.getSessionChooserPane().getManualButtonOnActionProperty().set(handler -> {
 			mainView.transition(mainView.getManualSessionPane());
+			mainView.setCenter(commandProcessor.process(""));
 		});
 		/**
 		 * Sets up the command processor on the main view 
