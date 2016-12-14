@@ -6,17 +6,30 @@ public class Country extends Area
 	private double longitude, latitude;
 	private boolean longitudeCached, latitudeCached;
 	
+	/**
+	 * Private constructor to call the string of the code of the country 
+	 * @param c the code for the country 
+	 * @throws Exception for the code initialisation 
+	 */
 	private Country(String c) throws Exception
 	{
 		super(c);
 		initialise();
 	}
+	
+	/**
+	 * Private constructor for the code 
+	 * @param c the code for the country 
+	 */
 	private Country(Code c)
 	{
 		super(c);
 		initialise();
 	}
 	
+	/**
+	 * Initialises the latitude, longitude, and all data needed for the country
+	 */
 	private void initialise()
 	{
 		region = null;
@@ -119,8 +132,5 @@ public class Country extends Area
 		if (!areas.containsKey(code))
 			areas.put(code, new Country(code));
 		return (Country)areas.get(code);
-	}
-	
-	
-	
+	}	
 }

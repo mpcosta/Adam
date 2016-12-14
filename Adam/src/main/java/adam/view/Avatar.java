@@ -12,7 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class Avatar {
-
+/**
+	 * Variable which gets and calls the images of Adam 
+	 * Speaking Image for the listening bars under Adam
+	 * Listening image for Adam's ears and eyes 
+	 * Static image for a frozen Adam
+	 */
 	private final Image SPEAKING_IMAGE = new Image("/speaking_animation.png");
 	private final Image LISTENING_IMAGE = new Image("/ears_and_eyes.png");
 	private final Image STATIC_IMAGE = new Image("/static_image.png");
@@ -22,7 +27,11 @@ public class Avatar {
 	private Scene scene;
 	
 	private ImageView staticImage, speakingImage, listeningImage; 
-
+/**
+	 * A constructor for Adam 
+	 * Resizes the images containing Adam 
+	 * @param scene
+	 */
 	public Avatar(Scene scene) {
 		this.scene = scene;
 		
@@ -33,14 +42,25 @@ public class Avatar {
 		speakingImage = createAnimatedImageView(SPEAKING_IMAGE, 601, 582, FRAME_LISTENING_IMAGE, 450);
 		speakingImage.setFitHeight(90);
 	}
-
+/**
+	 * Initialises the static image of Adam
+	 */
 	private void initStaticImage() {
 		staticImage = new ImageView(STATIC_IMAGE);
 		staticImage.setPreserveRatio(true);
 		staticImage.setFitHeight(90);
 		addButtonCapabilities(staticImage);
 	}
-
+/**
+	 * Creates the animated image view for Adam 
+	 * Sets the speaking animation for Adam 
+	 * @param image
+	 * @param frameWidth
+	 * @param frameHeight
+	 * @param framesNumber  - frames per second 
+	 * @param duration
+	 * @return the image of Adam 
+	 */
 	private ImageView createAnimatedImageView(Image image, int frameWidth, int frameHeight, int framesNumber,
 			int duration) {
 		final ImageView imageView = new ImageView(image);
@@ -57,7 +77,10 @@ public class Avatar {
 
 		return imageView;
 	}
-	
+	/**
+	 * A method to change the cursor to a hand when hovered over Adam 
+	 * @param imageView
+	 */
 	private void addButtonCapabilities(ImageView imageView) {
 		imageView.hoverProperty().addListener(handler -> {
 			if (((ReadOnlyBooleanProperty)handler).getValue()) {
@@ -67,14 +90,25 @@ public class Avatar {
 			}
 		});
 	}
-
+/**
+	 * Initiates the animated image of Adam 
+	 * Transitioning it from static to animation  
+	 * @author hagerabdo
+	 */
 	private class SpriteAnimation extends Transition {
 		private final ImageView imageView;
 		private final int columns;
 		private final int width;
 		private final int height;
 		private int lastIndex;
-
+/**
+		 * A sprite animation created and sets the cycle duration and interpolate
+		 * @param imageView
+		 * @param duration
+		 * @param columns
+		 * @param width
+		 * @param height
+		 */
 		public SpriteAnimation(ImageView imageView, Duration duration, int columns, int width, int height) {
 			this.imageView = imageView;
 			this.columns = columns;
@@ -83,7 +117,10 @@ public class Avatar {
 			setCycleDuration(duration);
 			setInterpolator(Interpolator.LINEAR);
 		}
-
+/**
+		 * A method to change the viewport accordingly to the number of columns and size of one image within a column 
+		 * Changes the view port accordingly to the size of the image sequence 
+		 */
 		protected void interpolate(double k) {
 			final int index = Math.min((int) Math.floor(k * columns), columns - 1);
 			if (index != lastIndex) {
@@ -94,15 +131,24 @@ public class Avatar {
 			}
 		}
 	}
-
+/**
+	 * Gets the static image 
+	 * @return static image 
+	 */
 	public ImageView getStaticImage() {
 		return staticImage;
 	}
-
+/**
+	 * Gets the speaking image 
+	 * @return the speaking image 
+	 */
 	public ImageView getSpeakingImage() {
 		return speakingImage;
 	}
-
+/**
+	 * Gets the listening image 
+	 * @return the listening image 
+	 */
 	public ImageView getListeningImage() {
 		return listeningImage;
 	}

@@ -14,11 +14,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 
 public class SessionChooserPane extends StackPane {
-
+/**
+	 * Variables for the main lesson and manual button 
+	 */
 	private Button lessonButton;
 	private Button manualButton;
 	private HBox buttonsBox;
-	
+	/**
+	 * Constructor to set the lesson button to Quiz and sets the manual Button to search 
+	 * Sets both buttons to button box and aligns it to the home pane 
+	 * Sets a greeting label and aligns it under the buttons box 
+	 * 
+	 */
 	public SessionChooserPane() {
 		super();
 		
@@ -40,11 +47,17 @@ public class SessionChooserPane extends StackPane {
 		
 		getChildren().addAll(buttonsBox, greetingLabel);
 	}
-	
+	/**
+	 * A getter for the action handler for the lesson button 
+	 * @return the lesson button handler 
+	 */
 	public ObjectProperty<EventHandler<ActionEvent>> getLessonButtonOnActionProperty() {
 		return lessonButton.onActionProperty();
 	}
-	
+	/**
+	 * A getter for the action handler for the manual button 
+	 * @return the maanual button handler 
+	 */
 	public ObjectProperty<EventHandler<ActionEvent>> getManualButtonOnActionProperty() {
 		return manualButton.onActionProperty();
 	}

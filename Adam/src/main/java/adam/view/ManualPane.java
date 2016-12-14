@@ -195,27 +195,45 @@ public class ManualPane extends StackPane {
 	public ObjectProperty<EventHandler<ActionEvent>> getSubmitButtonOnActionProperty() {
 		return submitButton.onActionProperty();
 	}
-	
+	/**
+	 * A getter for the country combo box 
+	 * @return A combo box for the country for the simple view 
+	 */
 	public ComboBox<String> getCountryComboBox() {
 		return countryComboBox;
 	}
-
+/**
+	 * A getter for the indicator combo box
+	 * @return A combo box for the indicator for the simple view 
+	 */
 	public ComboBox<String> getIndicatorComboBox() {
 		return indicatorComboBox;
 	}
-	
+	/**
+	 * A getter for the graph type combo box 
+	 * @return A combo box for the graph type for the simple view 
+	 */
 	public ComboBox<String> getGraphTypeComboBox() {
 		return graphTypeComboBox;
 	}
-
+/**
+	 * A getter for the year from range as field text input property 
+	 * @return A text property for what year the user wants to start with for the year range for the simple view 
+	 */
 	public StringProperty getFromYearFieldTextInputProperty() {
 		return fromYearField.textProperty();
 	}
-
+/**
+	 * A getter for the year to range as a field text input property 
+	 * @return A text property for what year the user wants to end with for the year range for the simple view 
+	 */
 	public StringProperty getToYearFieldTextInputProperty() {
 		return toYearField.textProperty();
 	}
-	
+	/**
+	 * A boolean method for the advanced mode 
+	 * @return the advanced bar 
+	 */
 	public boolean isOnAdvancedMode()
 	{
 		return getChildren().contains(advancedBar);

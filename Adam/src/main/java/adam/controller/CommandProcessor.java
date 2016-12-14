@@ -22,6 +22,9 @@ import javafx.scene.layout.StackPane;
 
 public class CommandProcessor
 {
+	/**
+	 * A String method containing data for the user to input the key words in the search bar
+	 */
 	private static final String[] DATA = new String[]
 	{
 		"GDP", "CPI", "BOP", "unemployment", "inflation", "government spending", "government consumption" 
@@ -38,6 +41,9 @@ public class CommandProcessor
 	{
 		"all areas"
 	};
+	/**
+	 * A static method for the three types of charts 
+	 */
 	private static final int LINE = 0, BAR = 1, PIE = 2, MAP = 3,
 			FROM = 0, TO = 1,
 			ALL_AREAS = 0;
@@ -58,7 +64,10 @@ public class CommandProcessor
 		mainView = m;
 		command = null;
 	}
-	
+	/**
+	 * A static get method for the Array list to get all the indicators 
+	 * @return indicators
+	 */
 	public static ArrayList<String> getAllIndicators()
 	{
 		ArrayList<String> indicators = new ArrayList<String>();
@@ -68,7 +77,10 @@ public class CommandProcessor
 		}
 		return indicators;
 	}
-	
+	/**
+	 * A static get method to retrieve all the graphs
+	 * @return graphs
+	 */
 	public static ArrayList<String> getAllGraphs()
 	{
 		ArrayList<String> graphs = new ArrayList<String>();
@@ -78,7 +90,14 @@ public class CommandProcessor
 		}
 		return graphs;
 	}
-	
+	/**
+	 * A get method to show the possible the suggestions the User can search 
+	 * @param existing
+	 * @param segment
+	 * @param full
+	 * @param display
+	 * @param override
+	 */
 	public void getSuggestions(String existing, String segment, String full, LinkedList<String> display, LinkedList<String> override)
 	{
 		ArrayList<String> suggestions = Area.estimateNamesFromFragment(segment);
@@ -128,7 +147,14 @@ public class CommandProcessor
 			override.add(existing + item + " ");
 		}
 	}
-	
+	/**
+	 * A method to process what the user inputs and prints the correct graph according to the input 
+	 * A boolean to match whether the key word is matched to the data input 
+	 * A matcher for the year range inputed by the user to be implemented in the graph 
+	 * A boolean to check if invalid data is typed in the search bar for an error message to appear 
+	 * @param c the code for the country 
+	 * @return the graph/chart for the user 
+	 */
 	public Pane process(String c)
 	{
 		command = c;
@@ -249,7 +275,10 @@ public class CommandProcessor
 			return constructMessagePane(REQUESTEX_DEFAULT + " " + e.getInfo());
 		}
 	}
-	
+	/**
+	 * An update method that shows a loading label to show the user the graph is formalising and will be appearing soon 
+	 * @param status
+	 */
 	private void updateProgress(String status)
 	{
 		final String newValue = status;
@@ -261,7 +290,17 @@ public class CommandProcessor
 			}
 		});
 	}
-	
+	/**
+	 * A method to formalise the chart including the type of chart and the range of years 
+	 * Calling the observable list to call the data from the indicator 
+	 * @param title
+	 * @param areas
+	 * @param chartType
+	 * @param dataType
+	 * @param startingYear
+	 * @param endingYear
+	 * @return the chart 
+	 */
 	private ChartPane constructChart(String title, ArrayList<Area> areas, int chartType, int dataType, int startingYear, int endingYear) throws RequestException
 	{
 		ChartPane chartPane = new ChartPane(chartType, title);
@@ -321,7 +360,11 @@ public class CommandProcessor
 		pane.getChildren().add(label);
 		return pane;
 	}
-	
+	/**
+	 * A method for the User to see possible options related to what they are typing in the search bar 
+	 * @param possibilities
+	 * @return possible options for the User 
+	 */
 	private ArrayList<String> findAllThatMatch(String[] possibilities)
 	{
 		ArrayList<String> found = new ArrayList<String>();

@@ -24,6 +24,11 @@ import javafx.scene.layout.Pane;
 
 public class MainController {
 	
+	/**
+	 * A main view of the application 
+	 * A command processor for all functions regarding the search bar 
+	 * Speech for Adam the Avatar!
+	 */
 	private MainView mainView;
 	private CommandProcessor commandProcessor;
 	
@@ -31,7 +36,11 @@ public class MainController {
 	private boolean canActivateSpeech;
 	
 	private Thread commandProcessorThread;
-
+	
+	/**
+	 * A constructor for the main view, command processor, and speech 
+	 * @param mainView
+	 */
 	public MainController(MainView mainView) {
 		this.mainView = mainView;
 		commandProcessor = new CommandProcessor(mainView);
@@ -46,8 +55,15 @@ public class MainController {
 		
 		init();
 	}
-	
+	/**
+	 * A main controller method for all that happens throughout the application 
+	 */
 	private void init() {
+		/**
+		 * For Adam the avatar, 
+		 * When the user clicks on the Avatar it will listen to what the User commands 
+		 * Locates Adam to the top of the pane 
+		 */
 		if (canActivateSpeech) {
 			mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
 				Thread thread = new Thread() {
@@ -64,11 +80,16 @@ public class MainController {
 				thread.start();
 			});
 		}
-			
+		
+		/**
+		 * A question Handler to get the questions, answers, and correct answers and add it to the main View 	
+		 */	
 		QHandler qHandler = new QHandler(mainView.getQuizPane().getQuestionAndAnswers().entrySet().iterator(), mainView.getQuizPane().getCorrectAnswers());
 		
 		mainView.getQuizPane().getButton().setOnAction(qHandler);
-		
+		/**
+		 * A back button for the user to transition between different panes and the home page 
+		 */
 		mainView.getBackButton().setOnAction(handler -> {
 			mainView.transition(mainView.getSessionChooserPane());
 		});
@@ -86,7 +107,10 @@ public class MainController {
 		mainView.getSessionChooserPane().getManualButtonOnActionProperty().set(handler -> {
 			mainView.transition(mainView.getManualSessionPane());
 		});
-		
+		/**
+		 * Sets up the command processor on the main view 
+		 * Retrieves the source to the text field 
+		 */
 		mainView.getManualSessionPane().getTextInputOnKeyReleasedProperty().set(key ->
 		{
 			if (key.getCode() == KeyCode.DOWN || key.getCode() == KeyCode.UP || (commandProcessorThread != null && commandProcessorThread.isAlive()))
@@ -115,7 +139,9 @@ public class MainController {
 			textField.setEntries(display, override);
 			textField.updateDisplay();
 		});
-		
+		/**
+		 * A toggle button to transition between advanced and simple mode for the graphs/charts to be displayed 
+		 */
 		ToggleButton advancedToggleButton = mainView.getAdvancedToggleButton();
 		advancedToggleButton.setOnAction(handler -> {
 			ManualPane manualPane = mainView.getManualSessionPane();
@@ -125,7 +151,9 @@ public class MainController {
 				advancedToggleButton.setText(manualPane.switchToSimpleMode());
 			}
 		});
-		
+		/**
+		 * For the countries, indicators, and graphs to be set by the user in the simple mode 
+		 */
 		mainView.getManualSessionPane().getSubmitButtonOnActionProperty().set(event ->
 		{
 			processRequest(event);
@@ -152,7 +180,13 @@ public class MainController {
 		};
 		thread.start();
 	}
-	
+	/**
+	 * A method containing the simple mode view with combo boxes for Country, Graph, Indicator, Year Range 
+	 * A void method once the user presses submit to have the loading screen appear until graph/chart is ready to appear on the screen 
+	 * Reads the user when they input the year range in the advanced mode 
+	 * Constructs the selection model for country combo box, indication combo box, and graph type combo box 
+	 * @param event
+	 */
 	private void processRequest(Event event)
 	{
 		mainView.getManualSessionPane().setSearchDisabled(true);
@@ -204,7 +238,12 @@ public class MainController {
 		mainView.addLoadingScreen();
 		thread.start();
 	}
-	
+	/**
+	 * A method for the Question Handler 
+	 * Adds the iterator, questions, and correct answers 
+	 * @author hagerabdo
+	 *
+	 */
 	private class QHandler implements EventHandler<ActionEvent> {
 		
 		private Map<String, ArrayList<Integer>> correct;
@@ -215,11 +254,20 @@ public class MainController {
 			this.correct = correct;
 			this.entryIterator = entryIterator;
 		}
-		
+		/**
+		 * Private booleans to set the correct answer for the first question of the multiple choice to false and the first question to true 
+		 */
 		private boolean correctAnswer = false;
 		private boolean firstTime = true;
 		private boolean finished = false;
-
+/**
+		 * For the first question of the multiple choice, be set to Feedback until the User chooses the correct answer then the button to switch to Next 
+		 * After the user will be able to go to the next question 
+		 * Depending on what the user picks as the answers in oder to match with the correct actual answer 
+		 * If able to match then user is able to click to next question if not message will appear "Wrong Answer"
+		 * The quiz pane will clear after every question to have a new question appear 
+		 * When the user is done with the quiz a finished message will appear 
+		 */
 		@Override
 		public void handle(ActionEvent event) {
 			if (entryIterator.hasNext()) {
@@ -261,18 +309,28 @@ public class MainController {
 				mainView.getQuizPane().getChildren().add(mainView.getQuizPane().getResLabel());
 			}
 		}
-		
+		/**
+		 * A boolean to check whether quiz is finished 
+		 * @return whether quiz is finished 
+		 */
 		public boolean isFinished() {
 			return finished;
 		}
-		
+		/**
+		 * A restart method for the every question 
+		 * @param entryIterator
+		 */
 		public void restart(Iterator<Entry<String, ArrayList<String>>> entryIterator) {
 			correctAnswer = false;
 			firstTime = true;
 			this.entryIterator = entryIterator;
 		}
 	}
-	
+	/**
+	 * Submit buttons set to be disabled until a user chooses an answer then will be enabled  
+	 * @author hagerabdo
+	 *
+	 */
 	private static class CheckBoxesHandler implements EventHandler<ActionEvent> {
 		
 		private Button submitButton;
