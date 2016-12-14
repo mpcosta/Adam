@@ -15,7 +15,6 @@ import edu.cmu.sphinx.api.LiveSpeechRecognizer;
  * The speech model that uses a synthesiser and a recogniser for the voice.
  * 
  * Using 3rd party libraries under GNU and MIT licenses (FreeTTS & Sphinx 4).
- * @author Razvan-Gabriel Geangu
  */
 public class Speech {
 	
