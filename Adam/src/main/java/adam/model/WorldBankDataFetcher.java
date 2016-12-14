@@ -527,6 +527,8 @@ public class WorldBankDataFetcher {
 		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
 		NodeList nodeList = document.getElementsByTagName(tagName);
+		if (!areaCodeToDocumentIndex.containsKey(code))
+			cacheAllNames();
 		int index = areaCodeToDocumentIndex.get(code);
 		return nodeList.item(index).getTextContent();
 	}
