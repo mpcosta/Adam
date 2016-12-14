@@ -2,15 +2,28 @@ package adam.model;
 
 public class Region extends Area
 {
+	/**
+	 * A private constructor for the region code as a string 
+	 * @param c the code of the country 
+	 * @throws Exception for the code of the region 
+	 */
 	private Region(String c) throws Exception
 	{
 		super(c);
 	}
+	/**
+	 * A private constructor for the region code of the country 
+	 * @param c the code of the country 
+	 */
 	private Region(Code c)
 	{
 		super(c);
 	}
-	
+	/**
+	 * A boolean to check if the code of the region is valid or not 
+	 * @param code for the region 
+	 * @return the areas code 
+	 */
 	protected static boolean codeIsValid(Code code)
 	{
 		return (areas.containsKey(code) && areas.get(code) instanceof Region)
