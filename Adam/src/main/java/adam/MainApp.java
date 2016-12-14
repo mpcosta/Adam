@@ -16,7 +16,9 @@ public class MainApp extends Application {
 	
 	// The title of the application.
 	private final String title = "Adam - Your Macro-Economics Friend";
-	
+	/**
+	 * A method to set the main view 
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 		try {
