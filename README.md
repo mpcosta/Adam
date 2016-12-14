@@ -1,7 +1,5 @@
 # Project Walk - Adam, your macro-economic friend!
 
-# Synopsis
-
 This is an **application** for A-Level macro-economic students that connects to [World Bank Data API](https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information) to get data necesarry to display in a new design manner a few indicators such as: GDP, BOP, Unemployment, Inflation etc.
 
 # Design
