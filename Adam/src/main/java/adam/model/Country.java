@@ -2,21 +2,34 @@ package adam.model;
 
 public class Country extends Area
 {
+	/**
+	 * Variable for the region, latitude, and longitude of the country 
+	 */
 	private String region, incomeLevel, lendingType, capitalCity;
 	private double longitude, latitude;
 	private boolean longitudeCached, latitudeCached;
-	
+	/**
+	 * Private constructor to call the string of the code of the country 
+	 * @param c the code for the country 
+	 * @throws Exception for the code initialisation 
+	 */
 	private Country(String c) throws Exception
 	{
 		super(c);
 		initialise();
 	}
+	/**
+	 * Private constructor for the code 
+	 * @param c the code for the country 
+	 */
 	private Country(Code c)
 	{
 		super(c);
 		initialise();
 	}
-	
+	/**
+	 * Initialises the latitude, longitude, and all data needed for the country
+	 */
 	private void initialise()
 	{
 		region = null;
@@ -115,7 +128,11 @@ public class Country extends Area
 			return false;
 		}
 	}
-	
+	/**
+	 * Tests whether a given Country code is valid to represent a Country. 
+	 * @param code	The Country code.
+	 * @return	True if it can be used to request a Country object.
+	 */
 	protected static boolean codeIsValid(Code code)
 	{
 		return (areas.containsKey(code) && areas.get(code) instanceof Country)
