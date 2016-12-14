@@ -20,6 +20,15 @@ public class AreaTest {
 	}
 	
 	@Test
+	public void testEstimateNamesFromFragmentCaching()
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			assertThat(estimateNamesFromFragment("E"), hasItem("European Union"));
+		}
+	}
+	
+	@Test
 	public void testGetAllNames() {
 		assertThat(getAllNames().isEmpty(), is(false));
 	}
