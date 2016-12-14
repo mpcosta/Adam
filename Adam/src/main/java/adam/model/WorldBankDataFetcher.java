@@ -38,7 +38,9 @@ import org.xml.sax.SAXException;
 
 
 public class WorldBankDataFetcher {
-
+/**
+	 * The indicators specified from the world bank for each macroeconomic topic 
+	 */
 	private static final String BASE_COUNTRY_URL = "http://api.worldbank.org/countries",
 			BASE_INDICATOR_URL = "http://api.worldbank.org/indicators",
 			GDP = "NY.GDP.MKTP.CD",
@@ -227,7 +229,11 @@ public class WorldBankDataFetcher {
 		return allCInfoData;
 	}
 	*/
-	
+	/**
+	 * A getter method to get the area code from the name from the world bank data 
+	 * @param name
+	 * @return the base country or null 
+	 */
 	public String getAreaCodeFromName(String name)
 	{
 		Document document = null;
@@ -249,7 +255,11 @@ public class WorldBankDataFetcher {
 		}
 		return null;
 	}
-	
+	/**
+	 * Estimates the name from the fragments inputed by the user from the world bank
+	 * @param fragment
+	 * @return
+	 */
 	public ArrayList<String> estimateNamesFromFragment(String fragment)
 	{
 		Document document = null;
@@ -274,7 +284,10 @@ public class WorldBankDataFetcher {
 		names.sort((s1, s2) -> s1.length() - s2.length());
 		return names;
 	}
-	
+	/**
+	 * Gets all the names in a node list from the world bank
+	 * @return the names
+	 */
 	public ArrayList<String> getAllNames()
 	{
 		Document document;
@@ -294,7 +307,9 @@ public class WorldBankDataFetcher {
 		}
 		return names;
 	}
-	
+	/**
+	 * The caches of all the names being retrieved from the world bank 
+	 */
 	public void cacheAllNames()
 	{
 		Document document = null;
@@ -440,7 +455,11 @@ public class WorldBankDataFetcher {
 	{
 		return getIndicatorDescription(indicator); 
 	}
-	
+	/**
+	 * Gets the indicators 
+	 * @param indicatorID
+	 * @return the indicators 
+	 */
 	private String getIndicatorCodeFromID(int indicatorID)
 	{
 		switch (indicatorID)
@@ -462,7 +481,14 @@ public class WorldBankDataFetcher {
 		}
 		return null;
 	}
-	
+	/**
+	 * Gets the data of every indicator 
+	 * @param code
+	 * @param indicator
+	 * @param startYear
+	 * @param endYear
+	 * @return the indicator data 
+	 */
 	public HashMap<Integer, Double> getIndicatorData(String code, int indicator, int startYear, int endYear) throws RequestException
 	{
 		HashMap<Integer, Double> data = new HashMap<Integer, Double>();
