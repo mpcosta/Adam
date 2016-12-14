@@ -5,16 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.FileWriter;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -25,7 +18,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -51,9 +43,7 @@ public class WorldBankDataFetcher {
 			GOVERNMENT_SPENDING = "NE.CON.TETC.ZS",
 			GOVERNMENT_CONSUMPTION = "NE.CON.GOVT.ZS",
 			
-			EX_INDICATOR_DATA_NOT_FOUND = "Indicator data could not be retrived specified year",
-			
-			OFFLINE_CACHING_PATH = "res/offline-data/";
+			OFFLINE_CACHING_PATH = "cached-offline-data/";
 	private static final int ITEMS_PER_PAGE = 1000;
 	
 	private static final Pattern INDICATOR_RANGE_QUERY = Pattern.compile("api.worldbank.org_countries_(..)_indicators_(.*)_date=(\\d\\d\\d\\d)_(\\d\\d\\d\\d).*");
@@ -63,7 +53,9 @@ public class WorldBankDataFetcher {
 	
 	public WorldBankDataFetcher()
 	{
-		
+		File folder = new File(OFFLINE_CACHING_PATH);
+		if (!folder.exists())
+			folder.mkdirs();
 	}
 	
 	private static String urlToFilename(String url)
@@ -333,7 +325,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The code of the Area.
 	 * @return	True if a Area exists with the specified code.
 	 */
-	public boolean areaCodeExists(String code)
+	public boolean areaCodeExists(String code) throws RequestException
 	{
 		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
@@ -351,7 +343,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The query code.
 	 * @return	True if the specified code matches to a Country.
 	 */
-	public boolean countryCodeExists(String code)
+	public boolean countryCodeExists(String code) throws RequestException
 	{
 		return areaCodeExists(code) && !isRegion(code);
 	}
@@ -361,7 +353,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The query code.
 	 * @return	True if the specified code matches to a Region.
 	 */
-	public boolean regionCodeExists(String code)
+	public boolean regionCodeExists(String code) throws RequestException
 	{
 		return areaCodeExists(code) && isRegion(code);
 	}
@@ -371,7 +363,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The area code.
 	 * @return	True if the specified code matches to a region.
 	 */
-	public boolean isRegion(String code)
+	public boolean isRegion(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:capitalCity").equals("");
 	}
@@ -381,7 +373,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Area code.
 	 * @return	The name of the Area.
 	 */
-	public String getNameFromCode(String code)
+	public String getNameFromCode(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:name");
 	}
@@ -391,7 +383,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The name of the region which Country is part of.
 	 */
-	public String getRegionFromCode(String code)
+	public String getRegionFromCode(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:region");
 	}
@@ -401,7 +393,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The income level for the specified Country.
 	 */
-	public String getIncomeLevelFromCode(String code)
+	public String getIncomeLevelFromCode(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:incomeLevel");
 	}
@@ -411,7 +403,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The lending type for the specified Country.
 	 */
-	public String getLendingType(String code)
+	public String getLendingType(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:lendingType");
 	}
@@ -421,7 +413,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The name of the Countries capital city.
 	 */
-	public String getCapitalCity(String code)
+	public String getCapitalCity(String code) throws RequestException
 	{
 		return getDataFromCode(code, "wb:capitalCity");
 	}
@@ -431,7 +423,7 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The longitude of the Country. 
 	 */
-	public double getLongitude(String code)
+	public double getLongitude(String code) throws RequestException
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:longitude"));
 	}
@@ -441,19 +433,9 @@ public class WorldBankDataFetcher {
 	 * @param code	The Country code.
 	 * @return	The latitude of the Country.
 	 */
-	public double getLatitude(String code)
+	public double getLatitude(String code) throws RequestException
 	{
 		return Double.parseDouble(getDataFromCode(code, "wb:latitude"));
-	}
-	
-	/**
-	 * Gets the Indicator Description.
-	 * @param code	The Indicator code.
-	 * @return	The Indicator Description.
-	 */
-	private String getIndicatorInfo(String indicator)
-	{
-		return getIndicatorDescription(indicator); 
 	}
 	/**
 	 * Gets the indicators 
@@ -519,7 +501,10 @@ public class WorldBankDataFetcher {
 					}
 				}
 			}
-			throw new RequestException(RequestException.NO_CONNECTION, "Cached data exists for the years " + minStart + " to " + maxEnd + ".");
+			if (minStart != 0 && maxEnd != 0)
+				throw new RequestException(RequestException.NO_CONNECTION, "Cached data exists for the years " + minStart + " to " + maxEnd + ".");
+			else
+				throw new RequestException(RequestException.NO_CONNECTION);
 		}
 		NodeList dates = document.getElementsByTagName("wb:date"), values = document.getElementsByTagName("wb:value");
 		for (int i = 0; i < values.getLength(); i++)
@@ -537,7 +522,7 @@ public class WorldBankDataFetcher {
 	 * @param tagName the tagName of the data we want.
 	 * @return	A String with the data we wanted.
 	 */
-	private String getDataFromCode(String code, String tagName)
+	private String getDataFromCode(String code, String tagName) throws RequestException
 	{
 		code = code.toUpperCase();
 		Document document = getDocumentForAllAreas();
@@ -546,54 +531,11 @@ public class WorldBankDataFetcher {
 		return nodeList.item(index).getTextContent();
 	}
 	
-	
 	/**
-	 * Gets the Document of an Area from its code.
-	 * @param code	The Area code.
-	 * @return	The Document for that Area
+	 * Retrieve the worldbank document for all areas.
+	 * @return
 	 */
-	private Document getDocumentForArea(String code)
-	{
-		try
-		{
-			return loadDocument(BASE_COUNTRY_URL + "/" + code);
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-	}
-	
-	/**
-	 * Gets the Indicator Information.
-	 * @param indicator The Indicator Code
-	 * @return	The Indicator Brief Description.
-	 */
-	private String getIndicatorDescription(String indicator) {
-		Document document = getIndicatorDocumentForInfo(indicator);
-		NodeList nodeList = document.getElementsByTagName("wb:sourceNote");
-		return nodeList.item(0).getTextContent();
-	}
-	
-	/**
-	 * Gets the Indicator Document based on a set of arguments
-	 * @param indicator	The Indicator Code.
-	 * @return	The Document with the Indicator Info.
-	 */
-	private Document getIndicatorDocumentForInfo(String indicator)
-	{
-		try
-		{
-			return loadDocument(BASE_INDICATOR_URL + "/" + indicator);
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
-		
-	}
-	
-	private Document getDocumentForAllAreas()
+	private Document getDocumentForAllAreas() throws RequestException
 	{
 		try
 		{
@@ -601,33 +543,16 @@ public class WorldBankDataFetcher {
 		}
 		catch (Exception e)
 		{
-			return null;
+			throw new RequestException(RequestException.NO_CONNECTION);
 		}
 	}
 	
 	/**
-	 *  Private void method to print the whole Document type of variable
-	 *  Check if all the data is on the Document
-	 *
-	 * @param  doc  a Document type of variable
-	 * @param  out  an OutputStream type
+	 * Transform a Document into a String.
+	 * @param document	The document to transform.
+	 * @return	The String representation of the document.
+	 * @throws Exception
 	 */
-	private static void printDocument(Document doc, OutputStream out) {
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer;
-		try {
-			transformer = tf.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			transformer.transform(new DOMSource(doc), 
-			new StreamResult(new OutputStreamWriter(out, "UTF-8")));
-						
-		} catch (UnsupportedEncodingException | TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
-	}
-	
 	private static String documentAsString(Document document) throws Exception
 	{
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();

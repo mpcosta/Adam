@@ -49,7 +49,9 @@ public class CommandProcessor
 			ALL_AREAS = 0;
 	private static final String REQUESTEX_DEFAULT = "An error occured when attempting to retrieve results.",
 			REQUESTEX_NO_CONNECTION = "Cannot connect to server and no offline data exists for the specified request. Check your internet connection, or try a smaller year range.",
-			REQUESTEX_INVALID_RANGE = "Invalid range specified. Start year must occur before end year.";
+			REQUESTEX_INVALID_RANGE = "Invalid range specified. Start year must occur before end year.",
+			REQUESTEX_MAP_INVALID_RANGE = "Map can only display data for one year. Please specify one year, rather than a range.",
+			REQUESTEX_MAP_NO_DATA = "No data to display.";
 	private static final Pattern PATTERN_RANGE = Pattern.compile(".*(\\d\\d\\d\\d) to (\\d\\d\\d\\d).*"),
 			PATTERN_SINGLE = Pattern.compile(".*(\\d\\d\\d\\d).*");
 	
@@ -200,8 +202,6 @@ public class CommandProcessor
 			if (keyWordIdentitified)
 				break;
 		}
-		//if (dataType == -1)
-		//	return null;
 		
 		keyWordIdentitified = false;
 		int chartType = -1;
@@ -219,8 +219,6 @@ public class CommandProcessor
 			if (keyWordIdentitified)
 				break;
 		}
-		//if (chartType == -1)
-		//	return null;
 		
 		Matcher rangeMatcher = PATTERN_RANGE.matcher(command);
 		int startingYear = -1, endingYear = -1;
@@ -238,9 +236,6 @@ public class CommandProcessor
 				endingYear = startingYear;
 			}
 		}
-			
-		//if (startingYear == -1 || endingYear == -1)
-		//	return null;
 		
 		boolean noAreas = areas.size() == 0,
 				invalidDataType = dataType == -1,
@@ -266,12 +261,18 @@ public class CommandProcessor
 		}
 		catch (RequestException e)
 		{
-			if (e.getType() == RequestException.NO_CONNECTION)
-				return constructMessagePane(REQUESTEX_NO_CONNECTION + " " + e.getInfo());
-			else if (e.getType() == RequestException.INVALID_RANGE)
-				return constructMessagePane(REQUESTEX_INVALID_RANGE + " " + e.getInfo());
-			else
-				return constructMessagePane(REQUESTEX_DEFAULT + " " + e.getInfo());
+			switch (e.getType())
+			{
+				case RequestException.NO_CONNECTION:
+					return constructMessagePane(REQUESTEX_NO_CONNECTION + " " + e.getInfo());
+				case RequestException.INVALID_RANGE:
+					return constructMessagePane(REQUESTEX_INVALID_RANGE + " " + e.getInfo());
+				case RequestException.MAP_INVALID_RANGE:
+					return constructMessagePane(REQUESTEX_MAP_INVALID_RANGE + " " + e.getInfo());
+				case RequestException.MAP_NO_COUNTRY_DATA_FOUND:
+					return constructMessagePane(REQUESTEX_MAP_NO_DATA + " " + e.getInfo());
+			}
+			return constructMessagePane(REQUESTEX_DEFAULT + " " + e.getInfo());
 		}
 	}
 	/**
@@ -306,7 +307,7 @@ public class CommandProcessor
 		if (chartType == MAP)
 		{
 			if (startingYear != endingYear)
-				return null;
+				throw new RequestException(RequestException.MAP_INVALID_RANGE);
 			ObservableList<String> areaCodes = FXCollections.observableArrayList();
 			ObservableList<String> areaNames = FXCollections.observableArrayList();
 			ObservableList<Double> areaValues = FXCollections.observableArrayList();
@@ -324,7 +325,7 @@ public class CommandProcessor
 				areaValues.add(d);
 			}
 			if (areaValues.size() == 0)
-				return null;
+				throw new RequestException(RequestException.MAP_NO_COUNTRY_DATA_FOUND);
 			chartPane.setMapData(areaCodes, areaNames, areaValues);
 		}
 		else

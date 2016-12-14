@@ -61,5 +61,4 @@ dependencies {
 	compile name: 'WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz'
 	compile name: 'WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz'
 	compile name: 'jfoenix'
-	compile name: 'commons-io-2.5'
 }
