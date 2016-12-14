@@ -14,7 +14,10 @@ public class AutoCompleteTextField extends JFXTextField {
 
 	private LinkedList<String> displayText, overrideText;
 	private ContextMenu entriesPopup;
-
+/**
+	 * A constructor for the text and entries 
+	 * Adding an action listener for the method focused property and hides the entries 
+	 */
 	public AutoCompleteTextField() {
 		super();
 		
@@ -46,7 +49,9 @@ public class AutoCompleteTextField extends JFXTextField {
 			entriesPopup.hide();
 		});
 	}
-	
+	/**
+	 * Updates the display of the entry popup depending on the text and display text 
+	 */
 	public void updateDisplay()
 	{
 		if (getText().length() == 0) {
@@ -66,7 +71,9 @@ public class AutoCompleteTextField extends JFXTextField {
 			}
 		}
 	}
-
+/**
+	 * A method to display the possible entries for the search bar 
+	 */
 	private void populatePopup() {
 		List<CustomMenuItem> menuItems = new LinkedList<>();
 		
@@ -91,7 +98,11 @@ public class AutoCompleteTextField extends JFXTextField {
 		entriesPopup.getItems().clear();
 		entriesPopup.getItems().addAll(menuItems);
 	}
-
+/**
+	 * Sets the entries for the text 
+	 * @param display text 
+	 * @param override text
+	 */
 	public void setEntries(LinkedList<String> display, LinkedList<String> override) {
 		displayText = display;
 		overrideText = override;
