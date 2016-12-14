@@ -19,12 +19,13 @@ public class Region extends Area
 	{
 		super(c);
 	}
+	
 	/**
 	 * A boolean to check if the code of the region is valid or not 
 	 * @param code for the region 
 	 * @return the areas code 
 	 */
-	protected static boolean codeIsValid(Code code)
+	protected static boolean codeIsValid(Code code) throws RequestException
 	{
 		return (areas.containsKey(code) && areas.get(code) instanceof Region)
 				|| dataFetcher.regionCodeExists(code.get());

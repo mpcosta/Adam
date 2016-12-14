@@ -11,25 +11,24 @@ public abstract class Area
 	public static final int GDP = 0, CPI = 1, BOP = 2, UNEMPLOYMENT = 3, INFLATION = 4, GOVERNMENT_SPENDING = 5, GOVERNMENT_CONSUMPTION = 6;
 	
 	protected static final String EX_CODE_INVALID = "Area code provided was not valid";
+	
 	/**
 	 * Calling the static data Fetcher from the World Bank 
 	 * Calling the codes and names for a specific area 
 	 */
 	protected static WorldBankDataFetcher dataFetcher = new WorldBankDataFetcher();
 	protected static HashMap<Code, Area> areas = new HashMap<Code, Area>();
-	
+
 	private static HashMap<String, String> namesToCodes = new HashMap<String, String>();
 	private static HashMap<String, ArrayList<String>> fragmentsToNamesEstimates = new HashMap<String, ArrayList<String>>();
 	private static ArrayList<String> allNames = new ArrayList<String>();
 	
 	protected Code code;
-	/**
-	 * Private hash maps for the indicators and macroeconomic topics 
-	 */
+	
 	private String name;
 	private HashMap<Integer, HashMap<Integer, Double>> indicators;
 	private HashMap<Integer, Integer> indicators_minYear, indicators_maxYear;
-	private HashMap<Integer, Double> gdp, cpi, bop, unemployment, inflation, governmentSpending, governmentConsumption;
+	
 	/**
 	 * Initialises the code for the specified area 
 	 * @param c The code that matches to a country 
@@ -40,6 +39,7 @@ public abstract class Area
 		code = new Code(c);
 		initialise();
 	}
+	
 	/**
 	 * Initialises the code for the area 
 	 * @param c the code for the country 
@@ -49,6 +49,7 @@ public abstract class Area
 		code = c;
 		initialise();
 	}
+	
 	/**
 	 * Initialises all data needed for a chart/graph to appear 
 	 */
@@ -58,14 +59,6 @@ public abstract class Area
 		indicators = new HashMap<Integer, HashMap<Integer, Double>>();
 		indicators_minYear = new HashMap<Integer, Integer>();
 		indicators_maxYear = new HashMap<Integer, Integer>();
-		
-		gdp = new HashMap<Integer, Double>();
-		cpi = new HashMap<Integer, Double>();
-		bop = new HashMap<Integer, Double>();
-		unemployment = new HashMap<Integer, Double>();
-		inflation = new HashMap<Integer, Double>();
-		governmentSpending = new HashMap<Integer, Double>();
-		governmentConsumption = new HashMap<Integer, Double>();
 	}
 	
 	/**
@@ -81,12 +74,13 @@ public abstract class Area
 	 * Gets the name for the Area.
 	 * @return	The Area name.
 	 */
-	public String getName()
+	public String getName() throws RequestException
 	{
 		if (name == null)
 			name = dataFetcher.getNameFromCode(code.get());
 		return name;
 	}
+	
 	/**
 	 * Gets the data for the Area 
 	 * @param indicator
@@ -116,6 +110,7 @@ public abstract class Area
 		}
 		return data;
 	}
+	
 	/**
 	 * Gets the area from the code 
 	 * @param c the code for the country 
@@ -134,6 +129,7 @@ public abstract class Area
 		}
 		return areas.get(code);
 	}
+	
 	/**
 	 * Gets the name of the area code 
 	 * @param name
@@ -145,30 +141,21 @@ public abstract class Area
 			namesToCodes.put(name, dataFetcher.getAreaCodeFromName(name));
 		return namesToCodes.get(name);
 	}
-	/**
-	 * Estimates the possible names from the fragment inputed 
-	 * @param fragment of the possible options 
-	 * @return possible names 
-	 */
+	
 	public static ArrayList<String> estimateNamesFromFragment(String fragment)
 	{
 		if (!fragmentsToNamesEstimates.containsKey(fragment))
 			fragmentsToNamesEstimates.put(fragment, dataFetcher.estimateNamesFromFragment(fragment));
 		return fragmentsToNamesEstimates.get(fragment);
 	}
-	/**
-	 * A getter for all the names in the data fetcher 
-	 * @return an array list of all the names
-	 */
+	
 	public static ArrayList<String> getAllNames()
 	{
 		if (allNames.size() == 0)
 			allNames = dataFetcher.getAllNames();
 		return new ArrayList<String>(allNames);
 	}
-	/**
-	 * A method to store the names that will be used 
-	 */
+	
 	public static void cacheAllNames()
 	{
 		dataFetcher.cacheAllNames();
@@ -179,29 +166,25 @@ public abstract class Area
 	 * @param code	The query code.
 	 * @return	True if an Area exists with the specified code.
 	 */
-	public static boolean codeIsValid(String code)
+	public static boolean codeIsValid(String code) throws RequestException
 	{
 		try
 		{
 			return codeIsValid(new Code(code));
 		}
-		catch (Exception e)
+		catch (CodeInvalidException e)
 		{
 			return false;
 		}
 	}
-	/**
-	 * Boolean to check whether the code exists or not 
-	 * @param code for the country 
-	 * @return the code if it exists or not 
-	 */
-	protected static boolean codeIsValid(Code code)
+	
+	protected static boolean codeIsValid(Code code) throws RequestException
 	{
 		return areas.containsKey(code) || dataFetcher.areaCodeExists(code.get());
 	}
+	
 	/**
 	 * A protected method for the codes length to check whether its valid or not 
-	 * @author hagerabdo
 	 * Containing a boolean to see whether the codes are equal 
 	 */
 	protected static class Code
@@ -210,10 +193,10 @@ public abstract class Area
 		
 		private String code;
 		
-		public Code(String c) throws Exception
+		public Code(String c) throws CodeInvalidException
 		{
 			if (c.length() != CODE_LENGTH)
-				throw new Exception(EX_CODE_INVALID + ": " + c + "; Code length must be " + CODE_LENGTH);
+				throw new CodeInvalidException(c);
 			code = c.toLowerCase();
 		}
 		
@@ -236,6 +219,16 @@ public abstract class Area
 			if (!(o instanceof Code))
 				return super.equals(o);
 			return code.equals(((Code)o).code);
+		}
+	}
+	
+	protected static class CodeInvalidException extends Exception
+	{
+		private static final long serialVersionUID = -5321608568058752157L; // TODO: Check this serial..
+
+		public CodeInvalidException(String code)
+		{
+			super(EX_CODE_INVALID + ": " + code + "; Code length must be " + Code.CODE_LENGTH);
 		}
 	}
 }

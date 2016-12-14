@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
 public class MainController {
+	
 	/**
 	 * A main view of the application 
 	 * A command processor for all functions regarding the search bar 
@@ -30,10 +31,13 @@ public class MainController {
 	 */
 	private MainView mainView;
 	private CommandProcessor commandProcessor;
+	
 	private Speech speech;
+	private boolean canActivateSpeech;
 	
 	private Thread commandProcessorThread;
-/**
+	
+	/**
 	 * A constructor for the main view, command processor, and speech 
 	 * @param mainView
 	 */
@@ -41,7 +45,13 @@ public class MainController {
 		this.mainView = mainView;
 		commandProcessor = new CommandProcessor(mainView);
 		commandProcessorThread = null;
-		speech = new Speech();
+		
+		try {
+			speech = new Speech();
+			canActivateSpeech = true;
+		} catch (Exception e) {
+			canActivateSpeech = false;
+		}
 		
 		init();
 	}
@@ -54,20 +64,23 @@ public class MainController {
 		 * When the user clicks on the Avatar it will listen to what the User commands 
 		 * Locates Adam to the top of the pane 
 		 */
-		mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
-			Thread thread = new Thread() {
-				public void run() {
-					String result = speech.listenVoiceToString();
-					
-					speech.speakMessage(result);
-					
-					if (result.contains("exit")) {
-						System.exit(1);
+		if (canActivateSpeech) {
+			mainView.getAvatar().getStaticImage().setOnMouseClicked(handler -> {
+				Thread thread = new Thread() {
+					public void run() {
+						String result = speech.listenVoiceToString();
+						
+						speech.speakMessage(result);
+						
+						if (result.contains("exit")) {
+							System.exit(0);
+						}
 					}
-				}
-			};
-			thread.start();
-		});
+				};
+				thread.start();
+			});
+		}
+		
 		/**
 		 * A question Handler to get the questions, answers, and correct answers and add it to the main View 	
 		 */	
@@ -176,6 +189,7 @@ public class MainController {
 	 */
 	private void processRequest(Event event)
 	{
+		mainView.getManualSessionPane().setSearchDisabled(true);
 		ManualPane manualPane = mainView.getManualSessionPane();
 		AutoCompleteTextField textField;
 		String text_construct;
@@ -208,6 +222,7 @@ public class MainController {
 					public void run()
 					{
 						mainView.removeLoadingScreen();
+						mainView.getManualSessionPane().setSearchDisabled(false);
 						if (newPane == null)
 							return;
 						mainView.transition(newPane);

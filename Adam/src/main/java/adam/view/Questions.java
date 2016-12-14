@@ -1,44 +1,80 @@
 package adam.view;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.commons.io.IOUtils;
-
 public class Questions {
-	
+	/**
+	 * A constructor containing the Hash map of question, answers, and correct answers 
+	 */
 	@SuppressWarnings("unchecked")
 	public Questions() {
 		questionAndAnswers = (HashMap<String, ArrayList<String>>) getDataFromFile("questionAndAnswers");
 		correctAnswers = (HashMap<String, ArrayList<Integer>>) getDataFromFile("correctAnswers");
 	}
-	
+	/**
+	 * Variables calling the data for the multiple choice quiz 
+	 */
 	private HashMap<String, ArrayList<String>> questionAndAnswers = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<Integer>> correctAnswers = new HashMap<String, ArrayList<Integer>>();
-
+/**
+	 * A getter for the question and answers from the HashMap reference 
+	 * @return the questions and answers 
+	 */
 	public HashMap<String, ArrayList<String>> getQuestionAndAnswers() {
 		return questionAndAnswers;
 	}
-
+/**
+	 * A getter for the correct Answers from the HashMap reference 
+	 * @return the correct answers 
+	 */
 	public HashMap<String, ArrayList<Integer>> getCorrectAnswers() {
 		return correctAnswers;
 	}
-
-	@SuppressWarnings("deprecation")
+/**
+	 * A method to read the state of the file Questions.txt 
+	 * Reads the file by char through the data string 
+	 * @return the data string 
+	 */
 	private String readStateFromFile() {
 		String result = "";
-
-		ClassLoader classLoader = getClass().getClassLoader();
+		
+		InputStream in = getClass().getResourceAsStream("/Questions.txt"); 
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		
 		try {
-		    result = IOUtils.toString(classLoader.getResourceAsStream("Questions.txt"));
+			String currentLine;
+			while ((currentLine = reader.readLine()) != null) {
+				result += currentLine + "\n";
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
-
+		
 		return result;
 	}
-
+/**
+	 * A getter that retrieves the data from the file Questions.txt 
+	 * Calls the hashmap references of questions, answers, and correct answers 
+	 * Goes through it by switch 
+	 * Case one for the method to read and retrieve the number of answers the question will contain 
+	 * Case two for method to read and retrieve the actual question 
+	 * Case three for the method to read and retrieve the answer options
+	 * Case four for method to read and retrieve the correct answer 
+	 * @param type
+	 * @return the questions and answers and correct answer
+	 */
 	private Object getDataFromFile(String type) {
 		
 		String line;

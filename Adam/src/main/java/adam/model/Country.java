@@ -2,12 +2,10 @@ package adam.model;
 
 public class Country extends Area
 {
-	/**
-	 * Variable for the region, latitude, and longitude of the country 
-	 */
 	private String region, incomeLevel, lendingType, capitalCity;
 	private double longitude, latitude;
 	private boolean longitudeCached, latitudeCached;
+	
 	/**
 	 * Private constructor to call the string of the code of the country 
 	 * @param c the code for the country 
@@ -18,6 +16,7 @@ public class Country extends Area
 		super(c);
 		initialise();
 	}
+	
 	/**
 	 * Private constructor for the code 
 	 * @param c the code for the country 
@@ -27,6 +26,7 @@ public class Country extends Area
 		super(c);
 		initialise();
 	}
+	
 	/**
 	 * Initialises the latitude, longitude, and all data needed for the country
 	 */
@@ -44,7 +44,7 @@ public class Country extends Area
 	 * Gets the region that the Country is part of.
 	 * @return	The name of the region.
 	 */
-	public String getRegion()
+	public String getRegion() throws RequestException
 	{
 		if (region == null)
 			region = dataFetcher.getRegionFromCode(code.get());
@@ -55,7 +55,7 @@ public class Country extends Area
 	 * Gets the income level of the Country.
 	 * @return	The income level.
 	 */
-	public String getIncomeLevel()
+	public String getIncomeLevel() throws RequestException
 	{
 		if (incomeLevel == null)
 			incomeLevel = dataFetcher.getIncomeLevelFromCode(code.get());
@@ -66,7 +66,7 @@ public class Country extends Area
 	 * Gets the lending type of the Country.
 	 * @return	The lending type.
 	 */
-	public String getLendingType()
+	public String getLendingType() throws RequestException
 	{
 		if (lendingType == null)
 			lendingType = dataFetcher.getLendingType(code.get());
@@ -77,7 +77,7 @@ public class Country extends Area
 	 * Gets the capital city of the Country.
 	 * @return	The name of the capital city.
 	 */
-	public String getCapitalCity()
+	public String getCapitalCity() throws RequestException
 	{
 		if (capitalCity == null)
 			capitalCity = dataFetcher.getCapitalCity(code.get());
@@ -88,7 +88,7 @@ public class Country extends Area
 	 * Gets the longitude of the Country.
 	 * @return	The longitude.
 	 */
-	public double getLongitude()
+	public double getLongitude() throws RequestException
 	{
 		if (!longitudeCached)
 		{
@@ -102,7 +102,7 @@ public class Country extends Area
 	 * Gets the latitude of the Country.
 	 * @return	The latitude.
 	 */
-	public double getLatitude()
+	public double getLatitude() throws RequestException
 	{
 		if (!latitudeCached)
 		{
@@ -112,28 +112,7 @@ public class Country extends Area
 		return latitude;
 	}
 	
-	/**
-	 * Tests whether a given Country code is valid to represent a Country. 
-	 * @param code	The Country code.
-	 * @return	True if it can be used to request a Country object.
-	 */
-	public static boolean codeIsValid(String code)
-	{
-		try
-		{
-			return codeIsValid(new Code(code));
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-	}
-	/**
-	 * Tests whether a given Country code is valid to represent a Country. 
-	 * @param code	The Country code.
-	 * @return	True if it can be used to request a Country object.
-	 */
-	protected static boolean codeIsValid(Code code)
+	protected static boolean codeIsValid(Code code) throws RequestException
 	{
 		return (areas.containsKey(code) && areas.get(code) instanceof Country)
 				|| dataFetcher.countryCodeExists(code.get());
@@ -153,8 +132,5 @@ public class Country extends Area
 		if (!areas.containsKey(code))
 			areas.put(code, new Country(code));
 		return (Country)areas.get(code);
-	}
-	
-	
-	
+	}	
 }

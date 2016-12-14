@@ -87,9 +87,7 @@ public class WorldMap extends StackPane {
 		
 		currentMapSource = currentMapSource.replaceAll("\\s", "%20");
 		
-		mapView.setImage(new Image(currentMapSource));
-		
-		System.out.println(currentMapSource);		
+		mapView.setImage(new Image(currentMapSource));		
 		
 		return mapView;
 	}
