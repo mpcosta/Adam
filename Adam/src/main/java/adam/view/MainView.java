@@ -213,7 +213,10 @@ public class MainView extends BorderPane {
 	public void setLoadingLabel(String value) {
 		loadingLabel.setText(value);
 	}
-	
+	/**
+	 * Gets the advanced toggle button 
+	 * @return advanced toggle button 
+	 */
 	public ToggleButton getAdvancedToggleButton()
 	{
 		return advancedToggleButton;
@@ -300,7 +303,10 @@ public class MainView extends BorderPane {
 		
 		alert.showAndWait();
 	}
-	
+	/**
+	 * Gets the top pane 
+	 * @return top pane 
+	 */
 	public StackPane getTopPane() {
 		return topPane;
 	}
